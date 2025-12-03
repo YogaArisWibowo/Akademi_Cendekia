@@ -22,14 +22,103 @@
                 background-color: rgba(255, 255, 255, 0.1);
                 border-radius: 5px;
             }
+
+            .welcome{
+                color: white;
+                margin-left: 120px;
+                margin-top: 150px;
+            }
+            
+            .blur-form {
+                background-color:  rgba(255, 255, 255, 0.1) !important;
+                backdrop-filter: blur(8px);
+                width: 400px;
+                height: 350px;
+                border-radius: 20px;
+                color: white;
+                border: 1px;
+                margin-left: 220px;
+                margin-top: 150px;
+            }
+            .masuk-akun{
+                font-size: 26px;
+                font-weight: 500;
+            }
+            .custom-input input.form-control {
+                background: transparent !important;
+                border: none !important;
+                border-radius: 0;
+                border-width: 3px;
+                border-bottom: 1px solid white !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                width: 90% !important;
+                color: white !important;
+                margin-left: 20px;
+                margin-top: 40px;
+            }
+            .custom-input input::placeholder{
+                color: #cccc !important;
+                padding-left: 30px;
+            }
+            .custom-input input.form-control:focus{
+                background: transparent !important;
+                box-shadow: none !important;
+                border-color: #03132a !important;
+            }
+            .login-button{
+                background: #FFFF !important;
+                border-radius: 6px;
+                border: none !important;
+                width:  100px;
+                height: 30px;
+                margin-left: 150px;
+                margin-top: 40px;
+                font-weight: 500;
+                color: #2F6FCA;
+            }
+            .login-button:hover{
+                background: rgba(255, 255, 255, 0.3) !important;
+                color: white !important;
+            }
+            .password-container{
+                position: relative;
+            }
+            .password-toggle-icon{
+                position: absolute;
+                right: 30px;
+                top: 50%;
+                transform: translateY(-50%);
+                cursor: pointer;
+                z-index: 10;
+            }
+            .password-input{
+                padding-right: 30px;
+            }
+            .lock{
+                position: absolute;
+                left: 10px;
+                top: 30px;
+                transform: translateY(-90%);
+                z-index: 10;
+                left: 30px;
+            }
+            .user{
+                position: absolute;
+                left: 10px;
+                top: 100px;
+                transform: translateY(-30%);
+                z-index: 10;
+                left: 30px;
+            }
         </style>
     </head>
     <body>
         <nav class="navbar navbar-expand-lg py-4">
             <div class="container-fluid border-bottom border-2 pb-3"
             style="border-color: #2F6FCA !important;">
-                <img src="{{ asset('img/logo-nav.png') }}" alt="logo" class="logo-img ms-3 "
-                style="width: 180px;">
+                <img src="{{ asset('img/logo-nav.png') }}" alt="logo" class="logo-img ms-4 "
+                style="width: 170px;">
                 <button
                     class="navbar-toggler"
                     type="button"
@@ -59,9 +148,29 @@
             </div>
         </nav>
 
-        <div class="main-content d-flex justify-content-center align-items-center">
-            <div class="align-bottom">
-                YOGA HITAM
+        <div class="d-flex justify-content-start align-items-center" style="height: 300px;">
+            <div class="welcome">
+                <p style="font-weight: 500; font-size: 32px;;"> Selamat Datang Kembali!</p><br>
+                <p style="font-size: 26px; font-weight: 400;">Yuk lanjutkan perjalanan belajarmu di <br> Akademi Cendekia.</p>
+            </div>
+            <div class="blur-form">
+                <p class="pt-2 masuk-akun text-center">Masuk Akun</p>
+                <div class="custom-input">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" placeholder="Username" required>
+                        <i class="bi bi-person-circle user"></i>
+                    </div>
+
+                    <div class="mb-3 password-container">
+                        <input type="password" class="form-control password-input" placeholder="Password" required >
+                        <i class="bi bi-eye password-toggle-icon"></i>
+                        <i class="bi bi-lock-fill lock"></i>
+                    </div>
+                </div>
+
+                <button class="login-button text-center">
+                    Masuk
+                </button>
             </div>
         </div>
 
