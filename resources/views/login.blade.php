@@ -8,7 +8,7 @@
 </head>
 
 @include('layouts.style')
-@vite(['resources/css/app.css', 'resources/js/app.js'])
+{{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
 
 <body
     class="bg-[linear-gradient(135deg,_var(--tw-gradient-from),_var(--tw-gradient-to))] from-primary-ungu to-primary-biru flex items-center justify-center min-h-screen">

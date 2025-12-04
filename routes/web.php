@@ -8,3 +8,6 @@ Route::get('/', function () {
 Route::get('/jadwal_mengajar', function () {
     return view('guru.jadwal_mengajar');
 });
+Route::get('/login_admin', function () {
+    return view('admin.login');
+});
