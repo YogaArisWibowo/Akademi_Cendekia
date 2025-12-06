@@ -1,0 +1,50 @@
+/* Bungkus tabel agar border radius berfungsi */
+.table-container {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0px 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden; /* wajib agar radius bekerja ke tabel */
+}
+
+/* Table */
+.table-general {
+    width: 100%;
+    border-collapse: separate; /* ubah dari collapse */
+    border-spacing: 0;         /* hilangkan jarak antar cell */
+    font-size: 14px;
+}
+
+/* Header table melengkung di ujung kiri & kanan */
+.table-general thead th:first-child {
+    border-top-left-radius: 12px;
+}
+
+.table-general thead th:last-child {
+    border-top-right-radius: 12px;
+}
+
+/* Row terakhir melengkung bawah kiri & kanan */
+.table-general tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 12px;
+}
+
+.table-general tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 12px;
+}
+
+/* Style biasa */
+.table-general thead th,
+.table-general td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.table-general thead {
+    background: #C4DAF9;
+    color: #333;
+}
+
+.table-general tbody tr:nth-child(even) {
+    background: #C4DAF9;
+}

@@ -1,0 +1,130 @@
+/* Tombol utama */
+.btn-primary {
+    background: #4A90E2;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+}
+
+/* Tombol tambah */
+.btn-add {
+    background: #F6B93B;
+    color: white !important;
+    padding: 6px 8px;
+    font-weight: 600;
+    border-radius: 10px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-add i {
+    font-size: 18px;
+}
+
+/* Pagination */
+.pagination-btn {
+    background: #F8F8FA;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #CCCCCC;
+    text-align: center;
+    margin-top: 25px;
+}
+
+.pagination-btn.disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.page {
+    background: #F8F8FA;
+    padding: 8px 15px;
+    margin: 0 5px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    color: #CCCCCC;
+}
+
+.page.active {
+    background: #C4DAF9;
+    color: #000;
+    border: none;
+}
+
+.pagination-wrapper {
+    text-align: center;
+    margin-top: 25px;
+}
+
+/* STATUS KEHADIRAN */
+.badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    text-transform: capitalize;
+     min-width: 110px;
+}
+
+.badge-hadir {
+    background-color: #6AE664; 
+}
+
+.badge-izin {
+    background-color: #FF7364; 
+}
+
+.badge-sakit {
+    background-color: #1E88E5; 
+}
+
+/* Tombol kembali */
+.back-btn {
+    all: unset;
+    background: #C7C7C7;
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+/* Tombol unggah tugas (outline blue) */
+.btn-unggah-tugas {
+    all: unset;
+    padding: 10px 0;
+    border: 1px solid #1876FF;
+    color: #1876FF;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    display: flex;
+    align-items: center;      
+    justify-content: center;
+}
+

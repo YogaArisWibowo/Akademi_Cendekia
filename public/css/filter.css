@@ -1,0 +1,25 @@
+.filter-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.filter-button {
+    background: white !important;
+    border: 1px solid #DCDCDC;
+    padding: 6px 8px;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    box-shadow: 0px 4px 20px rgba(0,0,0,0.08);
+}
+
+.filter-button i {
+    margin-left: 4px;
+    font-size: 18px;
+}
