@@ -59,7 +59,7 @@
             }
             .custom-input input::placeholder{
                 color: #cccc !important;
-                padding-left: 30px;
+                padding-left: 40px;
             }
             .custom-input input.form-control:focus{
                 background: transparent !important;
@@ -102,6 +102,7 @@
                 transform: translateY(-90%);
                 z-index: 10;
                 left: 30px;
+                font-size: 22px;
             }
             .user{
                 position: absolute;
@@ -110,6 +111,7 @@
                 transform: translateY(-30%);
                 z-index: 10;
                 left: 30px;
+                font-size: 22px;
             }
         </style>
     </head>
@@ -162,9 +164,9 @@
                     </div>
 
                     <div class="mb-3 password-container">
-                        <input type="password" class="form-control password-input" placeholder="Password" required >
-                        <i class="bi bi-eye password-toggle-icon"></i>
-                        <i class="bi bi-lock-fill lock"></i>
+                        <input name="password" type="password" class="form-control password-input" placeholder="Password" required >
+                            <i class="bi bi-lock-fill lock"></i>
+                            <i id="TogglePassword" class="bi bi-eye password-toggle-icon"></i>
                     </div>
                 </div>
 
