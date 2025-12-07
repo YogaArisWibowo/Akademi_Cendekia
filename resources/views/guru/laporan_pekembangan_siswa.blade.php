@@ -3,7 +3,7 @@
 @section('content')
 <main>
     <header class="topbar">
-        <h2>Laporan Pembelajaran Siswa</h2>
+        <h2>Laporan Perkembangan Siswa</h2>
         <div class="profile">
             <span>👤</span>
             <span>Ira S.</span>
