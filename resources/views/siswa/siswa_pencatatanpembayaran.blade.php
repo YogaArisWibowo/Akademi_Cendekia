@@ -1,4 +1,5 @@
 @extends('layouts.app_siswa', ['title' => 'Pembayaran Bimbel'])
+
 @section('content')
 
 <div class="pembayaran-header d-flex align-items-center justify-content-end mb-3">
@@ -52,7 +53,7 @@
         </tbody>
     </table>
 
-     <div class="pagination-wrapper">
+    <div class="pagination-wrapper">
         <button class="btn page">Sebelumnya</button>
         <button class="btn page active">1</button>
         <button class="btn page">2</button>
