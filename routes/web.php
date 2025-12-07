@@ -5,10 +5,36 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+//Route buat Admin
+
+
+//Route buat Guru
 Route::get('/jadwal_mengajar', function () {
     return view('guru.jadwal_mengajar');
-});
+})->name('jadwal_mengajar');
 
+Route::get('/absensi_guru', function () {
+    return view('guru.absensi');
+})->name('absensi_guru');
+Route::get('/tugas_siswa', function () {
+    return view('guru.tugas_siswa');
+})->name('tugas_siswa');
+Route::get('/gaji_guru', function () {
+    return view('guru.gaji');
+})->name('gaji_guru');
+Route::get('/materi_pembelajaran', function () {
+    return view('guru.materi_pembelajaran');
+})->name('materi_pembelajaran');
+Route::get('/video_materi_belajar', function () {
+    return view('guru.video_materi_belajar');
+})->name('video_materi_belajar');
+Route::get('/laporan_pekembangan_siswa', function () {
+    return view('guru.laporan_pekembangan_siswa');
+})->name('laporan_pekembangan_siswa');
+
+
+//Route buat Siswa
 Route::get('/siswa/jadwal_bimbel', function () {
 
     // Dummy data biar tabelnya tampil seperti contoh
