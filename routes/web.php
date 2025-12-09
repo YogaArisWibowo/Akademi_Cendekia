@@ -35,7 +35,7 @@ Route::get('/laporan_pekembangan_siswa', function () {
 
 
 //Route buat Siswa
-Route::get('/siswa/jadwal_bimbel', function () {
+Route::get('/siswa/siswa_jadwalbimbel', function () {
 
     // Dummy data biar tabelnya tampil seperti contoh
     $jadwal = collect([
@@ -68,27 +68,39 @@ Route::get('/siswa/jadwal_bimbel', function () {
         ],
     ]);
 
-    return view('siswa.jadwal_bimbel', compact('jadwal'));
+    return view('siswa.siswa_jadwalbimbel', compact('jadwal'));
 });
 
-Route::get('/siswa/absensi', function () {
-    return view('siswa.absensi', [
+Route::get('/siswa/siswa_absensi', function () {
+    return view('siswa.siswa_absensi', [
         'title' => 'Absensi'
     ]);
 });
 
-Route::get('/siswa/daftar_tugas', function () {
-    return view('siswa.daftar_tugas');
+Route::get('/siswa/siswa_daftartugas', function () {
+    return view('siswa.siswa_daftartugas');
 });
 
-Route::get('/siswa/tugas_siswa', function () {
-    return view('siswa.tugas_siswa');
+Route::get('/siswa/siswa_tugas', function () {
+    return view('siswa.siswa_tugas');
 });
 
-Route::get('/siswa/pencatatanpembayaran', function () {
-    return view('siswa.pencatatanpembayaran');
+Route::get('/siswa/siswa_pencatatanpembayaran', function () {
+    return view('siswa.siswa_pencatatanpembayaran');
 });
 
-Route::get('/siswa/laporanperkembangan', function () {
-    return view('siswa.laporanperkembangan');
+Route::get('/siswa/siswa_laporanperkembangan', function () {
+    return view('siswa.siswa_laporanperkembangan');
+});
+
+Route::get('/siswa/siswa_daftarmateri', function () {
+    return view('siswa.siswa_daftarmateri');
+});
+
+Route::get('/siswa/siswa_materi', function () {
+    return view('siswa.siswa_materi');
+});
+
+Route::get('/siswa/siswa_video', function () {
+    return view('siswa.siswa_video');
 });
