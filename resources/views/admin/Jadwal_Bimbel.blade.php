@@ -24,22 +24,31 @@
     }
     .search {
         width: 250px;
-        margin-bottom: 5px;
-        border-style: solid;
-        border-width: 1px;
-        border-radius: 6px;
-        border-color: #cccc;
+        position: relative;
+        display: inline-block;
+    }
+    .search i{
+        position: absolute;
+    top: 50%; /* Pindahkan ke tengah vertikal */
+    left: 8px; /* Jarak dari tepi kiri input */
+    transform: translateY(-50%); /* Penyesuaian akhir agar benar-benar di tengah */
+    color: #6c757d; /* Warna abu-abu Bootstrap */
+    font-size: 0.9rem; /* Atur ukuran ikon agar sesuai dengan form-control-sm */
+    z-index: 2; /* Pastikan ikon berada di atas input */
+    }
+    .search input.form-control{
+        padding-left: 30px;
     }
 </style>
 <div class="d-flex justify-content-between align-items-center mb-2">
-    <div class="search-container-custom" style="width: 250px">
+    <div class="search">
         <input
             type="search"
             class="form-control form-control-sm search-input"
             placeholder="Cari..."
             aria-label="Search"
         />
-        <i class="bi bi-search search-icon"></i>
+        <i class="bi bi-search"></i>
     </div>
 
     <button class="tambah text-center">

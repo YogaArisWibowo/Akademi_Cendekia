@@ -12,9 +12,7 @@ Route::get('/', function () {
 Route::get('/login_admin', function () {
     return view('admin.login');
 });
-Route::get('/admin/jadwal_bimbel', function () {
-    return view('admin.Jadwal_Bimbel');
-});
+Route::get('/admin/jadwal_bimbel',[JadwalController::class, 'adminindex']);
 //Route buat Guru
 Route::get('/jadwal_mengajar', function () {
     return view('guru.jadwal_mengajar');
@@ -42,10 +40,7 @@ Route::get('/laporan_pekembangan_siswa', function () {
 
 
 //Route buat Siswa
-Route::get('/siswa/siswa_jadwalbimbel', function () {
-
-    return view('siswa.jadwal_bimbel');
-});
+Route::get('/siswa/siswa_jadwalbimbel',[JadwalController::class, 'siswaindex']);
 
 Route::get('/siswa/siswa_absensi', function () {
     return view('siswa.siswa_absensi', [
