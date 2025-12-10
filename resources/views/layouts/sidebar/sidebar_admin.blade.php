@@ -1,107 +1,73 @@
-<!-- Sidebar -->
-
-<aside class="main-sidebar sidebar-dark-primary elevation-4 custom-ungu mini-sidebar">
-    <!-- Brand Logo -->
-    <a href="#" class="brand-link">
-        <img src="{{ asset('img/Logo/Logo D3Mi Simbol.png') }}" alt="D3MI Logo" class="brand-image"
-            style="opacity: .8">
-        <span class="brand-text font-weight-medium" style="font-size: 16px">Manajemen Informatika</span>
-    </a>
-
-    <!-- Sidebar -->
-    <div class="sidebar d-flex flex-column">
-        <!-- Sidebar user panel (optional) -->
-
-
-        <!-- Sidebar Menu -->
-        <nav class="mt-12">
-            <ul class="nav nav-pills nav-sidebar flex-column my-auto" data-widget="treeview" role="menu"
-                data-accordion="false">
-                <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
-
-                <li class="nav-item">
-                    <a href="{{ route('admin_dashboard.index') }}" class="nav-link">
-                        <div class="nav-icon">
-                            <i><ion-icon src="{{ asset('img/svg/hugeicons--building-05.svg') }}"></ion-icon></i>
-                            <p>Dashboard</p>
-                        </div>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin_dpl.index') }}" class="nav-link">
-                        <div class="nav-icon">
-                            <i><ion-icon src="{{ asset('img/svg/ph--chalkboard-teacher.svg') }}"></ion-icon></i>
-                            <p>Data DPL</p>
-                        </div>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin_mitra.index') }}" class="nav-link">
-                        <div class="nav-icon">
-                            <i><ion-icon src="{{asset('img/svg/hugeicons--building-05.svg') }}"></ion-icon></i>
-                            <p>Data Mitra</p>
-                        </div>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin_berkaskelompok.index') }}" class="nav-link">
-                        <div class="nav-icon">
-                            <i><ion-icon src="{{asset('img/svg/solar--document-add-linear.svg') }}"></ion-icon></i>
-                            <p>Data Mahasiswa</p>
-                        </div>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ url('logbook_admin') }}" class="nav-link">
-                        <div class="nav-icon">
-                            <i><ion-icon src="{{asset('img/svg/ph--list-checks-bold.svg') }}"></ion-icon></i>
-                            <p>Logbook</p>
-                        </div>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('penilaian.index') }}" class="nav-link">
-                        <div class="nav-icon">
-                            <i><ion-icon src="{{asset('img/svg/hugeicons--pencil-edit-02.svg') }}"></ion-icon></i>
-                            <p>Penilaian</p>
-                        </div>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin_lap_akhir.index') }}" class="nav-link">
-                        <div class="nav-icon">
-                            <i><ion-icon src="{{asset('img/svg/hugeicons--note.svg') }}"></ion-icon></i>
-                            <p>Laporan Magang</p>
-                        </div>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('sertifikat.admin') }}" class="nav-link">
-                        <div class="nav-icon">
-                            <i><ion-icon src="{{asset('img/svg/ph--certificate-light.svg') }}"></ion-icon></i>
-                            <p>Sertifikat</p>
-                        </div>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <form action="{{ route('logout') }}" method="POST" id="logout-form" style="display: none;">
-                        @csrf
-                    </form>
-                    <a href="javascript:void(0);" class="nav-link"
-                        onclick="document.getElementById('logout-form').submit();">
-                        <div class="nav-icon">
-                            <i><ion-icon src="{{ asset('img/svg/eva--log-out-outline.svg') }}"></ion-icon></i>
-                            <p>Logout</p>
-                        </div>
-                    </a>
-                </li>
-
-            </ul>
-        </nav>
-        <!-- /.sidebar-menu -->
-        <!-- Sidebar user (optional) -->
-
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sidebar Akademi Cendekia</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background-color: #f8f9fa;
+    }
+    .sidebar {
+      height: 100vh;
+      width: 280px;
+      background: linear-gradient(to bottom , #03132A, #1877FF);
+      color: white;
+      position: fixed;
+      padding-top: 1rem;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      display: block;
+    }
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+    }
+    .sidebar .active {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .logo i {
+      font-size: 2rem;
+    }
+    .logo span {
+      display: block;
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">
+      <img src="{{ asset('img/logo.png') }}" class="logo-img">
     </div>
-    <!-- /.sidebar -->
-</aside>
+    <a href="#"><i class="bi bi-calendar-check me-2"></i> Penerimaan Siswa</a>
+    <a href="#"><i class="bi bi-calendar-check me-2"></i> Data Guru & Siswa</a>
+    <a href="#" class="active"><i class="bi bi-calendar-check me-2"></i> Jadwal Bimbel</a>
+    <a href="#"><i class="bi bi-person-check me-2"></i> Absensi</a>
+    <a href="#"><i class="bi bi-journal-text me-2"></i> Pembayaran Siswa</a>
+    <a href="#"><i class="bi bi-cash-coin me-2"></i> Pencatatan Gaji Gutu</a>
+    <a href="#"><i class="bi bi-book me-2"></i> Materi Pembelajaran</a>
+    <a href="#"><i class="bi bi-play-circle me-2"></i> Video Materi Belajar</a>
+    <a href="#"><i class="bi bi-play-circle me-2"></i> Monitoring Guru</a>
+    <a href="#"><i class="bi bi-bar-chart-line me-2"></i> Laporan Perkembangan Siswa</a>
+  </div>
+
+  <div class="ms-250 p-4" style="margin-left: 250px;">
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -2,14 +2,17 @@
 
 use App\Http\Controllers\AbsensiGuruController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Jadwalcontroller;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 //Route buat Admin
-
-
+Route::get('/login_admin', function () {
+    return view('admin.login');
+});
+Route::get('/admin/jadwal_bimbel',[JadwalController::class, 'adminindex']);
 //Route buat Guru
 Route::get('/jadwal_mengajar', function () {
     return view('guru.jadwal_mengajar');
@@ -37,41 +40,7 @@ Route::get('/laporan_pekembangan_siswa', function () {
 
 
 //Route buat Siswa
-Route::get('/siswa/siswa_jadwalbimbel', function () {
-
-    // Dummy data biar tabelnya tampil seperti contoh
-    $jadwal = collect([
-        (object)[
-            'hari' => 'Senin',
-            'tanggal' => '05-Okt-2025',
-            'waktu' => '15.00',
-            'mapel' => 'IPAS',
-            'guru' => 'Ira Sulistya',
-            'nama_siswa' => 'Hafidz',
-            'alamat_siswa' => 'Jl. Kenari',
-        ],
-        (object)[
-            'hari' => 'Senin',
-            'tanggal' => '05-Okt-2025',
-            'waktu' => '15.00',
-            'mapel' => 'IPAS',
-            'guru' => 'Ira Sulistya',
-            'nama_siswa' => 'Hafidz',
-            'alamat_siswa' => 'Jl. Kenari',
-        ],
-        (object)[
-            'hari' => 'Senin',
-            'tanggal' => '05-Okt-2025',
-            'waktu' => '15.00',
-            'mapel' => 'IPAS',
-            'guru' => 'Ira Sulistya',
-            'nama_siswa' => 'Hafidz',
-            'alamat_siswa' => 'Jl. Kenari',
-        ],
-    ]);
-
-    return view('siswa.siswa_jadwalbimbel', compact('jadwal'));
-});
+Route::get('/siswa/siswa_jadwalbimbel',[JadwalController::class, 'siswaindex']);
 
 Route::get('/siswa/siswa_absensi', function () {
     return view('siswa.siswa_absensi', [
