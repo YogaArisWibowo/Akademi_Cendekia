@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AbsensiGuruController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,6 +18,7 @@ Route::get('/jadwal_mengajar', function () {
 Route::get('/absensi_guru', function () {
     return view('guru.absensi');
 })->name('absensi_guru');
+Route::post('/absensi/store', [AbsensiGuruController::class, 'store'])->name('absensi.store');
 Route::get('/tugas_siswa', function () {
     return view('guru.tugas_siswa');
 })->name('tugas_siswa');

@@ -17,6 +17,9 @@ return new class extends Migration
             $table->foreignId('id_jadwal_bimbel')->constrained('jadwal_bimbel')->onDelete('cascade');
             $table->string('bukti_foto');
             $table->text('laporan_kegiatan');
+            $table->string('hari');
+            $table->date('tanggal');
+            $table->time('waktu');
             $table->timestamps();
         });
     }

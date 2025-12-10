@@ -20,7 +20,7 @@
             </select>
 
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahAbsenModal">
-                Tambah Absen  <i class="bi bi-plus-circle me-1"></i>
+                Tambah Absen <i class="bi bi-plus-circle me-1"></i>
             </button>
 
         </div>
@@ -36,15 +36,14 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
 
-                        <form action="#" method="POST">
+                        <form action="{{ route('absensi.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="modal-body">
 
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Hari</label>
-                                        <input type="text" class="form-control" name="hari"
-                                            placeholder="Contoh: Senin" required>
+                                        <input type="text" class="form-control" name="hari" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Tanggal</label>
@@ -59,18 +58,18 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Mapel</label>
-                                        <input type="text" class="form-control" name="mapel" placeholder="Contoh: Matematika" required>
+                                        <input type="text" class="form-control" name="mapel" required>
                                     </div>
                                 </div>
 
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Bukti Kehadiran</label>
-                                        <input type="file" class="form-control" name="nama_siswa" required>
+                                        <input type="file" class="form-control" name="bukti_foto" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Catatan</label>
-                                        <input type="text" class="form-control" name="alamat" placeholder="Contoh: Pembelajaran hari ini tentang"required>
+                                        <input type="text" class="form-control" name="laporan_kegiatan" required>
                                     </div>
                                 </div>
 
@@ -80,7 +79,6 @@
                                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
                                 <button type="submit" class="btn btn-primary">Simpan</button>
                             </div>
-
                         </form>
 
                     </div>
@@ -107,7 +105,7 @@
                         <td>IPAS</td>
                         <td>Ira Sulistya</td>
                         <td>Hafidz</td>
-                        
+
                     </tr>
                     <tr>
                         <td>2.</td>
@@ -117,7 +115,7 @@
                         <td>IPAS</td>
                         <td>Ira Sulistya</td>
                         <td>Hafidz</td>
-                        
+
                     </tr>
                 </tbody>
             </table>
