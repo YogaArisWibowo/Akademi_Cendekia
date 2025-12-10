@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Jadwalcontroller;
 
 Route::get('/', function () {
     return view('welcome');
@@ -8,39 +9,12 @@ Route::get('/', function () {
 Route::get('/jadwal_mengajar', function () {
     return view('guru.jadwal_mengajar');
 });
+Route::get('/login', function () {
+    return view('admin.login');
+});
+Route::get('/Jadwal_Bimbel', [Jadwalcontroller::class, 'index']);
 
 Route::get('/siswa/jadwal_bimbel', function () {
-
-    // Dummy data biar tabelnya tampil seperti contoh
-    $jadwal = collect([
-        (object)[
-            'hari' => 'Senin',
-            'tanggal' => '05-Okt-2025',
-            'waktu' => '15.00',
-            'mapel' => 'IPAS',
-            'guru' => 'Ira Sulistya',
-            'nama_siswa' => 'Hafidz',
-            'alamat_siswa' => 'Jl. Kenari',
-        ],
-        (object)[
-            'hari' => 'Senin',
-            'tanggal' => '05-Okt-2025',
-            'waktu' => '15.00',
-            'mapel' => 'IPAS',
-            'guru' => 'Ira Sulistya',
-            'nama_siswa' => 'Hafidz',
-            'alamat_siswa' => 'Jl. Kenari',
-        ],
-        (object)[
-            'hari' => 'Senin',
-            'tanggal' => '05-Okt-2025',
-            'waktu' => '15.00',
-            'mapel' => 'IPAS',
-            'guru' => 'Ira Sulistya',
-            'nama_siswa' => 'Hafidz',
-            'alamat_siswa' => 'Jl. Kenari',
-        ],
-    ]);
 
     return view('siswa.jadwal_bimbel', compact('jadwal'));
 });
