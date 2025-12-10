@@ -1,4 +1,4 @@
-@extends('layouts.app_guru', ['title' => 'Jadwal Mengajar'])
+@extends('layouts.app_guru', ['title' => 'Absensi Guru'])
 
 @section('content')
     <main>
@@ -11,8 +11,15 @@
             </div>
         </header>
 
-        <div class="filter-section d-flex justify-content-between align-items-center mb-4">
+        {{-- Pesan Sukses --}}
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
+        <div class="filter-section d-flex justify-content-between align-items-center mb-4">
             <select class="dropdown-hari">
                 <option>Bulan</option>
                 <option>Januari</option>
@@ -22,10 +29,11 @@
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahAbsenModal">
                 Tambah Absen <i class="bi bi-plus-circle me-1"></i>
             </button>
-
         </div>
 
         <div class="table-wrapper">
+            
+            {{-- MODAL TAMBAH ABSENSI GURU --}}
             <div class="modal fade" id="tambahAbsenModal" tabindex="-1" aria-labelledby="tambahAbsenLabel"
                 aria-hidden="true">
                 <div class="modal-dialog modal-lg">
@@ -33,10 +41,10 @@
 
                         <div class="modal-header">
                             <h5 class="modal-title" id="tambahAbsenLabel">Tambah Absensi Guru</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
 
-                        <form action="{{ route('absensi.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="#" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="modal-body">
 
@@ -57,43 +65,46 @@
                                         <input type="time" class="form-control" name="waktu" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">Mapel</label>
+                                        <label class="form-label">Mata Pelajaran</label>
                                         <input type="text" class="form-control" name="mapel" required>
                                     </div>
                                 </div>
 
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <label class="form-label">Bukti Kehadiran</label>
-                                        <input type="file" class="form-control" name="bukti_foto" required>
+                                        <label class="form-label">Bukti Kehadiran (Foto)</label>
+                                        <input type="file" class="form-control" name="bukti_foto" accept="image/*" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">Catatan</label>
-                                        <input type="text" class="form-control" name="laporan_kegiatan" required>
+                                        <label class="form-label">Laporan/Catatan Kegiatan</label>
+                                        <textarea class="form-control" name="laporan_kegiatan" rows="3" required></textarea>
                                     </div>
                                 </div>
-
+                                
                             </div>
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-primary">Simpan</button>
+                                <button type="submit" class="btn btn-primary">Simpan Absen</button>
                             </div>
                         </form>
 
                     </div>
                 </div>
             </div>
+            {{-- AKHIR MODAL --}}
+
+            {{-- TABEL ABSENSI GURU --}}
             <table class="table-jadwal">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th>No.</th>
                         <th>Hari</th>
                         <th>Tanggal</th>
                         <th>Waktu</th>
                         <th>Mapel</th>
-                        <th>Bukti Kehadiran</th>
-                        <th>Catatan</th>
+                        <th>Bukti Foto</th>
+                        <th>Catatan Kegiatan</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -105,7 +116,6 @@
                         <td>IPAS</td>
                         <td>Ira Sulistya</td>
                         <td>Hafidz</td>
-
                     </tr>
                     <tr>
                         <td>2.</td>
@@ -115,10 +125,11 @@
                         <td>IPAS</td>
                         <td>Ira Sulistya</td>
                         <td>Hafidz</td>
-
                     </tr>
                 </tbody>
             </table>
+            {{-- AKHIR TABEL --}}
+
             <div class="pagination">
                 <button class="btn">Sebelumnya</button>
                 <button class="btn active">1</button>
