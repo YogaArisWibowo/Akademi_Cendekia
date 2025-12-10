@@ -25,7 +25,7 @@
     margin-bottom: 10px;
 }
 
-.menu-list {
+/* .menu-list {
     list-style: none;
     padding-left: 0;
 }
@@ -39,13 +39,42 @@
     gap: 12px;
     cursor: pointer;
     font-size: 15px;
-}
+} */
 
-.menu-item.active {
-    background: rgba(255, 255, 255, 0.3); /* putih 30% */
+/* .menu-item.active {
+    background: rgba(255, 255, 255, 0.3); 
     border-radius: 8px;
     color: white;
+} */
+
+.menu-list {
+    list-style: none;
+    padding-left: 0;
 }
+
+.menu-item {
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.menu-item a {
+    color: inherit;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+/* Aktif */
+.menu-item.active {
+    background: rgba(255, 255, 255, 0.3);
+    color: #fff;
+}
+
 
 
 /* Topbar */
@@ -94,14 +123,10 @@
     font-size: 16px;
 }
 
-/* ======================
-   DETAIL TUGAS SISWA
-====================== */
 .daftar-tugas-container {
     display: flex;
     flex-direction: column; /* membuat card turun ke bawah */
     gap: 20px; /* jarak antar card */
-    padding: 20px;
 }
 
 .tugas-card {
@@ -140,6 +165,18 @@
     gap: 15px;
 }
 
+.tugas-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.tugas-card-link:hover .tugas-card {
+    transform: translateY(-3px);
+    transition: .2s;
+}
+
+
 .icon-wrapper {
     width: 48px;
     height: 48px;
@@ -177,16 +214,11 @@
     white-space: pre-line;
 }
 
-/* Kanan: kartu jawaban */
-.jawaban-card {
-    width: 260px;
-    padding: 20px;
+.jawaban-container {
     background: #fff;
-    border-radius: 16px;
-    border: 1px solid #e5e5e5;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
-    display: flex;
-    flex-direction: column; /* biar jawaban di atas, tombol di bawah */
+    padding: 16px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 20px rgba(0,0,0,0.08);
 }
 
 .jawaban-header {
@@ -196,10 +228,38 @@
     margin-bottom: 20px;
 }
 
-.jawaban-content {
-    background: #f9f9f9;
-    padding: 12px;
-    border-radius: 12px;
+.jawaban-list {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Item jawaban */
+.jawaban-item {
+    display: flex;
+    align-items: center;
+    background: #F7F9FC;
+    padding: 10px;
+    border-radius: 10px;
+    gap: 10px;
+    border: 1px solid #E3E8EF;
+}
+
+.file-icon {
+    font-size: 22px;
+    color: #4D92F7;
+}
+
+.file-name {
+    flex-grow: 1;
+    font-size: 14px;
+    color: #444;
+}
+
+.file-size {
+    font-size: 12px;
+    color: #777;
 }
 
 
@@ -238,3 +298,120 @@
     font-size: 16px; 
 }
 
+.search-input-wrapper {
+    position: relative;
+    width: 300px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 15px 10px 35px;
+    border-radius: 10px;
+    border: 1px solid #DCDCDC;
+    font-size: 14px;
+    background: #fff;
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #A0A0A0;
+    font-size: 18px;
+}
+
+.materi-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 40px;
+}
+
+.materi-card {
+    display: flex;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0px 3px 12px rgba(0,0,0,0.08);
+    padding: 15px;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.materi-card:hover {
+    transform: translateY(-3px);
+}
+
+.materi-thumb {
+    width: 80px;
+    height: 60px;
+    background: #E5E7EB;
+    border-radius: 10px;
+    font-size: 13px;
+    color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.materi-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.materi-detail-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    margin-top: 10px;
+}
+
+.materi-detail-card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0px 3px 12px rgba(0,0,0,0.08);
+}
+
+.materi-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+}
+
+.materi-card-link:hover .materi-card {
+    transform: translateY(-3px);
+    transition: 0.2s;
+}
+
+
+/* Grid video */
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+/* Card video */
+.video-card {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0px 4px 9px rgba(0,0,0,0.08);
+    overflow: hidden;
+    padding-bottom: 15px;
+}
+
+.video-thumb {
+    background: #E7E7E7;
+    padding: 30px;
+    text-align: center;
+    font-weight: 700;
+    color: #555;
+}
+
+.video-info {
+    padding: 15px 18px;
+    font-size: 14px;
+}

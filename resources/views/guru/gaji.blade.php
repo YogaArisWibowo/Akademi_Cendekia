@@ -3,7 +3,7 @@
 @section('content')
     <main>
         <header class="topbar">
-            <h2>Jadwal Mengajar</h2>
+            <h2>Gaji Guru</h2>
             <div class="profile">
                 <span>👤</span>
                 <span>Ira S.</span>
@@ -23,14 +23,13 @@
             <table class="table-jadwal">
                 <thead>
                     <tr>
-                        <th>No</th>
-                        <th>Hari</th>
-                        <th>Tanggal</th>
-                        <th>Waktu</th>
-                        <th>Mapel</th>
                         <th>Nama</th>
-                        <th>Nama Siswa</th>
-                        <th>Alamat Siswa</th>
+                        <th>Guru Jenjang</th>
+                        <th>Rekening</th>
+                        <th>Gaji Per jam</th>
+                        <th>Absensi</th>
+                        <th>Total</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,7 +41,6 @@
                         <td>IPAS</td>
                         <td>Ira Sulistya</td>
                         <td>Hafidz</td>
-                        <td>Jl. Kenari</td>
                     </tr>
                     <tr>
                         <td>2.</td>
@@ -52,7 +50,6 @@
                         <td>IPAS</td>
                         <td>Ira Sulistya</td>
                         <td>Hafidz</td>
-                        <td>Jl. Kenari</td>
                     </tr>
                 </tbody>
             </table>

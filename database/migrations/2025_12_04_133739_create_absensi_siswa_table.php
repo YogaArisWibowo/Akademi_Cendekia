@@ -16,6 +16,9 @@ return new class extends Migration
             $table->foreignId('id_siswa')->constrained('siswa')->onDelete('cascade');
             $table->foreignId('id_jadwal_bimbel')->constrained('jadwal_bimbel')->onDelete('cascade');
             $table->enum('kehadiran', ['Hadir', 'Ijin', 'Sakit']);
+            $table->string('hari');
+            $table->date('tanggal');
+            $table->time('waktu');
             $table->timestamps();
         });
     }

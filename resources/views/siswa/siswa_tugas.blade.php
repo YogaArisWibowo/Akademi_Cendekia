@@ -1,9 +1,10 @@
 @extends('layouts.app_siswa', ['title' => 'Tugas Siswa'])
+
 @section('content')
 
-<button class="back-btn">
+<a href="/siswa/siswa_daftartugas" class="back-btn">
     <i class="ri-arrow-left-line"></i> Kembali
-</button>
+</a>
 
 <div class="tugas-siswa-card">
 
@@ -41,22 +42,38 @@
         </p>
     </div>
 
-    <div class="jawaban-card">
+    <div class="jawaban-container mt-4">
+
+        <!-- Judul -->
         <div class="jawaban-header">
             <span>Jawaban</span>
             <span class="nilai">..... / 100</span>
         </div>
-        <div class="jawaban-content mb-3">
-            <!-- Nanti jawaban akan muncul di sini -->
-            <p>Jawaban 1</p>
-            <p>Jawaban 2</p>
-            <p>Jawaban 3</p>
-            <!-- dst -->
+
+        <!-- LIST JAWABAN – masih kosong karena belum ada upload -->
+        <div class="jawaban-list">
+            <!-- Contoh dummy untuk ngecek tinggi -->
+            <!-- Nanti ini dihapus kalau backend sudah ada -->
+            <div class="jawaban-item">
+                <i class="ri-file-line file-icon"></i>
+                <span class="file-name">Tugas_Ekonomi_Hafidz.pdf</span>
+                <span class="file-size">420 KB</span>
+            </div>
+
+            <div class="jawaban-item">
+                <i class="ri-image-line file-icon"></i>
+                <span class="file-name">foto_tugas1.jpg</span>
+                <span class="file-size">1.2 MB</span>
+            </div>
         </div>
-        <button class="btn-unggah-tugas w-100 mt-4">
+
+        <!-- Tombol Unggah -->
+        <button class="btn-unggah-tugas w-100 mt-3">
             <i class="ri-add-line"></i> Unggah Tugas
         </button>
+
     </div>
+
 
 </div>
 
