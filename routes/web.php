@@ -15,10 +15,6 @@ Route::get('/login_admin', function () {
 Route::get('/admin/jadwal_bimbel', function () {
     return view('admin.Jadwal_Bimbel');
 });
-
-Route::get('/siswa/siswa_daftartugas', function () {
-    return view('siswa.siswa_daftartugas');
-});
 //Route buat Guru
 Route::get('/jadwal_mengajar', function () {
     return view('guru.jadwal_mengajar');
