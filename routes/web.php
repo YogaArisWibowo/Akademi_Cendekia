@@ -25,9 +25,7 @@ Route::get('/jadwal_mengajar', function () {
     return view('guru.jadwal_mengajar');
 })->name('jadwal_mengajar');
 
-// Route::get('/absensi_guru', function () {
-//     return view('guru.absensi');
-// })->name('absensi_guru');
+Route::get('/jadwal_mengajar', [GuruController::class, 'jadwalMengajar'])->name('jadwal_mengajar');
 
 Route::get('/absensi_guru', function () {
     return view('guru.absensi');
@@ -46,17 +44,41 @@ Route::get('/tugas_siswa', function () {
     return view('guru.tugas_siswa');
 })->name('tugas_siswa');
 
+Route::get('/detail_tugas_siswa', function () {
+    return view('guru.detail_tugas_siswa');
+})->name('detail_tugas_siswa');
+
 Route::get('/gaji_guru', function () {
     return view('guru.gaji');
 })->name('gaji_guru');
 
-Route::get('/materi_pembelajaran', function () {
-    return view('guru.materi_pembelajaran');
-})->name('materi_pembelajaran'); 
+// Route::get('/materi_pembelajaran', function () {
+//     return view('guru.materi_pembelajaran');
+// })->name('materi_pembelajaran'); 
 
-Route::get('/detail_materi_pembelajaran', function () {
-    return view('guru.detail_materi_pembelajaran');
-})->name('detail_materi_pembelajaran');
+// Route::get('/detail_materi_pembelajaran', function () {
+//     return view('guru.detail_materi_pembelajaran');
+// })->name('detail_materi_pembelajaran');
+// Route::get('/materi_pembelajaran', [GuruController::class, 'materiPembelajaran'])->name('materi_pembelajaran');
+
+
+// Halaman list materi
+Route::get('/materi_pembelajaran', [GuruController::class, 'indexMateri'])
+    ->name('materi_pembelajaran');
+
+// Detail materi
+Route::get('/materi_pembelajaran/{id}', [GuruController::class, 'materiPembelajaran'])
+    ->name('detail_materi_pembelajaran');
+
+// Store materi
+Route::post('/materi_pembelajaran/store', [GuruController::class, 'storeMateri'])
+    ->name('store_materi');
+
+// Update materi
+Route::put('/materi_pembelajaran/update/{id}', [GuruController::class, 'updateMateri'])
+    ->name('update_materi');
+
+
 
 Route::get('/video_materi_belajar', function () {
     return view('guru.video_materi_belajar');

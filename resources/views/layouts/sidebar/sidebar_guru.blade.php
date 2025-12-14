@@ -57,7 +57,7 @@
             </a>
         </li>
 
-        <li class="menu-item {{ request()->routeIs('tugas_siswa') ? 'active' : '' }}">
+        <li class="menu-item {{ request()->routeIs('tugas_siswa') || request()->routeIs('detail_tugas_siswa') ? 'active' : '' }}">
             <a href="{{ route('tugas_siswa') }}">
                 <i class="ri-todo-fill"></i>
                 Tugas Siswa
