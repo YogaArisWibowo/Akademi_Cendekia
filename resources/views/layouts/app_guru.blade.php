@@ -1,27 +1,25 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title ?? 'Guru' }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <title>{{ $title ?? 'Halaman' }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/siswa.css">
     <link rel="stylesheet" href="{{ asset('css/tabel.css') }}">
     <link rel="stylesheet" href="{{ asset('css/button.css') }}">
     <link rel="stylesheet" href="{{ asset('css/filter.css') }}">
-
-
-    @include('layouts.style')
 </head>
 
 <body>
+
+    {{-- Sidebar --}}
     @include('layouts.sidebar.sidebar_guru')
 
     {{-- Topbar --}}
-    {{-- <div class="topbar">
+    <div class="topbar">
         <div class="title">{{ $title }}</div>
 
         <div class="profile d-flex align-items-center">
@@ -35,20 +33,21 @@
             </div>
 
             <!-- Nama -->
-            <span class="fw-semibold text-dark me-2">Hafidz</span>
+            <span class="fw-semibold text-dark me-2">Guru MTK</span>
 
             <!-- Icon dropdown -->
             <i class="bi bi-caret-down-fill text-dark"></i>
 
         </div>
 
-    </div> --}}
+    </div>
 
+    {{-- Halaman Konten --}}
     <main class="main-content">
         @yield('content')
     </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {{-- Bootstrap JS WAJIB DI SINI --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

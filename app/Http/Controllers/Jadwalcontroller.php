@@ -83,7 +83,7 @@ class Jadwalcontroller extends Controller
             ],
         ]);
 
-        return view('siswa.jadwal_bimbel', compact('jadwal'));
+        return view('siswa.siswa_jadwalbimbel', compact('jadwal'));
 
     }
 
