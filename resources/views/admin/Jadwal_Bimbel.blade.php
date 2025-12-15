@@ -11,8 +11,8 @@
         background-color: #ffd700;
         font-weight: 500 !important;
         align-items: center;
-        width: 100px;
-        height: 28px;
+        width: 102px;
+        height: 30px;
     }
     .tambah i {
         color: white;
@@ -27,20 +27,23 @@
         position: relative;
         display: inline-block;
     }
-    .search i{
+    .search i {
         position: absolute;
-    top: 50%; /* Pindahkan ke tengah vertikal */
-    left: 8px; /* Jarak dari tepi kiri input */
-    transform: translateY(-50%); /* Penyesuaian akhir agar benar-benar di tengah */
-    color: #6c757d; /* Warna abu-abu Bootstrap */
-    font-size: 0.9rem; /* Atur ukuran ikon agar sesuai dengan form-control-sm */
-    z-index: 2; /* Pastikan ikon berada di atas input */
+        top: 50%; /* Pindahkan ke tengah vertikal */
+        left: 8px; /* Jarak dari tepi kiri input */
+        transform: translateY(
+            -50%
+        ); /* Penyesuaian akhir agar benar-benar di tengah */
+        color: #6c757d; /* Warna abu-abu Bootstrap */
+        font-size: 0.9rem; /* Atur ukuran ikon agar sesuai dengan form-control-sm */
+        z-index: 2; /* Pastikan ikon berada di atas input */
     }
-    .search input.form-control{
+    .search input.form-control {
         padding-left: 30px;
+        height: 30px;
     }
 </style>
-<div class="d-flex justify-content-between align-items-center mb-2">
+<div class="d-flex justify-content-between align-items-center mb-3">
     <div class="search">
         <input
             type="search"
@@ -51,7 +54,11 @@
         <i class="bi bi-search"></i>
     </div>
 
-    <button class="tambah text-center">
+    <button
+        class="tambah text-center"
+        data-bs-toggle="modal"
+        data-bs-target="#modalTambahJadwal"
+    >
         Tambah <i class="bi bi-plus"></i>
     </button>
 </div>

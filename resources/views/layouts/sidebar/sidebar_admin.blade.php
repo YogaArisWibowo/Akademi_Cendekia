@@ -17,7 +17,7 @@
       background: linear-gradient(to bottom , #03132A, #1877FF);
       color: white;
       position: fixed;
-      padding-top: 1rem;
+      padding-bottom: 2rem;
     }
     .sidebar a {
       color: white;
@@ -35,7 +35,7 @@
     }
     .logo {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-top: 2rem;
     }
     .logo i {
       font-size: 2rem;
@@ -65,7 +65,7 @@
     <a href="#"><i class="bi bi-bar-chart-line me-2"></i> Laporan Perkembangan Siswa</a>
   </div>
 
-  <div class="ms-250 p-4" style="margin-left: 250px;">
+  <div class="ms-250" style="margin-left: 250px;">
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

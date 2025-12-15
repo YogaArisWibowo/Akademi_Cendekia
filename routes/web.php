@@ -3,6 +3,8 @@
 use App\Http\Controllers\AbsensiGuruController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Jadwalcontroller;
+use App\Http\Controllers\Data_GuruDanSiswacontroller;
+use App\Http\Controllers\Penerimaan_Siswacontroller;
 
 Route::get('/', function () {
     return view('welcome');
@@ -12,7 +14,12 @@ Route::get('/', function () {
 Route::get('/login_admin', function () {
     return view('admin.login');
 });
+Route::get('/admin/Pencatatan_Gaji_Guru', function () {
+    return view('admin.Pencatatan_Gaji_Guru');
+});
 Route::get('/admin/jadwal_bimbel',[JadwalController::class, 'adminindex']);
+Route::get('/admin/Data_GurudanSiswa',[Data_GuruDanSiswacontroller::class, 'index']);
+Route::get('/admin/Penerimaan_Siswa',[Penerimaan_Siswacontroller::class, 'index']);
 //Route buat Guru
 Route::get('/jadwal_mengajar', function () {
     return view('guru.jadwal_mengajar');
@@ -41,7 +48,6 @@ Route::get('/laporan_pekembangan_siswa', function () {
 
 //Route buat Siswa
 Route::get('/siswa/siswa_jadwalbimbel',[JadwalController::class, 'siswaindex']);
-
 Route::get('/siswa/siswa_absensi', function () {
     return view('siswa.siswa_absensi', [
         'title' => 'Absensi'
