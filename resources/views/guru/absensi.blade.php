@@ -1,131 +1,173 @@
-@extends('layouts.app_guru', ['title' => 'Jadwal Mengajar'])
-
+@extends('layouts.app_guru', ['title' => 'Absensi'])
 @section('content')
-    <main>
-        <header class="topbar">
-            <h2>Absensi Guru</h2>
-            <div class="profile">
-                <span>👤</span>
-                <span>Ira S.</span>
-                <span>▼</span>
+    <div class="absensi-header d-flex align-items-center justify-content-between mb-3">
+
+
+        <form method="GET" action="{{ route('absensi_guru') }}" class="d-flex align-items-center gap-3">
+
+            {{-- Filter Bulan --}}
+            <div>
+                <label for="bulan" class="form-label mb-1">Bulan</label>
+                <select name="bulan" id="bulan" class="form-select">
+                    <option value="">Pilih Bulan</option>
+                    @for ($i = 1; $i <= 12; $i++)
+                        <option value="{{ $i }}" {{ request('bulan') == $i ? 'selected' : '' }}>
+                            {{ DateTime::createFromFormat('!m', $i)->format('F') }}
+                        </option>
+                    @endfor
+                </select>
             </div>
-        </header>
 
-        <div class="filter-section d-flex justify-content-between align-items-center mb-4">
+            {{-- Filter Tahun --}}
+            <div>
+                <label for="tahun" class="form-label mb-1">Tahun</label>
+                <select name="tahun" id="tahun" class="form-select">
+                    <option value="">Pilih Tahun</option>
+                    @for ($y = 2020; $y <= date('Y'); $y++)
+                        <option value="{{ $y }}" {{ request('tahun') == $y ? 'selected' : '' }}>
+                            {{ $y }}
+                        </option>
+                    @endfor
+                </select>
+            </div>
 
-            <select class="dropdown-hari">
-                <option>Bulan</option>
-                <option>Januari</option>
-                <option>Februari</option>
-            </select>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </div>
 
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahAbsenModal">
-                Tambah Absen <i class="bi bi-plus-circle me-1"></i>
-            </button>
+        </form>
 
-        </div>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahModal">
+            Tambah +
+        </button>
+    </div>
 
-        <div class="table-wrapper">
-            <div class="modal fade" id="tambahAbsenModal" tabindex="-1" aria-labelledby="tambahAbsenLabel"
-                aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
 
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="tambahAbsenLabel">Tambah Absensi Guru</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <!-- Modal Tambah -->
+    <div class="modal fade" id="tambahModal" tabindex="-1" aria-labelledby="tambahModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"> {{-- dibuat lebih lebar --}}
+            <form method="POST" action="{{ route('absensi.store') }}" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tambahModalLabel">Tambah Absensi</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <div class="row">
+                            {{-- Kolom Kiri --}}
+                            <div class="col-md-6">
+
+                                {{-- Hari --}}
+                                <div class="mb-3">
+                                    <label class="form-label">Hari</label>
+                                    <select name="hari" class="form-control" required>
+                                        <option value="">-- Pilih Hari --</option>
+                                        <option>Senin</option>
+                                        <option>Selasa</option>
+                                        <option>Rabu</option>
+                                        <option>Kamis</option>
+                                        <option>Jumat</option>
+                                        <option>Sabtu</option>
+                                        <option>Minggu</option>
+                                    </select>
+                                </div>
+
+                                {{-- Tanggal --}}
+                                <div class="mb-3">
+                                    <label class="form-label">Tanggal</label>
+                                    <input type="date" name="tanggal" class="form-control" required>
+                                </div>
+
+                                {{-- Waktu --}}
+                                <div class="mb-3">
+                                    <label class="form-label">Waktu</label>
+                                    <input type="time" name="waktu" class="form-control" required>
+                                </div>
+
+                            </div>
+
+                            {{-- Kolom Kanan --}}
+                            <div class="col-md-6">
+
+                                {{-- Mapel --}}
+                                <div class="mb-3">
+                                    <label class="form-label">Mapel</label>
+                                    <input type="text" name="mapel" class="form-control" placeholder="Contoh: IPAS"
+                                        required>
+                                </div>
+
+                                {{-- Bukti Kehadiran --}}
+                                <div class="mb-3">
+                                    <label class="form-label">Bukti Kehadiran (jpg/jpeg)</label>
+                                    <input type="file" name="bukti" class="form-control" accept=".jpg,.jpeg" required>
+                                </div>
+
+                                {{-- Catatan --}}
+                                <div class="mb-3">
+                                    <label class="form-label">Catatan</label>
+                                    <textarea name="catatan" class="form-control" rows="3" placeholder="Tambahkan catatan..."></textarea>
+                                </div>
+
+                            </div>
                         </div>
 
-                        <form action="{{ route('absensi.store') }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <div class="modal-body">
-
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Hari</label>
-                                        <input type="text" class="form-control" name="hari" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Tanggal</label>
-                                        <input type="date" class="form-control" name="tanggal" required>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Waktu</label>
-                                        <input type="time" class="form-control" name="waktu" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Mapel</label>
-                                        <input type="text" class="form-control" name="mapel" required>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Bukti Kehadiran</label>
-                                        <input type="file" class="form-control" name="bukti_foto" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Catatan</label>
-                                        <input type="text" class="form-control" name="laporan_kegiatan" required>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </div>
-                        </form>
-
                     </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+
                 </div>
-            </div>
-            <table class="table-jadwal">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Hari</th>
-                        <th>Tanggal</th>
-                        <th>Waktu</th>
-                        <th>Mapel</th>
-                        <th>Bukti Kehadiran</th>
-                        <th>Catatan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1.</td>
-                        <td>Senin</td>
-                        <td>05-Okt-2025</td>
-                        <td>15.00</td>
-                        <td>IPAS</td>
-                        <td>Ira Sulistya</td>
-                        <td>Hafidz</td>
-
-                    </tr>
-                    <tr>
-                        <td>2.</td>
-                        <td>Senin</td>
-                        <td>05-Okt-2025</td>
-                        <td>15.00</td>
-                        <td>IPAS</td>
-                        <td>Ira Sulistya</td>
-                        <td>Hafidz</td>
-
-                    </tr>
-                </tbody>
-            </table>
-            <div class="pagination">
-                <button class="btn">Sebelumnya</button>
-                <button class="btn active">1</button>
-                <button class="btn">2</button>
-                <button class="btn">3</button>
-                <button class="btn">Selanjutnya</button>
-            </div>
+            </form>
         </div>
-    </main>
+    </div>
+
+
+
+    <div class="table-container">
+        <table class="table-general">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Hari</th>
+                    <th>Tanggal</th>
+                    <th>Waktu</th>
+                    <th>Mapel</th>
+                    <th>Bukti Kehadiran</th>
+                    <th>Catatan</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach ($data as $item)
+                    <tr>
+                        <td>{{ $loop->iteration }}.</td>
+                        <td>{{ $item->hari }}</td>
+                        <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d-M-Y') }}</td>
+                        <td>{{ $item->waktu }}</td>
+                        <td>{{ $item->mapel ?? '-' }}</td>
+                        <td>
+                            <img src="{{ asset('bukti_absensi/' . $item->bukti_foto) }}" width="60">
+                        </td>
+                        <td>{{ $item->laporan_kegiatan }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+
+        </table>
+
+        <div class="pagination-wrapper">
+            <button class="btn page">Sebelumnya</button>
+            <button class="btn page active">1</button>
+            <button class="btn page">2</button>
+            <button class="btn page">3</button>
+            <button class="btn page active">Selanjutnya</button>
+        </div>
+
+    </div>
 @endsection

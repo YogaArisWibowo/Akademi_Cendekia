@@ -15,6 +15,7 @@ class AbsensiGuru extends Model
         'laporan_kegiatan',
         'hari',
         'tanggal',
-        'waktu',
+        'mapel',
+        'waktu'
     ];
 }
