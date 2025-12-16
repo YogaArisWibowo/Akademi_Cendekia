@@ -21,9 +21,9 @@ Route::get('/admin/jadwal_bimbel',[JadwalController::class, 'adminindex']);
 
 
 //Route buat Guru
-Route::get('/jadwal_mengajar', function () {
-    return view('guru.jadwal_mengajar');
-})->name('jadwal_mengajar');
+// Route::get('/jadwal_mengajar', function () {
+//     return view('guru.jadwal_mengajar');
+// })->name('jadwal_mengajar');
 
 Route::get('/jadwal_mengajar', [GuruController::class, 'jadwalMengajar'])->name('jadwal_mengajar');
 
@@ -52,14 +52,6 @@ Route::get('/gaji_guru', function () {
     return view('guru.gaji');
 })->name('gaji_guru');
 
-// Route::get('/materi_pembelajaran', function () {
-//     return view('guru.materi_pembelajaran');
-// })->name('materi_pembelajaran'); 
-
-// Route::get('/detail_materi_pembelajaran', function () {
-//     return view('guru.detail_materi_pembelajaran');
-// })->name('detail_materi_pembelajaran');
-// Route::get('/materi_pembelajaran', [GuruController::class, 'materiPembelajaran'])->name('materi_pembelajaran');
 
 
 // Halaman list materi
@@ -83,6 +75,16 @@ Route::put('/materi_pembelajaran/update/{id}', [GuruController::class, 'updateMa
 Route::get('/video_materi_belajar', function () {
     return view('guru.video_materi_belajar');
 })->name('video_materi_belajar');
+
+
+
+Route::get('/video_materi_belajar', [GuruController::class, 'indexVideoMateri'])->name('video_materi_belajar');
+Route::post('/video_materi_belajar/store', [GuruController::class, 'storeVideoMateri'])->name('store_video_materi');
+Route::post('/video_materi_belajar/update/{id}', [GuruController::class, 'updateVideoMateri'])->name('update_video_materi');
+
+
+
+
 
 Route::get('/laporan_pekembangan_siswa', function () {
     return view('guru.laporan_pekembangan_siswa');

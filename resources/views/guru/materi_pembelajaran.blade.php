@@ -29,6 +29,26 @@
 
         </div>
 
+        <form action="{{ route('materi_pembelajaran') }}" method="GET" class="d-flex align-items-end mb-4">
+
+            <div class="tahun-select-wrapper me-3">
+                <label for="jenjang" class="form-label mb-1">Jenjang</label>
+                <select name="jenjang" id="jenjang" class="form-select">
+                    <option value="">Semua Jenjang</option>
+                    @foreach ($jenjang as $j)
+                        <option value="{{ $j }}" {{ request('jenjang') == $j ? 'selected' : '' }}>
+                            {{ $j }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Filter
+            </button>
+
+        </form>
+
         <div class="modal fade" id="modalTambahMateri" tabindex="-1">
             <div class="modal-dialog">
                 <form action="{{ route('store_materi') }}" method="POST">
@@ -52,8 +72,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label>Siswa (Opsional)</label>
-                                <select name="id_siswa" class="form-control">
+                                <label>Siswa </label>
+                                <select name="id_siswa" class="form-control" required>
                                     <option value="">-- Pilih --</option>
                                     @foreach ($siswa as $s)
                                         <option value="{{ $s->id }}">{{ $s->nama }}</option>

@@ -137,3 +137,38 @@
     pointer-events: none;
     user-select: none;
 }
+
+
+
+.video-card {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    background: #fff;
+}
+
+/* Posisi tombol di kanan bawah */
+.video-edit {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+}
+
+/* Style tombol */
+.edit-icon {
+    background-color: #007bff; 
+    border: none;
+    padding: 4px 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit-icon i {
+    font-size: 18px;
+    color: #fff;
+}

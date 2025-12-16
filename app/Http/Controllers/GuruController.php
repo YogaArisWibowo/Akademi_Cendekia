@@ -7,6 +7,8 @@ use App\Models\MateriPembelajaran;
 use App\Models\Guru;
 use App\Models\Siswa;
 use App\Models\Mapel;
+use App\Models\VideoMateri;
+
 
 use App\Models\AbsensiGuru;
 use Illuminate\Http\Request;
@@ -71,15 +73,28 @@ class GuruController extends Controller
 
     // UNTUK MATERI PEMBELAJARAN
     //tambah dan view materi
-    public function indexMateri()
+    public function indexMateri(Request $request)
     {
-        $materi = MateriPembelajaran::with(['guru', 'mapel'])->get();
+        // Ambil jenjang dari tabel siswa
+        $jenjang = Siswa::select('jenjang')->distinct()->pluck('jenjang');
+
+        // Query materi
+        $query = MateriPembelajaran::with(['guru', 'mapel', 'siswa']);
+
+        // Jika filter jenjang dipilih
+        if ($request->filled('jenjang')) {
+            $query->whereHas('siswa', function ($q) use ($request) {
+                $q->where('jenjang', $request->jenjang);
+            });
+        }
+
+        $materi = $query->get();
 
         $guru = Guru::all();
         $siswa = Siswa::all();
         $mapel = Mapel::all();
 
-        return view('guru.materi_pembelajaran', compact('materi', 'guru', 'siswa', 'mapel'));
+        return view('guru.materi_pembelajaran', compact('materi', 'guru', 'siswa', 'mapel', 'jenjang'));
     }
 
     public function storeMateri(Request $request)
@@ -118,5 +133,49 @@ class GuruController extends Controller
         $materi->update($request->all());
 
         return redirect()->back()->with('success', 'Materi berhasil diperbarui');
+    }
+
+
+
+    public function indexVideoMateri()
+    {
+        $video = VideoMateri::with(['guru', 'siswa', 'mapel'])->get();
+        $guru = Guru::all();
+        $siswa = Siswa::all();
+        $mapel = Mapel::all();
+
+        return view('guru.video_materi_belajar', compact('video', 'guru', 'siswa', 'mapel'));
+    }
+
+
+
+    public function storeVideoMateri(Request $request)
+    {
+        $request->validate([
+            'id_guru' => 'required',
+            'id_siswa' => 'nullable',
+            'id_mapel' => 'required',
+            'link_video' => 'required',
+            'jenis_kurikulum' => 'required',
+            'nama_materi' => 'required'
+        ]);
+
+        VideoMateri::create($request->all());
+
+        return redirect()->back()->with('success', 'Video materi berhasil ditambahkan');
+    }
+
+    public function updateVideoMateri(Request $request, $id)
+    {
+        $request->validate([
+            'link_video' => 'required',
+            'jenis_kurikulum' => 'required',
+            'nama_materi' => 'required'
+        ]);
+
+        $video = VideoMateri::findOrFail($id);
+        $video->update($request->all());
+
+        return redirect()->back()->with('success', 'Video materi berhasil diperbarui');
     }
 }
