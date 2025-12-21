@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AbsensiSiswa;
 
 use App\Models\JadwalBimbel;
-
+use App\Models\PembayaranSiswa;
 use Illuminate\Http\Request;
 
 class SiswaController extends Controller
@@ -28,7 +28,7 @@ class SiswaController extends Controller
 
         // Tips: Sebaiknya filter berdasarkan siswa yang login agar tidak melihat data orang lain
         // $userId = Auth::id(); 
-        
+
         $data = AbsensiSiswa::when($bulan, fn($q) => $q->whereMonth('tanggal', $bulan))
             ->when($tahun, fn($q) => $q->whereYear('tanggal', $tahun))
             ->orderBy('tanggal', 'desc')
@@ -61,18 +61,18 @@ class SiswaController extends Controller
             // Karena di database kolom id_jadwal_bimbel TIDAK BOLEH NULL,
             // Kita harus pastikan ID 1 itu ada, atau gunakan trik ini.
             $idJadwal = 1; // Default dummy
-            
+
             // Opsional: Cek apakah id 1 ada di tabel jadwal_bimbel, jika tidak ada, ambil id pertama yang ada
             if (!JadwalBimbel::find($idJadwal)) {
-                 // Jika ID 1 tidak ada, kita coba ambil sembarang ID yang ada agar tidak error Foreign Key
-                 $firstJadwal = JadwalBimbel::first();
-                 if($firstJadwal) {
-                     $idJadwal = $firstJadwal->id;
-                 } else {
-                     // Jika tabel jadwal kosong sama sekali, ini akan error. 
-                     // Solusi: Admin harus isi tabel jadwal_bimbel dulu minimal 1 data.
-                     return redirect()->back()->with('error', 'Data Jadwal Bimbel kosong. Hubungi Admin.');
-                 }
+                // Jika ID 1 tidak ada, kita coba ambil sembarang ID yang ada agar tidak error Foreign Key
+                $firstJadwal = JadwalBimbel::first();
+                if ($firstJadwal) {
+                    $idJadwal = $firstJadwal->id;
+                } else {
+                    // Jika tabel jadwal kosong sama sekali, ini akan error. 
+                    // Solusi: Admin harus isi tabel jadwal_bimbel dulu minimal 1 data.
+                    return redirect()->back()->with('error', 'Data Jadwal Bimbel kosong. Hubungi Admin.');
+                }
             }
 
             // 4. Simpan Data
@@ -89,11 +89,61 @@ class SiswaController extends Controller
             ]);
 
             return redirect()->route('absensi.index')->with('success', 'Absensi berhasil ditambahkan');
-
         } catch (\Exception $e) {
             // Tampilkan error jika gagal (berguna untuk debugging)
             return redirect()->back()->with('error', 'Gagal menyimpan: ' . $e->getMessage());
         }
-
     }
+
+    // --- FITUR PEMBAYARAN ---
+
+    // $idSiswa = 1; // Ganti dengan Auth::id();
+    // 1. Tampilkan List Pembayaran (Menggantikan view statis kamu)
+    public function pencatatanPembayaran(Request $request)
+    {
+        // Ambil id siswa yang login (sesuaikan guard kamu). Jika belum ada Auth untuk siswa,
+        // sementara pakai id 1, tapi disarankan pakai Auth::id().
+        $idSiswa = 1;
+
+        // Paginate untuk sinkron dengan UI (misal 10 per halaman)
+        $pembayaran = PembayaranSiswa::with('siswa')
+            ->where('id_siswa', $idSiswa)
+            ->orderBy('tanggal_pembayaran', 'desc')
+            ->paginate(10);
+
+        return view('siswa.siswa_pencatatanpembayaran', compact('pembayaran'));
+    }
+
+    public function storePembayaran(Request $request)
+    {
+        $request->validate([
+            'tanggal_pembayaran' => 'required|date',
+            'nama_orangtua'      => 'required|string|max:50',
+            'nominal'            => 'required|integer|min:1',
+            'bukti_pembayaran'   => 'nullable|image|max:2048',
+        ]);
+
+        try {
+            $idSiswa = 1;
+
+            $buktiPath = null;
+            if ($request->hasFile('bukti_pembayaran')) {
+                $buktiPath = $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public');
+            }
+
+            PembayaranSiswa::create([
+                'id_siswa'          => $idSiswa,
+                'tanggal_pembayaran'=> $request->tanggal_pembayaran,
+                'nama_orangtua'     => $request->nama_orangtua,
+                'nominal'           => $request->nominal,
+                'bukti_pembayaran'  => $buktiPath,
+            ]);
+
+            return redirect()->route('siswa.pembayaran.index')
+                ->with('success', 'Pembayaran berhasil disimpan');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal menyimpan: ' . $e->getMessage());
+        }
+    }
+
 }

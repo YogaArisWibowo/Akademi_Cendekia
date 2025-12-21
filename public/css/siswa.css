@@ -25,28 +25,6 @@
     margin-bottom: 10px;
 }
 
-/* .menu-list {
-    list-style: none;
-    padding-left: 0;
-}
-
-.menu-item {
-    padding: 12px 15px;
-    border-radius: 8px;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    font-size: 15px;
-} */
-
-/* .menu-item.active {
-    background: rgba(255, 255, 255, 0.3); 
-    border-radius: 8px;
-    color: white;
-} */
-
 .menu-list {
     list-style: none;
     padding-left: 0;
@@ -414,4 +392,114 @@
 .video-info {
     padding: 15px 18px;
     font-size: 14px;
+}
+
+
+/* =========================================
+   RESPONSIVE & HAMBURGER MENU FIX
+   ========================================= */
+
+/* Default: Hamburger Sembunyi di Desktop */
+.hamburger-btn {
+    display: none;
+    font-size: 28px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333;
+    padding: 0;
+    margin-right: 15px;
+}
+
+/* Default Overlay */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1040; /* Di atas konten, di bawah sidebar */
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Transisi Halus pada Sidebar */
+.sidebar-siswa {
+    transition: transform 0.3s ease-in-out;
+    z-index: 1050; /* Harus paling atas */
+}
+
+/* =========================================
+   TAMPILAN TABLET & MOBILE (< 992px)
+   ========================================= */
+@media (max-width: 991px) {
+    
+    /* 1. Sidebar Logic: Sembunyi ke kiri */
+    .sidebar-siswa {
+        transform: translateX(-100%);
+        box-shadow: none;
+    }
+
+    /* Saat class 'active' ditambahkan via JS, sidebar muncul */
+    .sidebar-siswa.active {
+        transform: translateX(0);
+        box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    }
+
+    /* 2. Topbar Logic */
+    .topbar {
+        margin-left: 0; /* Full width */
+        padding: 0 20px;
+        justify-content: flex-start; /* Rata kiri biar tombol menu di kiri */
+    }
+
+    /* Tombol muncul di layar kecil */
+    .hamburger-btn {
+        display: block; 
+    }
+
+    /* Judul agak dikecilkan dan digeser */
+    .topbar .title {
+        font-size: 20px;
+        margin-left: 10px;
+        flex-grow: 1; /* Biar profil kedorong ke kanan */
+    }
+
+    /* Profil user */
+    .profile {
+        margin-left: auto;
+    }
+
+    /* 3. Main Content Logic */
+    .main-content {
+        margin-left: 0; /* Konten jadi lebar penuh */
+        padding: 20px;
+        width: 100%;
+    }
+    
+    /* FIX: Card biar ga penyok */
+    .tugas-siswa-card {
+        flex-direction: column;
+    }
+    
+    .nilai-card {
+        width: 100%;
+        max-width: 100%;
+        margin-top: 15px;
+    }
+
+    .materi-grid, .video-grid {
+        grid-template-columns: 1fr; /* Jadi 1 kolom semua biar rapi */
+    }
+    
+    .search-input-wrapper {
+        width: 100%;
+    }
 }

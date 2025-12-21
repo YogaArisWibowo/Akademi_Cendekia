@@ -1,12 +1,12 @@
-@extends('layouts.app_guru', ['title' => 'Absensi'])
+@extends('layouts.app_guru', ['title' => 'Absensi Guru'])
 @section('content')
-    <div class="absensi-header d-flex align-items-center justify-content-between mb-3">
+    <div class="absensi-header row align-items-end mb-3">
 
-
-        <form method="GET" action="{{ route('absensi_guru') }}" class="d-flex align-items-center gap-3">
+        {{-- FORM FILTER (Menggunakan Grid System col-md-9) --}}
+        <form method="GET" action="{{ route('absensi_guru') }}" class="col-md-9 row g-3">
 
             {{-- Filter Bulan --}}
-            <div>
+            <div class="col-md-3">
                 <label for="bulan" class="form-label mb-1">Bulan</label>
                 <select name="bulan" id="bulan" class="form-select">
                     <option value="">Pilih Bulan</option>
@@ -19,7 +19,7 @@
             </div>
 
             {{-- Filter Tahun --}}
-            <div>
+            <div class="col-md-3">
                 <label for="tahun" class="form-label mb-1">Tahun</label>
                 <select name="tahun" id="tahun" class="form-select">
                     <option value="">Pilih Tahun</option>
@@ -31,15 +31,20 @@
                 </select>
             </div>
 
-            <div class="mt-4">
-                <button type="submit" class="btn btn-primary">Filter</button>
+            {{-- Tombol Filter --}}
+            <div class="col-md-2">
+                {{-- mt-4 diberikan agar tombol sejajar dengan input (karena input ada label di atasnya) --}}
+                <button type="submit" class="btn btn-primary w-90 mt-4">Filter</button>
             </div>
-
         </form>
 
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahModal">
-            Tambah +
-        </button>
+        {{-- TOMBOL TAMBAH (Menggunakan sisa grid col-md-3) --}}
+        <div class="col-md-3 text-end">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahModal">
+                Tambah +
+            </button>
+        </div>
+
     </div>
 
 

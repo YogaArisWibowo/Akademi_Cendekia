@@ -1,11 +1,9 @@
 @extends('layouts.app_siswa', ['title' => 'Absensi Siswa'])
 @section('content')
-    <div class="absensi-header d-flex align-items-center justify-content-between mb-3">
-
-
-        <form action="{{ route('absensi.index') }}" method="GET" class="row g-3 mb-3">
-
-            <div class="col-md-3">
+    <div class="absensi-header row align-items-end mb-3">
+        {{-- Filter Bulan dan Tahun --}}
+        <form action="{{ route('absensi.index') }}" method="GET" class="col-md-9 row g-3">
+            <div class="col-md-2">
                 <label for="bulan" class="form-label mb-1">Bulan</label>
                 <select name="bulan" id="bulan" class="form-select">
                     <option value="">Pilih Bulan</option>
@@ -17,7 +15,7 @@
                 </select>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label for="tahun" class="form-label mb-1">Tahun</label>
                 <select name="tahun" id="tahun" class="form-select">
                     <option value="">Pilih Tahun</option>
@@ -29,15 +27,17 @@
                 </select>
             </div>
 
-            <div class="col-md-2 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            <div class="col-md-2 ">
+                <button type="submit" class="btn btn-primary w-90 mt-4">Filter</button>
             </div>
-
         </form>
 
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahModal">
-            Tambah +
-        </button>
+        {{-- Tombol Tambah --}}
+        <div class="col-md-3 text-end">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahModal">
+                Tambah +
+            </button>
+        </div>
     </div>
     {{-- modal tambah absensi --}}
     <div class="modal fade" id="tambahModal" tabindex="-1" aria-labelledby="tambahModalLabel" aria-hidden="true">

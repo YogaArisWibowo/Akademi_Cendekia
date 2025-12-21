@@ -28,8 +28,8 @@
             </a>
         </li>
 
-        <li class="menu-item {{ Request::is('siswa/siswa_pencatatanpembayaran') ? 'active' : '' }}">
-            <a href="/siswa/siswa_pencatatanpembayaran">
+        <li class="menu-item {{ Request::is('siswa_pembayaran') ? 'active' : '' }}">
+            <a href="/siswa_pembayaran">
                 <i class="ri-wallet-3-fill"></i>
                 Pembayaran Bimbel
             </a>

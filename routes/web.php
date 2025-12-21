@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AbsensiGuruController;
 use App\Http\Controllers\GuruController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Jadwalcontroller;
@@ -9,7 +8,7 @@ use App\Http\Controllers\Penerimaan_Siswacontroller;
 use App\Http\Controllers\SiswaController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('landingpages');
 });
 
 //Route buat Admin
@@ -39,13 +38,20 @@ Route::get('/absensi_guru', [GuruController::class, 'index'])->name('absensi_gur
 
 
 
-Route::get('/tugas_siswa', function () {
-    return view('guru.tugas_siswa');
-})->name('tugas_siswa');
+Route::get('/tugas_siswa', [GuruController::class, 'indexTugas'])->name('tugas_siswa');
 
-Route::get('/detail_tugas_siswa', function () {
-    return view('guru.detail_tugas_siswa');
-})->name('detail_tugas_siswa');
+
+Route::get('/tugas_siswa/{id}', [GuruController::class, 'detailTugasSiswa'])->name('detail_tugas_siswa');
+
+Route::post('/tugas_siswa/simpan', [GuruController::class, 'simpanTugas'])->name('tugas_siswa.simpan');
+
+Route::get('/tugas_siswa/{id}/detail/{tugas_id}', [GuruController::class, 'detailTugasPerSiswa'])->name('detail_tugas_persiswa');
+Route::put('/tugas_siswa/update/{id}', [GuruController::class, 'updateTugas'])->name('tugas_siswa.update');
+
+
+
+
+
 
 Route::get('/gaji_guru', function () {
     return view('guru.gaji');
@@ -80,10 +86,16 @@ Route::post('/video_materi_belajar/update/{id}', [GuruController::class, 'update
 
 
 
-Route::get('/laporan_pekembangan_siswa', function () {
+Route::get('/laporan_perkembangan_siswa', function () {
     return view('guru.laporan_pekembangan_siswa');
-})->name('laporan_pekembangan_siswa');
+})->name('laporan_perkembangan_siswa');
 
+
+
+Route::get('/laporan_perkembangan_siswa', [GuruController::class, 'laporanPerkembangan'])->name('laporan_perkembangan_siswa');
+Route::get('/detail_laporan_perkembangan_siswa/{id}', [GuruController::class, 'detailLaporanPerkembangan'])->name('detail_laporan_perkembangan_siswa');
+Route::post('/laporan_perkembangan_siswa/tambah', [GuruController::class, 'tambahLaporan'])->name('laporan_perkembangan_siswa.tambah');
+Route::put('/laporan_perkembangan_siswa/update/{id}', [GuruController::class, 'updateLaporan'])->name('laporan_perkembangan_siswa.update');
 
 
 
@@ -97,17 +109,17 @@ Route::get('/laporan_pekembangan_siswa', function () {
 // Route::get('/jadwal_siswa', [SiswaController::class, 'jadwal']);
 Route::get('/jadwal_siswa', [SiswaController::class, 'jadwal'])->name('jadwalbimbel');
 
-Route::get('/siswa/siswa_absensi', function () {
-    return view('siswa.siswa_absensi', [
-        'title' => 'Absensi'
-    ]);
-});
+
 
 // Halaman absensi siswa
 Route::get('/siswa_absensi', [SiswaController::class, 'absensi'])->name('absensi.index');
 
 // Simpan absensi
 Route::post('/siswa_absensi/store', [SiswaController::class, 'store'])->name('siswa.absensi.store');
+
+
+
+
 
 
 Route::get('/siswa/siswa_daftartugas', function () {
@@ -118,9 +130,30 @@ Route::get('/siswa/siswa_tugas', function () {
     return view('siswa.siswa_tugas');
 });
 
+
+
+
+
 Route::get('/siswa/siswa_pencatatanpembayaran', function () {
     return view('siswa.siswa_pencatatanpembayaran');
 });
+
+
+
+
+// Route untuk Pembayaran
+Route::get('/siswa_pembayaran', [SiswaController::class, 'pencatatanPembayaran'])
+    ->name('siswa.pembayaran.index');
+
+Route::post('/siswa/pembayaran', [SiswaController::class, 'storePembayaran'])
+    ->name('siswa.pembayaran.store');
+
+
+
+
+
+
+
 
 Route::get('/siswa/siswa_laporanperkembangan', function () {
     return view('siswa.siswa_laporanperkembangan');
