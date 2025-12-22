@@ -1,4 +1,4 @@
-@extends('layouts.app_admin', ['title' => 'Absensi Siswa']) @section('content')
+@extends('layouts.app_admin', ['title' => 'Monitoring Guru']) @section('content')
 
 <style>
     .back {
@@ -92,7 +92,7 @@
 </style>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <a href="{{ route('Absensi') }}">
+    <a href="{{ route('admin_Monitoring_Guru') }}">
         <button class="back"><i class="ri-arrow-left-line"></i> Kembali</button>
     </a>
 </div>

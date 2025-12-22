@@ -180,7 +180,7 @@
         <div class="siswa-grid">
             @for($i =0; $i < 10; $i++)
             <a
-                href="{{ route('detail_pembayaran_siswa') }}"
+                href="{{ route('admin_detail_pembayaran_siswa') }}"
                 class="siswa-card-link"
             >
                 <div class="siswa-card">

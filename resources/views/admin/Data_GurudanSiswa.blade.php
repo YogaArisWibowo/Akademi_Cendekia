@@ -147,7 +147,7 @@
         <button class="btn page active">Selanjutnya</button>
     </div>
 </div>
-<div class="d-flex justify-content-between align-items-center mb-2">
+<div class="d-flex justify-content-between align-items-center mb-2 mt-4">
     <p class="data">Data Siswa</p>
 
     <button

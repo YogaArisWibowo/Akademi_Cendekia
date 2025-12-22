@@ -66,7 +66,7 @@
 </style>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <a href="{{ route('Pembayaran_Siswa') }}">
+    <a href="{{ route('admin_Pembayaran_Siswa') }}">
         <button class="back"><i class="ri-arrow-left-line"></i> Kembali</button>
     </a>
 </div>

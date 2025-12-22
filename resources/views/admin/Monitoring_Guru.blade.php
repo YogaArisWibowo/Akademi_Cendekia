@@ -1,4 +1,4 @@
-@extends('layouts.app_admin', ['title' => 'Gaji Guru'])
+@extends('layouts.app_admin', ['title' => 'Monitoring Guru'])
 @section('content')
 
 <style>
@@ -99,7 +99,7 @@
     {{-- Grid Kartu Guru/Siswa --}}
     <div class="guru-grid">
         @for($i=0; $i < 10; $i++)
-        <a href="{{route('detail_monitoring_guru')}}" class="guru-card-link">
+        <a href="{{route('admin_detail_monitoring_guru')}}" class="guru-card-link">
             <div class="guru-card">
                 {{-- Nama (Ira Sulistya) --}}
                 <span class="nama">Ira Sulistya</span>

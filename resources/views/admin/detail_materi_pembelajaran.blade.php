@@ -49,7 +49,7 @@
 
 <div class="content-wrapper">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <a href="{{ route('Materi_Pembelajaran') }}">
+        <a href="{{ route('admin_Materi_Pembelajaran') }}">
             <button class="back">
                 <i class="ri-arrow-left-line"></i> Kembali
             </button>

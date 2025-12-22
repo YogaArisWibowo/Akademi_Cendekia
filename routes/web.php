@@ -15,70 +15,65 @@ Route::get('/', function () {
 Route::get('/login_admin', function () {
     return view('admin.login');
 });
-Route::get('/admin/Pencatatan_Gaji_Guru', function () {
+Route::get('/admin/admin_Pencatatan_Gaji_Guru', function () {
     return view('admin.Pencatatan_Gaji_Guru');
-})->name('Pencatatan_Gaji_Guru');
+})->name('admin_Pencatatan_Gaji_Guru');
 
-Route::get('/admin/detail_pencatatan_gaji_guru', function () {
+Route::get('/admin/admin_detail_pencatatan_gaji_guru', function () {
     return view('admin.detail_pencatatan_gaji_guru');
-})->name('detail_pencatatan_gaji_guru');
+})->name('admin_detail_pencatatan_gaji_guru');
 
-Route::get('/admin/Absensi', function () {
+Route::get('/admin/admin_Absensi', function () {
     return view('admin.Absensi');
-})->name('Absensi');
+})->name('admin_Absensi');
 
-Route::get('/admin/detail_absensi_siswa', function () {
+Route::get('/admin/admin_detail_absensi_siswa', function () {
     return view('admin.detail_absensi_siswa');
-})->name('detail_absensi_siswa');
+})->name('admin_detail_absensi_siswa');
 
-Route::get('/admin/detail_absensi_guru', function () {
+Route::get('/admin/admin_detail_absensi_guru', function () {
     return view('admin.detail_absensi_guru ');
-})->name('detail_absensi_guru');
+})->name('admin_detail_absensi_guru');
 
-Route::get('/admin/Pembayaran_Siswa', function () {
+Route::get('/admin/admin_Pembayaran_Siswa', function () {
     return view('admin.Pembayaran_Siswa ');
-})->name('Pembayaran_Siswa');
+})->name('admin_Pembayaran_Siswa');
 
-Route::get('/admin/detail_pembayaran_siswa', function () {
+Route::get('/admin/admin_detail_pembayaran_siswa', function () {
     return view('admin.detail_pembayaran_siswa ');
-})->name('detail_pembayaran_siswa');
+})->name('admin_detail_pembayaran_siswa');
 
-Route::get('/admin/Materi_Pembelajaran', function () {
+Route::get('/admin/admin_Materi_Pembelajaran', function () {
     return view('admin.Materi_Pembelajaran ');
-})->name('Materi_Pembelajaran');
+})->name('admin_Materi_Pembelajaran');
 
-Route::get('/admin/detail_materi_pembelajaran', function () {
+Route::get('/admin/admin_detail_materi_pembelajaran', function () {
     return view('admin.detail_materi_pembelajaran');
-})->name('detail_materi_pembelajaran');
+})->name('admin_detail_materi_pembelajaran');
 
-Route::get('/admin/Video_Materi', function () {
+Route::get('/admin/admin_Video_Materi', function () {
     return view('admin.Video_Materi ');
-})->name('Video_Materi');
+})->name('admin_Video_Materi');
 
-Route::get('/admin/Monitoring_Guru', function () {
+Route::get('/admin/admin_Monitoring_Guru', function () {
     return view('admin.Monitoring_Guru ');
-})->name('Monitoring_Guru');
+})->name('admin_Monitoring_Guru');
 
-Route::get('/admin/detail_monitoring_guru', function () {
+Route::get('/admin/admin_detail_monitoring_guru', function () {
     return view('admin.detail_monitoring_guru ');
-})->name('detail_monitoring_guru');
+})->name('admin_detail_monitoring_guru');
 
-Route::get('/admin/Laporan_Perkembangan_Siswa', function () {
+Route::get('/admin/admin_Laporan_Perkembangan_Siswa', function () {
     return view('admin.Laporan_Perkembangan_Siswa ');
-})->name('Laporan_Perkembangan_Siswa');
+})->name('admin_Laporan_Perkembangan_Siswa');
 
-Route::get('/admin/detail_laporan_perkembangan_siswa', function () {
+Route::get('/admin/admin_detail_laporan_perkembangan_siswa', function () {
     return view('admin.detail_laporan_perkembangan_siswa ');
-})->name('detail_laporan_perkembangan_siswa');
+})->name('admin_detail_laporan_perkembangan_siswa');
 
-Route::get('/admin/jadwal_bimbel',[JadwalController::class, 'adminindex'])->name('Jadwal_Bimbel');
-
-Route::get('/admin/Data_GurudanSiswa',[Data_GuruDanSiswacontroller::class, 'index'])->name('Data_GurudanSiswa');
-Route::get('/admin/Penerimaan_Siswa',[Penerimaan_Siswacontroller::class, 'index'])->name('Penerimaan_Siswa');
-Route::get('/admin/jadwal_bimbel', [JadwalController::class, 'adminindex']);
-
-Route::get('/admin/Data_GurudanSiswa', [Data_GuruDanSiswacontroller::class, 'index']);
-Route::get('/admin/Penerimaan_Siswa', [Penerimaan_Siswacontroller::class, 'index']);
+Route::get('/admin/admin_jadwal_bimbel',[JadwalController::class, 'adminindex'])->name('admin_Jadwal_Bimbel');
+Route::get('/admin/admin_Data_GurudanSiswa',[Data_GuruDanSiswacontroller::class, 'index'])->name('admin_Data_GurudanSiswa');
+Route::get('/admin/admin_Penerimaan_Siswa', [Penerimaan_Siswacontroller::class, 'index'])->name('admin_Penerimaan_Siswa');
 
 
 //Route buat Guru

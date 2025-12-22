@@ -129,7 +129,7 @@
     {{-- Grid Kartu Guru/Siswa --}}
     <div class="guru-grid">
         @for($i=0; $i < 10; $i++)
-        <a href="{{route('detail_pencatatan_gaji_guru')}}" class="guru-card-link">
+        <a href="{{route('admin_detail_pencatatan_gaji_guru')}}" class="guru-card-link">
             <div class="guru-card">
                 {{-- Nama (Ira Sulistya) --}}
                 <span class="nama">Ira Sulistya</span>

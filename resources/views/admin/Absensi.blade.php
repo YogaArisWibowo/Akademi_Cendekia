@@ -138,7 +138,7 @@
 
             <div class="list-wrapper">
                 @for($i = 0; $i < 6; $i++)
-                <a href="{{ route('detail_absensi_guru') }}" class="custom-card-link">
+                <a href="{{ route('admin_detail_absensi_guru') }}" class="custom-card-link">
                     <div class="custom-card">
                         <div class="card-body-content">
                             <div class="info">
@@ -170,7 +170,7 @@
 
             <div class="list-wrapper">
                 @for($i = 0; $i < 6; $i++)
-                <a href="{{ route('detail_absensi_siswa') }}" class="custom-card-link">
+                <a href="{{ route('admin_detail_absensi_siswa') }}" class="custom-card-link">
                     <div class="custom-card">
                         <div class="card-body-content">
                             <div class="info">

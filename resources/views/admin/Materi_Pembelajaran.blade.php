@@ -68,7 +68,7 @@
     <div class="materi-grid">
 
         @for($i=0; $i < 10; $i++)
-        <a href="{{route('detail_materi_pembelajaran')}}" class="materi-card-link">
+        <a href="{{route('admin_detail_materi_pembelajaran')}}" class="materi-card-link">
             <div class="materi-card">
                 <div class="materi-thumb">Gambar</div>
                 <div class="materi-info">

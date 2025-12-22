@@ -99,7 +99,7 @@
     }
 </style>
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <a href="{{ route('Absensi') }}">
+    <a href="{{ route('admin_Absensi') }}">
         <button class="back"><i class="ri-arrow-left-line"></i> Kembali</button>
     </a>
 </div>
@@ -166,7 +166,7 @@
                 <td>
                     <a href="#"><u>Lihat Detail</u></a>
                 </td>
-                <td>Hitam Sekali</td>
+                <td>good</td>
             </tr>
         </tbody>
     </table>

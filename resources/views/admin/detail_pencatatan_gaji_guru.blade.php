@@ -88,7 +88,7 @@
     }
 </style>
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <a href="{{ route('Pencatatan_Gaji_Guru') }}">
+    <a href="{{ route('admin_Pencatatan_Gaji_Guru') }}">
         <button class="back"><i class="ri-arrow-left-line"></i> Kembali</button>
     </a>
 </div>
