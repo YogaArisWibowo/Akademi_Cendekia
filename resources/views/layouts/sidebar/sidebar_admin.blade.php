@@ -53,16 +53,17 @@
     <div class="logo">
       <img src="{{ asset('img/logo.png') }}" class="logo-img">
     </div>
-    <a href="#"><i class="bi bi-calendar-check me-2"></i> Penerimaan Siswa</a>
-    <a href="#"><i class="bi bi-calendar-check me-2"></i> Data Guru & Siswa</a>
-    <a href="#" class="active"><i class="bi bi-calendar-check me-2"></i> Jadwal Bimbel</a>
-    <a href="#"><i class="bi bi-person-check me-2"></i> Absensi</a>
-    <a href="#"><i class="bi bi-journal-text me-2"></i> Pembayaran Siswa</a>
-    <a href="#"><i class="bi bi-cash-coin me-2"></i> Pencatatan Gaji Gutu</a>
-    <a href="#"><i class="bi bi-book me-2"></i> Materi Pembelajaran</a>
-    <a href="#"><i class="bi bi-play-circle me-2"></i> Video Materi Belajar</a>
-    <a href="#"><i class="bi bi-play-circle me-2"></i> Monitoring Guru</a>
-    <a href="#"><i class="bi bi-bar-chart-line me-2"></i> Laporan Perkembangan Siswa</a>
+    <a href="{{ route('Penerimaan_Siswa') }}"class="{{ request()->routeIs('Penerimaan_Siswa') ? 'active' : '' }}"><i class="bi bi-calendar-check me-2"></i> Penerimaan Siswa</a>
+    <a href="{{ route('Data_GurudanSiswa') }}" class="{{ request()->routeIs('Data_GurudanSiswa') ? 'active' : '' }}"><i class="bi bi-calendar-check me-2"></i> Data Guru & Siswa</a>
+    <a href="{{ route('Jadwal_Bimbel') }}"  class="{{ request()->routeIs('Jadwal_Bimbel') ? 'active' : '' }}">
+      <i class="bi bi-calendar-check me-2"></i> Jadwal Bimbel</a>
+    <a href="{{ route('Absensi') }}" class="{{ request()->routeIs('Absensi', 'detail_absensi_siswa', 'detail_absensi_guru') ? 'active' : '' }}"><i class="bi bi-person-check me-2"></i> Absensi</a>
+    <a href="{{route('Pembayaran_Siswa')}}" class="{{ request()->routeIs('Pembayaran_Siswa', 'detail_pembayaran_siswa') ? 'active' : ''}}"><i class=" bi bi-journal-text me-2"></i> Pembayaran Siswa</a>
+    <a href="{{ route('Pencatatan_Gaji_Guru') }}"class="{{ request()->routeIs('Pencatatan_Gaji_Guru','detail_pencatatan_gaji_guru') ? 'active' : '' }}"><i class="bi bi-cash-coin me-2"></i> Pencatatan Gaji Guru</a>
+    <a href="{{route('Materi_Pembelajaran')}}" class="{{ request()->routeIs('Materi_Pembelajaran','detail_materi_pembelajaran') ? 'active' : '' }}"><i class="bi bi-book me-2"></i> Materi Pembelajaran</a>
+    <a href="{{route('Video_Materi')}}" class="{{ request()->routeIs('Video_Materi') ? 'active' : '' }}"><i class="bi bi-play-circle me-2"></i> Video Materi Belajar</a>
+    <a href="{{route('Monitoring_Guru')}}" class="{{ request()->routeIs('Monitoring_Guru','detail_monitoring_guru') ? 'active' : '' }}"><i class="bi bi-play-circle me-2"></i> Monitoring Guru</a>
+    <a href="{{route('Laporan_Perkembangan_Siswa')}}" class="{{ request()->routeIs('Laporan_Perkembangan_Siswa','detail_laporan_perkembangan_siswa') ? 'active' : '' }}"><i class="bi bi-bar-chart-line me-2"></i> Laporan Perkembangan Siswa</a>
   </div>
 
   <div class="ms-250" style="margin-left: 250px;">

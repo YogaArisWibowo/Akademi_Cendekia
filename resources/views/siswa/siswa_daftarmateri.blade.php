@@ -12,7 +12,7 @@
 
     <div class="materi-grid">
 
-        @for($i=0; $i<10; $i++)
+        @for($i=0; $i < 10; $i++)
         <a href="/siswa/siswa_materi" class="materi-card-link">
             <div class="materi-card">
                 <div class="materi-thumb">Gambar</div>

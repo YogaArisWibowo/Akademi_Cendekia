@@ -7,28 +7,6 @@
         padding: 20px;
     }
 
-    /* Style untuk Search Input */
-    .guru-search {
-        margin-bottom: 25px;
-    }
-    .search-input-wrapper {
-        position: relative;
-        display: flex;
-        align-items: center;
-    }
-    .search-icon {
-        position: absolute;
-        left: 15px;
-        color: #adb5bd;
-    }
-    .search-input {
-        width: 100%;
-        padding: 10px 15px 10px 40px;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        font-size: 16px;
-    }
-
     .guru-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr); /* 2 kolom */
@@ -115,21 +93,13 @@
         background-color: #f8f9fa;
         color: #adb5bd;
     }
-</style>
 
-<div class="content-wrapper">
-    {{-- Pencarian --}}
-    <div class="guru-search mb-4">
-        <div class="search-input-wrapper">
-            <i class="ri-search-line search-icon"></i>
-            <input type="text" class="search-input" placeholder="Cari" />
-        </div>
-    </div>
+</style>
 
     {{-- Grid Kartu Guru/Siswa --}}
     <div class="guru-grid">
         @for($i=0; $i < 10; $i++)
-        <a href="{{route('detail_pencatatan_gaji_guru')}}" class="guru-card-link">
+        <a href="{{route('detail_monitoring_guru')}}" class="guru-card-link">
             <div class="guru-card">
                 {{-- Nama (Ira Sulistya) --}}
                 <span class="nama">Ira Sulistya</span>
