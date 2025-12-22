@@ -48,3 +48,20 @@
 .table-general tbody tr:nth-child(even) {
     background: #C4DAF9;
 }
+
+/* ============================================================
+   RESPONSIVE TABLET & MOBILE (FIX SCROLL SAMPING)
+   Taruh kode ini di baris paling bawah tabel.css
+   ============================================================ */
+
+@media screen and (max-width: 992px) {
+    .table-container {
+        overflow-x: auto !important; 
+        -webkit-overflow-scrolling: touch; 
+        display: block; 
+    }
+    .table-general {
+        
+        min-width: 1000px; 
+    }
+}

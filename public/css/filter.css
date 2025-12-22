@@ -28,3 +28,36 @@
     pointer-events: none;
     user-select: none;
 }
+
+/* ============================================================
+   RESPONSIVE TABLET & MOBILE (FILTER)
+   Taruh kode ini di baris paling bawah filter.css
+   ============================================================ */
+
+@media screen and (max-width: 991px) {
+    
+    /* 1. Container Filter */
+    .filter-row {
+        /* Wajib: Biarkan tombol turun ke baris baru jika layar tidak muat */
+        flex-wrap: wrap; 
+        
+        /* Kurangi jarak antar elemen biar lebih hemat tempat di HP */
+        gap: 10px; 
+    }
+
+    /* 2. Tombol Filter */
+    .filter-button {
+        /* Flex 1: Tombol akan melebar otomatis mengisi ruang kosong */
+        /* Ini bikin tampilan rapi "kotak-kotak" di HP */
+        flex: 1 1 auto; 
+        
+        /* Pastikan isi tombol (teks & icon) rata tengah */
+        justify-content: center; 
+        
+        /* Text align center untuk jaga-jaga */
+        text-align: center;
+        
+        /* Hapus min-width paksa jika layar sangat kecil (opsional tapi aman) */
+        min-width: fit-content;
+    }
+}

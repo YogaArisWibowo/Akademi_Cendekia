@@ -137,3 +137,98 @@
     pointer-events: none;
     user-select: none;
 }
+
+
+
+.video-card {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    background: #fff;
+}
+
+/* Posisi tombol di kanan bawah */
+.video-edit {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+}
+
+/* Style tombol */
+.edit-icon {
+    background-color: #007bff; 
+    border: none;
+    padding: 4px 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit-icon i {
+    font-size: 18px;
+    color: #fff;
+}
+
+/* ============================================================
+   RESPONSIVE TABLET & MOBILE
+   Taruh kode ini di baris paling bawah button.css
+   ============================================================ */
+
+/* Untuk Tablet dan HP (Layar di bawah 992px) */
+@media screen and (max-width: 991px) {
+    
+    /* 1. Perbaiki Badge Status */
+    /* Masalah utama tabel jebol di HP biasanya karena min-width 110px ini */
+    .badge {
+        min-width: auto;      /* Matikan lebar minimum paksa */
+        padding: 4px 8px;     /* Kecilkan padding biar muat di tabel sempit */
+        font-size: 11px;      /* Kecilkan font sedikit */
+        white-space: nowrap;  /* Pastikan teks "Hadir/Izin" tidak turun baris */
+    }
+
+    /* 2. Tombol Edit Video */
+    /* Perbesar sedikit area sentuh biar gampang dipencet jari */
+    .edit-icon {
+        padding: 8px 10px;
+    }
+}
+
+/* Khusus Untuk HP (Layar di bawah 576px) */
+@media screen and (max-width: 576px) {
+
+    /* 1. Tombol Unggah Tugas */
+    /* Bikin full width biar enak ditekan di HP */
+    .btn-unggah-tugas {
+        width: 100%;       /* Lebar penuh */
+        box-sizing: border-box; /* Agar padding tidak bikin tombol keluar layar */
+    }
+
+    /* 2. Tombol Primary & Add */
+    /* Sesuaikan padding agar proporsional di layar kecil */
+    .btn-primary {
+        font-size: 14px;
+        padding: 8px 14px;
+        white-space: nowrap;
+    }
+
+    .btn-add {
+        padding: 8px 10px; /* Sedikit diperbesar area tap-nya */
+    }
+
+    /* 3. Pagination */
+    /* Rapatkan jarak antar angka halaman biar gak makan tempat */
+    .page {
+        margin: 0 2px;     /* Jarak kiri-kanan dirapatkan */
+        padding: 6px 10px; /* Padding diperkecil */
+        font-size: 12px;
+    }
+    
+    .pagination-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}

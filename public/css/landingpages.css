@@ -1,0 +1,222 @@
+/* Import Google Fonts (Poppins) agar font terlihat modern seperti di gambar */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+body {
+    /* Gradient Background sesuai gambar: Gelap di atas, Biru terang di bawah */
+    background: linear-gradient(180deg, #020c1b 0%, #0a2e5c 40%, #1877FF 100%);
+    color: white;
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden; /* Mencegah scroll horizontal */
+}
+
+/* --- Navbar Styling --- */
+.navbar {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #1877FF;
+}
+
+.navbar-brand img {
+    height: 40px; /* Sesuaikan ukuran logo */
+}
+
+/* Tombol Navbar */
+.btn-nav-outline {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    color: white;
+    padding: 8px 25px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-nav-outline:hover {
+    border-color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.btn-nav-solid {
+    background-color: #3b82f6; /* Warna biru tombol Masuk */
+    color: white;
+    border: none;
+    padding: 8px 25px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-nav-solid:hover {
+    background-color: #2563eb;
+    color: white;
+}
+
+/* --- Hero Section Styling --- */
+.hero {
+    padding-top: 80px; /* Memberi jarak dari navbar */
+    padding-bottom: 60px;
+    display: flex;
+    align-items: center;
+    min-height: 80vh; /* Agar konten berada di tengah layar secara vertikal */
+}
+
+.hero-text h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+}
+
+.hero-text p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #e0e0e0;
+    margin-bottom: 2rem;
+    max-width: 90%;
+}
+
+/* Tombol Gabung Sekarang */
+.btn-cta {
+    background-color: rgba(59, 130, 246, 0.8); /* Biru semi transparan */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 12px 30px;
+    font-size: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-cta:hover {
+    background-color: #2563eb;
+    transform: translateY(-2px);
+    color: white;
+}
+
+/* Image Styling */
+.hero-img img {
+    max-width: 100%;
+    height: auto;
+    /* Drop shadow agar gambar orang terlihat lebih menyatu/pop-up */
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); 
+}
+
+/* Responsiveness (Mobile) */
+@media (max-width: 991px) {
+    .hero {
+        text-align: center;
+        padding-top: 40px;
+    }
+    
+    .hero-text {
+        margin-bottom: 50px;
+    }
+
+    .hero-text p {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .navbar-nav {
+        margin-top: 15px;
+    }
+    
+    .d-flex.gap-3 {
+        justify-content: center;
+        margin-top: 10px;
+    }
+}
+
+/* =========================================
+   RESPONSIVE STYLING (TABLET & HP)
+   ========================================= */
+
+/* 1. Tampilan Tablet & Layar Kecil (Max Width: 991px) */
+@media (max-width: 991px) {
+    /* Navbar: Tombol pindah ke bawah saat di-toggle */
+    .navbar-collapse {
+        background: rgba(2, 12, 27, 0.95); /* Background gelap agar menu terbaca */
+        padding: 20px;
+        margin-top: 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Hero Section: Text di atas, Gambar di bawah */
+    .hero {
+        text-align: center; /* Rata tengah biar rapi */
+        padding-top: 40px;
+        padding-bottom: 40px;
+        min-height: auto; /* Hilangkan min-height agar tidak terlalu panjang */
+    }
+    
+    .hero-text {
+        margin-bottom: 40px; /* Jarak antara teks dan gambar */
+        padding-right: 0; /* Reset padding */
+    }
+
+    .hero-text h1 {
+        font-size: 2rem; /* Kecilkan sedikit font judul */
+    }
+
+    .hero-text p {
+        margin-left: auto;
+        margin-right: auto; /* Tengahkan paragraf */
+    }
+
+    /* Gambar Hero */
+    .hero-img {
+        margin-top: 20px;
+    }
+    
+    .hero-img img {
+        max-width: 80%; /* Gambar jangan terlalu besar di tablet */
+    }
+}
+
+/* 2. Tampilan HP / Mobile (Max Width: 576px) */
+@media (max-width: 576px) {
+    /* Navbar Logo */
+    .navbar-brand img {
+        height: 30px; /* Logo lebih kecil di HP */
+    }
+
+    /* Judul Utama */
+    .hero-text h1 {
+        font-size: 1.6rem; /* Font judul lebih kecil lagi */
+        line-height: 1.3;
+    }
+
+    /* Paragraf */
+    .hero-text p {
+        font-size: 0.95rem; /* Font paragraf disesuaikan */
+        padding: 0 10px; /* Memberi jarak kiri-kanan */
+    }
+
+    /* Tombol CTA (Gabung Sekarang) */
+    .btn-cta {
+        width: 100%; /* Tombol jadi lebar penuh di HP biar gampang dipencet */
+        display: block;
+    }
+
+    /* Tombol Navbar (Daftar/Masuk) */
+    .d-flex.gap-3 {
+        flex-direction: column; /* Tombol navbar jadi vertikal (atas-bawah) */
+        width: 100%;
+    }
+
+    .btn-nav-outline, .btn-nav-solid {
+        width: 100%; /* Tombol navbar lebar penuh */
+        text-align: center;
+        display: block;
+    }
+
+    .hero-img img {
+        max-width: 100%; /* Gambar full width di HP */
+        margin-top: 10px;
+    }
+}
