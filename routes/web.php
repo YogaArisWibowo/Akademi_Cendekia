@@ -4,21 +4,30 @@ use App\Http\Controllers\GuruController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Jadwalcontroller;
 use App\Http\Controllers\Data_GuruDanSiswacontroller;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Penerimaan_Siswacontroller;
 use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\Logincontroller;
+use App\Http\Controllers\RegisterController;
 
 Route::get('/', function () {
     return view('landingpages');
 })->name('Landing_Page');
 
 //Route buat Admin
-Route::get('/login_admin', function () {
-    return view('admin.login');
+Route::get('/login', function () {
+    return view('/login');
 })->name('Login');
+
+Route::post('/login', [Logincontroller::class, 'authenticate'])->name('Login.post');
 
 Route::get('/register', function () {
     return view('register');
 })->name('register');
+
+
+Route::post('/register', [RegisterController::class, 'store'])->name('Register.post');
+
 Route::get('/admin/admin_Pencatatan_Gaji_Guru', function () {
     return view('admin.Pencatatan_Gaji_Guru');
 })->name('admin_Pencatatan_Gaji_Guru');
@@ -76,7 +85,9 @@ Route::get('/admin/admin_detail_laporan_perkembangan_siswa', function () {
 })->name('admin_detail_laporan_perkembangan_siswa');
 
 Route::get('/admin/admin_jadwal_bimbel',[JadwalController::class, 'adminindex'])->name('admin_Jadwal_Bimbel');
-Route::get('/admin/admin_Data_GurudanSiswa',[Data_GuruDanSiswacontroller::class, 'index'])->name('admin_Data_GurudanSiswa');
+Route::get('/admin/admin_Data_GurudanSiswa',[AdminController::class, 'index'])->name('admin_Data_GurudanSiswa');
+Route::post('/admin/admin_Data_GurudanSiswa/store',[AdminController::class, 'store'])->name('admin_Data_GurudanSiswa.store');
+Route::put('/admin/admin_Data_GurudanSiswa/update/{id}',[AdminController::class, 'update'])->name('admin_Data_GurudanSiswa.update');
 Route::get('/admin/admin_Penerimaan_Siswa', [Penerimaan_Siswacontroller::class, 'index'])->name('admin_Penerimaan_Siswa');
 
 
