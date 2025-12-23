@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('hari');
             $table->date('tanggal');
             $table->time('waktu');
+            $table->string('mapel',255);
             $table->timestamps();
         });
     }

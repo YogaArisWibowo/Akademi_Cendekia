@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('penugasan',255);
             $table->string('jawaban_siswa');
             $table->float('nilai_tugas');
+            $table->date('tanggal');
             $table->timestamps();
         });
     }

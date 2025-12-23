@@ -17,6 +17,10 @@ return new class extends Migration
             $table->foreignId('id_jadwal_bimbel')->constrained('jadwal_bimbel')->onDelete('cascade');
             $table->text('laporan_perkembangan');
             $table->float('nilai_rata-rata');
+            $table->string('hari',255);
+            $table->date('tanggal');
+            $table->time('waktu');
+            $table->string('mapel',255);
             $table->timestamps();
         });
     }
