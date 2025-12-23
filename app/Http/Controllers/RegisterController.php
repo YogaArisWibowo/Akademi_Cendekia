@@ -72,7 +72,7 @@ class RegisterController extends Controller
                     'kelas'          => $request->kelas,
                     'asal_sekolah'   => $request->asal_sekolah,
                     'nama_orang_tua' => $request->nama_orang_tua,
-                    'status_penerimaan'    => false,
+                    'status_penerimaan'    => 0,
                 ]);
                 $redirect = back()->with('info', 'Pendaftaran Siswa berhasil. Mohon tunggu persetujuan Admin.');
             }

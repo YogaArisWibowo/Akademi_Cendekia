@@ -19,7 +19,11 @@ class Siswa extends Authenticatable
         'kelas', 
         'asal_sekolah', 
         'nama_orang_tua', 
-        'is_approved'
+        'status_penerimaan'
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user', 'id');
+    }   
 }

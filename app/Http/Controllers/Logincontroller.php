@@ -33,11 +33,16 @@ class LoginController extends Controller
 
             if ($user->role === 'siswa') {
                 // Cek Approval di tabel siswa
-                if ($user->siswa && !$user->siswa->is_approved) {
-                    Auth::logout();
-                    return back()->withErrors(['username' => 'Akun Anda belum disetujui oleh Admin.']);
-                }
-                return redirect()->intended('/siswa/jadwal_bimbel');
+                if (!$user->siswa || $user->siswa->status_penerimaan != 1) {
+                Auth::logout(); // Paksa keluar jika belum diterima
+                
+                $pesan = ($user->siswa->status_penerimaan == 2) 
+                         ? 'Mohon maaf, Anda Belum Bisa Login.' 
+                         : 'Akun Anda masih dalam pengecekan Admin.';
+
+                return back()->withErrors(['username' => $pesan]);
+            }
+                return redirect()->intended('/jadwal_siswa');
             }
         }
 

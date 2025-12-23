@@ -28,67 +28,75 @@ Route::get('/register', function () {
 
 Route::post('/register', [RegisterController::class, 'store'])->name('Register.post');
 
-Route::get('/admin/admin_Pencatatan_Gaji_Guru', function () {
+Route::middleware(['auth', 'admin'])->group(function () {
+    // Halaman Utama Data Guru & Siswa
+    Route::get('/admin/admin_Data_GurudanSiswa', [AdminController::class, 'dataPengguna'])->name('admin_Data_GurudanSiswa');
+    Route::post('/admin/store-guru', [AdminController::class, 'storeGuru'])->name('guru.store');
+    Route::put('/admin/guru/update/{id}', [AdminController::class, 'updateGuru'])->name('guru.update');
+    Route::post('/admin/store-siswa', [AdminController::class, 'storeSiswa'])->name('siswa.store');
+    Route::put('/admin/siswa/update/{id}', [AdminController::class, 'updateSiswa'])->name('siswa.update');
+    Route::post('/admin/update-status/{role}/{id}', [AdminController::class, 'updateStatus']);
+    
+    Route::get('/admin/admin_Pencatatan_Gaji_Guru', function () {
     return view('admin.Pencatatan_Gaji_Guru');
-})->name('admin_Pencatatan_Gaji_Guru');
+    })->name('admin_Pencatatan_Gaji_Guru');
 
-Route::get('/admin/admin_detail_pencatatan_gaji_guru', function () {
-    return view('admin.detail_pencatatan_gaji_guru');
-})->name('admin_detail_pencatatan_gaji_guru');
+    Route::get('/admin/admin_detail_pencatatan_gaji_guru', function () {
+        return view('admin.detail_pencatatan_gaji_guru');
+    })->name('admin_detail_pencatatan_gaji_guru');
 
-Route::get('/admin/admin_Absensi', function () {
-    return view('admin.Absensi');
-})->name('admin_Absensi');
+    Route::get('/admin/admin_Absensi', function () {
+        return view('admin.Absensi');
+    })->name('admin_Absensi');
 
-Route::get('/admin/admin_detail_absensi_siswa', function () {
-    return view('admin.detail_absensi_siswa');
-})->name('admin_detail_absensi_siswa');
+    Route::get('/admin/admin_detail_absensi_siswa', function () {
+        return view('admin.detail_absensi_siswa');
+    })->name('admin_detail_absensi_siswa');
 
-Route::get('/admin/admin_detail_absensi_guru', function () {
-    return view('admin.detail_absensi_guru ');
-})->name('admin_detail_absensi_guru');
+    Route::get('/admin/admin_detail_absensi_guru', function () {
+        return view('admin.detail_absensi_guru ');
+    })->name('admin_detail_absensi_guru');
 
-Route::get('/admin/admin_Pembayaran_Siswa', function () {
-    return view('admin.Pembayaran_Siswa ');
-})->name('admin_Pembayaran_Siswa');
+    Route::get('/admin/admin_Pembayaran_Siswa', function () {
+        return view('admin.Pembayaran_Siswa ');
+    })->name('admin_Pembayaran_Siswa');
 
-Route::get('/admin/admin_detail_pembayaran_siswa', function () {
-    return view('admin.detail_pembayaran_siswa ');
-})->name('admin_detail_pembayaran_siswa');
+    Route::get('/admin/admin_detail_pembayaran_siswa', function () {
+        return view('admin.detail_pembayaran_siswa ');
+    })->name('admin_detail_pembayaran_siswa');
 
-Route::get('/admin/admin_Materi_Pembelajaran', function () {
-    return view('admin.Materi_Pembelajaran ');
-})->name('admin_Materi_Pembelajaran');
+    Route::get('/admin/admin_Materi_Pembelajaran', function () {
+        return view('admin.Materi_Pembelajaran ');
+    })->name('admin_Materi_Pembelajaran');
 
-Route::get('/admin/admin_detail_materi_pembelajaran', function () {
-    return view('admin.detail_materi_pembelajaran');
-})->name('admin_detail_materi_pembelajaran');
+    Route::get('/admin/admin_detail_materi_pembelajaran', function () {
+        return view('admin.detail_materi_pembelajaran');
+    })->name('admin_detail_materi_pembelajaran');
 
-Route::get('/admin/admin_Video_Materi', function () {
-    return view('admin.Video_Materi ');
-})->name('admin_Video_Materi');
+    Route::get('/admin/admin_Video_Materi', function () {
+        return view('admin.Video_Materi ');
+    })->name('admin_Video_Materi');
 
-Route::get('/admin/admin_Monitoring_Guru', function () {
-    return view('admin.Monitoring_Guru ');
-})->name('admin_Monitoring_Guru');
+    Route::get('/admin/admin_Monitoring_Guru', function () {
+        return view('admin.Monitoring_Guru ');
+    })->name('admin_Monitoring_Guru');
 
-Route::get('/admin/admin_detail_monitoring_guru', function () {
-    return view('admin.detail_monitoring_guru ');
-})->name('admin_detail_monitoring_guru');
+    Route::get('/admin/admin_detail_monitoring_guru', function () {
+        return view('admin.detail_monitoring_guru ');
+    })->name('admin_detail_monitoring_guru');
 
-Route::get('/admin/admin_Laporan_Perkembangan_Siswa', function () {
-    return view('admin.Laporan_Perkembangan_Siswa ');
-})->name('admin_Laporan_Perkembangan_Siswa');
+    Route::get('/admin/admin_Laporan_Perkembangan_Siswa', function () {
+        return view('admin.Laporan_Perkembangan_Siswa ');
+    })->name('admin_Laporan_Perkembangan_Siswa');
 
-Route::get('/admin/admin_detail_laporan_perkembangan_siswa', function () {
-    return view('admin.detail_laporan_perkembangan_siswa ');
-})->name('admin_detail_laporan_perkembangan_siswa');
+    Route::get('/admin/admin_detail_laporan_perkembangan_siswa', function () {
+        return view('admin.detail_laporan_perkembangan_siswa ');
+    })->name('admin_detail_laporan_perkembangan_siswa');
 
-Route::get('/admin/admin_jadwal_bimbel',[JadwalController::class, 'adminindex'])->name('admin_Jadwal_Bimbel');
-Route::get('/admin/admin_Data_GurudanSiswa',[AdminController::class, 'index'])->name('admin_Data_GurudanSiswa');
-Route::post('/admin/admin_Data_GurudanSiswa/store',[AdminController::class, 'store'])->name('admin_Data_GurudanSiswa.store');
-Route::put('/admin/admin_Data_GurudanSiswa/update/{id}',[AdminController::class, 'update'])->name('admin_Data_GurudanSiswa.update');
-Route::get('/admin/admin_Penerimaan_Siswa', [Penerimaan_Siswacontroller::class, 'index'])->name('admin_Penerimaan_Siswa');
+    Route::get('/admin/admin_jadwal_bimbel',[JadwalController::class, 'adminindex'])->name('admin_Jadwal_Bimbel');
+    Route::get('/admin/admin_Penerimaan_Siswa', [Penerimaan_Siswacontroller::class, 'index'])->name('admin_Penerimaan_Siswa');
+    Route::post('/admin/update-status-siswa/{id}', [Penerimaan_Siswacontroller::class, 'updateStatusSiswa'])->name('update.status.siswa');
+});
 
 
 

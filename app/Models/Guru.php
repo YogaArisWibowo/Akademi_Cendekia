@@ -46,4 +46,9 @@ class Guru extends Authenticatable
         'password' => 'hashed',    // Otomatis mengenali hash bcrypt
         'is_approved' => 'boolean', // Memastikan nilai 0/1 menjadi false/true
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user', 'id');
+    }
 }

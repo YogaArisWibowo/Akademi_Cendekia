@@ -3,53 +3,32 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Siswa;
 
 class Penerimaan_Siswacontroller extends Controller
 {
     Public Function index(){
+        $siswa = Siswa::all();
+
+    // 2. Kirim variabel $siswa ke view
+    // 'admin.penerimaan_siswa' adalah lokasi file blade Anda
+    return view('admin.penerimaan_siswa', compact('siswa'));
+
+    }
+
+    public function updateStatusSiswa(Request $request, $id)
+    {
+        // Temukan data siswa
+        $siswa = Siswa::findOrFail($id);
         
-        // Definisikan status default di Controller
-        $status_awal_default = 'aktif';
-
-        // Data Dummy DENGAN ID UNIK (Penting untuk Dropdown)
-        $data_list = collect([
-            (object)[
-                'id' => 3, // ID UNIK DITAMBAHKAN
-                'nama' => 'Siti',
-                'jenjang' => 'SD',
-                'kelas' => '6',
-                'asal_sekolah' => 'SD N 3 Ngawi',
-                'no_hp' => '0857xxxxx',
-                'alamat_siswa' => 'Klaten Utara',
-                'status' => 'aktif',
-            ],
-            (object)[
-                'id' => 3, // ID UNIK DITAMBAHKAN
-                'nama' => 'Siti',
-                'jenjang' => 'SD',
-                'kelas' => '6',
-                'asal_sekolah' => 'SD N 3 Ngawi',
-                'no_hp' => '0857xxxxx',
-                'alamat_siswa' => 'Klaten Utara',
-                'status' => 'aktif',
-            ],
-            (object)[
-                'id' => 3, // ID UNIK DITAMBAHKAN
-                'nama' => 'Siti',
-                'jenjang' => 'SD',
-                'kelas' => '6',
-                'asal_sekolah' => 'SD N 3 Ngawi',
-                'no_hp' => '0857xxxxx',
-                'alamat_siswa' => 'Klaten Utara',
-                'status' => 'aktif',
-            ],
+        // UPDATE STATUS AKTIF DI DATABASE
+        $siswa->update([
+            'status_penerimaan' => $request->status_penerimaan 
         ]);
 
-        return view('admin.Penerimaan_Siswa', [
-            'jadwal' => $data_list,
-            'siswa_list' => $data_list, // Menggunakan data yang sama untuk siswa
-            'status_awal' => $status_awal_default, // Mengirimkan status default
+        return response()->json([
+            'success' => true,
+            'message' => 'Status penerimaan siswa berhasil diupdate'
         ]);
-
     }
 }

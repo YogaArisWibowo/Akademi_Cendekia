@@ -6,20 +6,13 @@
         border-radius: 15px !important; 
         padding: 5px 15px; 
         border-color: #3f51b5; 
-        transition: all 0.3s; /* Efek transisi untuk perubahan warna */
+        transition: all 0.3s ease;
+        cursor: pointer;
+        width: 100%;
     }
-
-    .status-aktif {
-        background-color: #e8f5e9 !important; 
-        color: #2e7d32 !important; 
-        font-weight: bold;
-    }
-
-    .status-non-aktif {
-        background-color: #ffebee !important; 
-        color: #c62828 !important; 
-        font-weight: bold;
-    }
+    .status-pending { background-color: #fffde7 !important; color: #856404 !important; border: 1px solid #ffeeba !important; }
+    .status-diterima { background-color: #e8f5e9 !important; color: #155724 !important; border: 1px solid #c3e6cb !important; }
+    .status-ditolak { background-color: #ffebee !important; color: #721c24 !important; border: 1px solid #f5c6cb !important; }
 </style>
 
 <div class="table-container">
@@ -29,105 +22,75 @@
                 <th>No</th>
                 <th>Nama</th>
                 <th>Jenjang</th>
-                <th>Kelas</th>
-                <th>Asal Sekolah</th>
                 <th>No Hp</th>
+                <th>Alamat</th>
                 <th>Status</th>
-                <th>Alamat Siswa</th>
             </tr>
         </thead>
-
         <tbody>
-        @foreach($jadwal as $i => $j)
-        @php
-            // Ambil status dari database (data dummy), jika tidak ada, gunakan default dari Controller
-            $current_status = $j->status ?? $status_awal;
-            $css_class = $current_status == 'aktif' ? 'status-aktif' : 'status-non-aktif';
-        @endphp
-
-            <tr id="row-{{ $j->id }}" class="table-{{ $current_status == 'aktif' ? 'success' : 'secondary' }}">
-                <td>{{ $j->id }}</td> {{-- Menggunakan ID untuk debugging --}}
-                <td>{{ $j->nama }}</td>
-                <td>{{ $j->jenjang }}</td>
-                <td>{{ $j->kelas }}</td>
-                <td>{{ $j->asal_sekolah }}</td>
-                <td>{{ $j->no_hp }}</td>
-                <td>{{ $j->alamat_siswa }}</td>
+        @foreach($siswa as $s)
+            @php
+                // MENGAMBIL STATUS AKTIF DARI DATABASE
+                // 0 = Pending, 1 = Diterima/Aktif, 2 = Ditolak
+                $status = $s->status_penerimaan ?? 0; 
+                
+                if($status == 1) { 
+                    $cls = 'status-diterima'; 
+                } elseif($status == 2) { 
+                    $cls = 'status-ditolak'; 
+                } else { 
+                    $cls = 'status-pending'; 
+                }
+            @endphp
+            <tr id="row-{{ $s->id }}">
+                <td>{{ $loop->iteration }}</td>
+                <td>{{ $s->nama }}</td>
+                <td>{{ $s->jenjang }}</td>
+                <td>{{ $s->no_hp }}</td>
+                <td>{{ $s->alamat }}</td>
                 <td>
-                    {{-- Dropdown Status --}}
-                    <select
-                        class="form-select form-select-sm custom-status-dropdown {{ $css_class }}" 
-                        id="status-select-{{ $j->id }}" 
-                        aria-label="Status {{ $j->id }}"
-                    >
-                        <option value="aktif" @if($current_status == 'aktif') selected @endif > Terima
-                        </option>
-                        <option value="non aktif" @if($current_status == 'non aktif') selected @endif > Tolak
-                        </option>
+                    <select class="form-select form-select-sm custom-status-dropdown {{ $cls }}" data-id="{{ $s->id }}">
+                        <option value="0" {{ $status == 0 ? 'selected' : '' }}>Pending</option>
+                        <option value="1" {{ $status == 1 ? 'selected' : '' }}>Terima</option>
+                        <option value="2" {{ $status == 2 ? 'selected' : '' }}>Tolak</option>
                     </select>
                 </td>
             </tr>
         @endforeach
+        </tbody>
     </table>
-
-    <div class="pagination-wrapper">
-        <button class="btn page">Sebelumnya</button>
-        <button class="btn page active">1</button>
-        <button class="btn page">2</button>
-        <button class="btn page">3</button>
-        <button class="btn page active">Selanjutnya</button>
-    </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function () {
-        
-        // 1. Fungsi untuk menerapkan warna awal saat halaman dimuat
-        $('[id^="status-select-"]').each(function() {
-            var selectedValue = $(this).val();
-            var $dropdown = $(this);
-            var tableRow = $dropdown.closest('tr');
-            
-            // Hapus kelas Bootstrap/kustom yang mungkin sudah ada dari Blade/default
-            tableRow.removeClass('table-success table-secondary'); 
-            $dropdown.removeClass('status-aktif status-non-aktif');
-            
-            // Terapkan warna awal
-            if (selectedValue === "non aktif") {
-                $dropdown.addClass("status-non-aktif");
-                tableRow.addClass("table-secondary");
-            } else {
-                $dropdown.addClass("status-aktif");
-                tableRow.addClass("table-success");
+$(document).ready(function () {
+    $('select.custom-status-dropdown').on("change", function () {
+        var $dropdown = $(this);
+        var selectedValue = $dropdown.val();
+        var siswaId = $dropdown.data('id');
+
+        $.ajax({
+            url: "/admin/update-status-siswa/" + siswaId,
+            type: "POST",
+            data: { 
+                _token: '{{ csrf_token() }}', 
+                status_penerimaan: selectedValue // Mengirim field status_aktif
+            },
+            success: function (response) {
+                $dropdown.removeClass('status-pending status-diterima status-ditolak');
+                if (selectedValue == "1") {
+                    $dropdown.addClass("status-diterima");
+                } else if (selectedValue == "2") {
+                    $dropdown.addClass("status-ditolak");
+                } else {
+                    $dropdown.addClass("status-pending");
+                }
+            },
+            error: function () {
+                alert("Gagal memperbarui status penerimaan di database.");
             }
         });
-
-        // 2. Fungsi untuk menangani perubahan (change event)
-        $('[id^="status-select-"]').on("change", function () {
-            // Simpan referensi objek
-    var $dropdown = $(this);
-    var tableRow = $dropdown.closest("tr");
-    
-    // --- PENTING: HAPUS SEMUA KELAS WARNA ---
-    // Hapus kelas warna kustom
-    $dropdown.removeClass('status-aktif status-non-aktif');
-    // Hapus kelas warna Bootstrap untuk baris
-    tableRow.removeClass('table-success table-secondary'); 
-    
-    // --- Terapkan Kelas Baru ---
-    if (selectedValue === "non aktif") {
-        // Terapkan Non Aktif
-        $dropdown.addClass("status-non-aktif");
-        tableRow.addClass("table-secondary"); // Abu-abu
-    } else {
-        // Terapkan Aktif
-        $dropdown.addClass("status-aktif"); 
-        tableRow.addClass("table-success"); // Hijau
-    }
-
-            console.log("Status diubah ke: " + selectedValue);
-        });
     });
+});
 </script>
-
 @endsection
