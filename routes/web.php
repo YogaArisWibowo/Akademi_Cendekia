@@ -9,12 +9,16 @@ use App\Http\Controllers\SiswaController;
 
 Route::get('/', function () {
     return view('landingpages');
-});
+})->name('Landing_Page');
 
 //Route buat Admin
 Route::get('/login_admin', function () {
     return view('admin.login');
-});
+})->name('Login');
+
+Route::get('/register', function () {
+    return view('register');
+})->name('register');
 Route::get('/admin/admin_Pencatatan_Gaji_Guru', function () {
     return view('admin.Pencatatan_Gaji_Guru');
 })->name('admin_Pencatatan_Gaji_Guru');
