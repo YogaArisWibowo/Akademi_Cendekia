@@ -11,21 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user', function (Blueprint $table) {
-            $table->id(); // bigint auto increment
-            $table->string('nama');
-            $table->enum('role', ['admin', 'guru', 'siswa/orangtua'])->default('admin');
-            $table->timestamps(); // created_at & updated_at
-
-        });
-
-        Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
-            $table->string('ip_address', 45)->nullable();
-            $table->text('user_agent')->nullable();
-            $table->longText('payload');
-            $table->integer('last_activity')->index();
+        Schema::create('users', function (Blueprint $table) {
+            $table->id(); // Ini akan menjadi 'id' yang dirujuk oleh 'id_user'
+            $table->string('username')->unique();
+            $table->string('password');
+            $table->enum('role', ['admin', 'guru', 'siswa']);
+            $table->rememberToken();
+            $table->timestamps();
         });
     }
 

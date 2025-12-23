@@ -172,6 +172,21 @@
 
         <div class="main-content">
             <div class="blur-form" id="formContainer">
+                @if(session('info'))
+                    <div class="alert alert-info border-0 mb-3" style="background: rgba(255,255,255,0.2); color: white;">
+                        {{ session('info') }}
+                    </div>
+                @endif
+
+                @if($errors->any())
+                    <div class="alert alert-danger border-0 mb-3" style="background: rgba(255,0,0,0.2); color: white;">
+                        <ul class="mb-0">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <h3 class="mb-4 fw-bold">DAFTAR AKUN</h3>
                 
                 <div class="role-switcher" id="roleContainer">
@@ -180,16 +195,21 @@
                     <button type="button" class="role-btn" onclick="setRole(this, 'admin')">ADMIN</button>
                 </div>
 
-                <form action="/register" method="POST">
+                <form id="MainRegisterForm" action="{{ route('Register.post') }}" method="POST">
+                    @csrf 
                     <input type="hidden" name="role" id="user_role" value="siswa">
 
                     <div class="row custom-input text-start" id="formRow">
-                        <div class="col-md-6 px-4 mx-auto" id="leftCol">
+                        <div class="col-md-6 px-4" id="leftCol">
                             <input type="text" name="username" class="form-control" placeholder="Username" required>
+                            <input type="text" id="alamat" name="alamat" class="form-control" placeholder="Alamat" required>
                             
                             <div id="student_specific_fields">
                                 <input type="text" name="jenjang" class="form-control" placeholder="Jenjang">
-                                <input type="text" name="kelas" class="form-control" placeholder="Kelas">
+                            </div>
+
+                            <div id="guru_specific_fields" style="display: none;">
+                                <input type="text" name="mapel" class="form-control" placeholder="Mapel">
                             </div>
 
                             <div class="password-wrapper">
@@ -198,19 +218,26 @@
                             </div>
 
                             <div class="password-wrapper">
-                                <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Konfirmasi password" required>
-                                <i class="bi bi-eye" id="toggleConfirmPassword" onclick="togglePasswordVisibility('password_confirmation', 'toggleConfirmPassword')"></i>
+                                <input type="text" name="password_confirmation" class="form-control" placeholder="Konfirmasi password" required>
                             </div>
                         </div>
 
                         <div class="col-md-6 px-4" id="rightCol">
-                            <input type="text" name="asal_sekolah" class="form-control" placeholder="Asal Sekolah" required>
-                            <input type="text" name="no_hp" class="form-control" placeholder="No. Handphone" required>
-                            <input type="text" name="alamat" class="form-control" placeholder="Alamat" required>
+                            
+                            <div id="guru_extra_fields" style="display: none;">
+                                <input type="text" name="pendidikan_terakhir" class="form-control" placeholder="Pendidikan Terakhir">
+                                <input type="text" name="rekening" class="form-control" placeholder="No Rekening">
+                                <input type="text" name="no_e_wallet" class="form-control" placeholder="No E-Wallet">
+                                <input type="text" name="jenis_e_wallet" class="form-control" placeholder="Jenis E-Wallet">
+                            </div>
+
                             
                             <div id="parent_field">
+                                <input type="text" name="kelas" class="form-control" placeholder="Kelas">
+                                <input type="text" name="asal_sekolah" class="form-control" placeholder="Asal Sekolah">
                                 <input type="text" name="nama_orang_tua" class="form-control" placeholder="Nama Orang Tua">
                             </div>
+                            <input type="text" name="no_hp" class="form-control" placeholder="No. Handphone">
                         </div>
                     </div>
 
@@ -251,9 +278,9 @@
             }
 
             function setRole(btn, roleValue) {
-                resetPasswordFields(); // Fix bug password
+                resetPasswordFields();
 
-                // Logic Animasi Switch
+                // Animasi Switch
                 const slideBg = document.getElementById('slide-bg');
                 slideBg.style.width = btn.offsetWidth + 'px';
                 slideBg.style.left = btn.offsetLeft + 'px';
@@ -264,31 +291,54 @@
 
                 document.getElementById('user_role').value = roleValue;
 
-                const studentFields = document.getElementById('student_specific_fields');
-                const parentField = document.getElementById('parent_field');
+                // Elements
+                const studentFields = document.getElementById('student_specific_fields'); // Group kiri siswa
+                const guruFields = document.getElementById('guru_specific_fields');       // Group kiri guru
+                const guruExtra = document.getElementById('guru_extra_fields');         // Group kanan guru
+                const parentField = document.getElementById('parent_field');            // Group kanan siswa
                 const rightCol = document.getElementById('rightCol');
                 const leftCol = document.getElementById('leftCol');
                 const formContainer = document.getElementById('formContainer');
 
                 if (roleValue === 'siswa') {
-                    rightCol.style.display = 'block';
+                    formContainer.style.maxWidth = "800px";
                     leftCol.className = "col-md-6 px-4";
+                    rightCol.style.display = 'block';
+                    
                     studentFields.style.display = 'block';
                     parentField.style.display = 'block';
-                    formContainer.style.maxWidth = "800px";
+                    guruFields.style.display = 'none';
+                    guruExtra.style.display = 'none';
                 } 
                 else if (roleValue === 'guru') {
-                    rightCol.style.display = 'block';
+                    formContainer.style.maxWidth = "800px";
                     leftCol.className = "col-md-6 px-4";
+                    rightCol.style.display = 'block';
+                    
                     studentFields.style.display = 'none';
                     parentField.style.display = 'none';
-                    formContainer.style.maxWidth = "800px";
+                    guruFields.style.display = 'block';
+                    guruExtra.style.display = 'block';
                 } 
                 else if (roleValue === 'admin') {
-                    rightCol.style.display = 'none';
-                    studentFields.style.display = 'none';
-                    leftCol.className = "col-md-8 px-4 mx-auto";
                     formContainer.style.maxWidth = "450px";
+                    leftCol.className = "col-md-12 px-4 mx-auto"; // Fokus di tengah
+                    rightCol.style.display = 'none';
+                    alamat.style.display = 'none';
+                    
+                    studentFields.style.display = 'none';
+                    guruFields.style.display = 'none';
+                }
+                const alamatInput = document.getElementsByName('alamat')[0];
+
+                if (roleValue === 'admin') {
+                    // Matikan required saat kolom disembunyikan
+                    alamatInput.required = false; 
+                    // ...
+                } else {
+                    // Aktifkan kembali saat kolom muncul
+                    alamatInput.required = true;
+                    // ...
                 }
             }
 
