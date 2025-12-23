@@ -18,9 +18,19 @@
                 background: linear-gradient(to bottom, #03132a, #1877ff);
                 height: 100vh;
             }
+            .navbar a {
+                /* Tambahkan 'solid' agar garisnya terlihat */
+                border: 2px solid #2F6FCA !important; 
+                border-radius: 8px !important; /* Sedikit lebih tumpul agar modern */
+                color: white !important;
+                padding: 5px 20px !important;
+                transition: all 0.3s ease; /* Transisi halus saat hover */
+                text-decoration: none;
+            }
+
             .navbar a:hover {
                 background-color: rgba(255, 255, 255, 0.1);
-                border-radius: 5px;
+                border-color: white !important; /* Warna berubah saat hover */
             }
 
             .welcome{
@@ -119,7 +129,7 @@
         <nav class="navbar navbar-expand-lg py-4">
             <div class="container-fluid border-bottom border-2 pb-3"
             style="border-color: #2F6FCA !important;">
-                <img src="{{ asset('img/logo-nav.png') }}" alt="logo" class="logo-img ms-4 "
+                <img src="{{ asset('img/logo2.png') }}" alt="logo" class="logo-img ms-4 "
                 style="width: 170px;">
                 <button
                     class="navbar-toggler"
@@ -139,10 +149,9 @@
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
                             <a
-                                class="nav-link active text-white me-4 px-3 py-0 pb-1 border border-2 rounded"
-                                style="border-color: #2F6FCA !important;"
+                                class="nav-link active text-white me-4 px-3 py-0 pb-1 "
                                 aria-current="page"
-                                href="#"
+                                href="{{route('Landing_Page')}}"
                                 >Beranda</a
                             >
                         </li>
@@ -173,6 +182,7 @@
                 <button class="login-button text-center">
                     Masuk
                 </button>
+                <p class="mt-4 text-center">Belum punya akun? <a href="{{route('register')}}" class="text-black fw-bold text-decoration-none">Daftar</a></p>
             </div>
         </div>
 

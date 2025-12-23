@@ -23,8 +23,8 @@
 
       <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <div class="d-flex gap-3 align-items-center mt-3 mt-lg-0">
-            <a href="#" class="btn-nav-outline">Daftar</a>
-            <a href="#" class="btn-nav-solid">Masuk</a>
+            <a href="{{route('register')}}" class="btn-nav-outline">Daftar</a>
+            <a href="{{route('Login')}}" class="btn-nav-solid">Masuk</a>
         </div>
       </div>
     </div>
@@ -40,7 +40,7 @@
             Bergabunglah dengan Akademi Cendekia dan rasakan pengalaman belajar privat 
             yang lebih fokus, efektif, dan menyenangkan!
           </p>
-          <a href="#" class="btn-cta">Gabung Sekarang</a>
+          <a href="{{route('register')}}" class="btn-cta">Gabung Sekarang</a>
         </div>
 
         <div class="col-lg-6 hero-img text-center text-lg-end">
