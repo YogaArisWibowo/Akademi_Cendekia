@@ -19,15 +19,16 @@ class Guru extends Authenticatable
      * Pastikan semua name="" yang ada di Blade Register ada di sini.
      */
     protected $fillable = [
-        'username',
+        'id_user',
+        'nama',
         'password',
         'mapel',
-        'alamat',
+        'no_hp',
+        'alamat_guru',
         'jenis_e_wallet', // Sesuaikan jika di DB menggunakan underscore (_)
         'no_e_wallet',
         'rekening',
         'pendidikan_terakhir',
-        'is_approved', // Kolom untuk status ACC Admin
     ];
 
     /**

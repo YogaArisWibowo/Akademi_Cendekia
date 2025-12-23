@@ -50,29 +50,29 @@ class RegisterController extends Controller
             elseif ($role === 'guru') {
                 Guru::create([
                     'id_user'             => $user->id,
-                    'username'            => $request->username,
+                    'nama'                => $request->username, // Mengisi kolom 'nama' yang diminta DB
                     'mapel'               => $request->mapel,
-                    'alamat'              => $request->alamat,
-                    'jenis_e_wallet'      => $request->input('jenis_e-wallet'),
-                    'no_e_wallet'         => $request->input('no_e-wallet'),
+                    'alamat_guru'              => $request->alamat,
+                    'jenis_e_wallet'      => $request->input('jenis_e_wallet'),
+                    'no_e_wallet'         => $request->input('no_e_wallet'),
                     'rekening'            => $request->rekening,
+                    'no_hp'            => $request->no_hp,
                     'pendidikan_terakhir' => $request->pendidikan_terakhir,
-                    'is_approved'         => false,
                 ]);
-                $redirect = back()->with('info', 'Pendaftaran Guru berhasil. Mohon tunggu persetujuan Admin.');
+                $redirect = redirect()->route('Login')('info', 'Pendaftaran Guru berhasil.');
             } 
             
             else { // Siswa
                 Siswa::create([
                     'id_user'        => $user->id,
-                    'username'       => $request->username,
+                    'nama'     => $request->username, // Mengisi kolom 'nama' yang diminta DB
                     'jenjang'        => $request->jenjang,
                     'no_hp'          => $request->no_hp,
                     'alamat'         => $request->alamat,
                     'kelas'          => $request->kelas,
                     'asal_sekolah'   => $request->asal_sekolah,
                     'nama_orang_tua' => $request->nama_orang_tua,
-                    'is_approved'    => false,
+                    'status_penerimaan'    => false,
                 ]);
                 $redirect = back()->with('info', 'Pendaftaran Siswa berhasil. Mohon tunggu persetujuan Admin.');
             }

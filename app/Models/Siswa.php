@@ -10,7 +10,8 @@ class Siswa extends Authenticatable
     protected $table = 'siswa'; // Nama tabel di database
 
     protected $fillable = [
-        'username', 
+        'id_user', 
+        'nama', 
         'password', 
         'jenjang', 
         'no_hp', 

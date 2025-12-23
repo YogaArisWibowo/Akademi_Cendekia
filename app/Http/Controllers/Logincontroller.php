@@ -28,12 +28,6 @@ class LoginController extends Controller
             } 
             
             if ($user->role === 'guru') {
-                // Cek Approval di tabel guru melalui relasi atau query
-                // Kita asumsikan Anda punya relasi 'guru' di Model User
-                if ($user->guru && !$user->guru->is_approved) {
-                    Auth::logout();
-                    return back()->withErrors(['username' => 'Akun Guru Anda belum disetujui oleh Admin.']);
-                }
                 return redirect()->intended('/jadwal_mengajar');
             }
 
