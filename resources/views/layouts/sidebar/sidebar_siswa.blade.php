@@ -43,15 +43,15 @@
             </a>
         </li>
 
-        <li class="menu-item {{ Request::is('siswa/siswa_video') ? 'active' : '' }}">
-            <a href="/siswa/siswa_video">
+        <li class="menu-item {{ Request::is('siswa_videomateri') ? 'active' : '' }}">
+            <a href="/siswa_videomateri">
                 <i class="bi bi-play-btn-fill"></i>
                 Video Materi Belajar
             </a>
         </li>
 
-        <li class="menu-item {{ Request::is('siswa/siswa_laporanperkembangan') ? 'active' : '' }}">
-            <a href="/siswa/siswa_laporanperkembangan">
+        <li class="menu-item {{ Request::is('siswa_laporanperkembangan') ? 'active' : '' }}">
+            <a href="/siswa_laporanperkembangan">
                 <i class="bi bi-file-earmark-text-fill"></i>
                 Laporan Perkembangan Siswa
             </a>

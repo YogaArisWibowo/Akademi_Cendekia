@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\AbsensiSiswa;
 
 use App\Models\JadwalBimbel;
+use App\Models\LaporanPerkembanganSiswa;
 use App\Models\PembayaranSiswa;
+use App\Models\VideoMateri;
 use Illuminate\Http\Request;
 
 class SiswaController extends Controller
@@ -144,6 +146,45 @@ class SiswaController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menyimpan: ' . $e->getMessage());
         }
+    }
+
+
+    // --- FITUR VIDEO MATERI ---
+    public function videoMateri(Request $request)
+    {
+        // 1. Ambil keyword pencarian jika ada
+        $search = $request->input('search');
+
+        // 2. Query data video
+        $videos = VideoMateri::query()
+            // Filter pencarian berdasarkan nama materi
+            ->when($search, function ($query) use ($search) {
+                return $query->where('nama_materi', 'like', "%{$search}%");
+            })
+            ->orderBy('created_at', 'desc') // Urutkan dari yang terbaru
+            ->paginate(6); // Tampilkan 6 video per halaman agar rapi di grid
+
+        // 3. Return view
+        return view('siswa.siswa_video', compact('videos', 'search'));
+    }
+
+
+
+    public function laporanPerkembangan()
+    {
+        // ID Siswa Dummy (Ganti Auth::id() jika sudah pakai login)
+        $idSiswa = 1;
+
+        // 1. Ambil Data Laporan (Paginate 5 atau 10 baris)
+        $laporan = LaporanPerkembanganSiswa::where('id_siswa', $idSiswa)
+                    ->orderBy('tanggal', 'desc')
+                    ->paginate(5);
+        $rataRata = LaporanPerkembanganSiswa::where('id_siswa', $idSiswa)->avg('nilai_rata_rata');
+
+        // Jika datanya kosong, set 0 agar tidak error
+        $rataRata = $rataRata ? round($rataRata) : 0;
+
+        return view('siswa.siswa_laporanperkembangan', compact('laporan', 'rataRata'));
     }
 
 }

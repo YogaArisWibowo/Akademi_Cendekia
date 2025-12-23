@@ -76,6 +76,11 @@ Route::get('/admin/admin_Data_GurudanSiswa',[Data_GuruDanSiswacontroller::class,
 Route::get('/admin/admin_Penerimaan_Siswa', [Penerimaan_Siswacontroller::class, 'index'])->name('admin_Penerimaan_Siswa');
 
 
+
+
+
+
+
 //Route buat Guru
 // list halaman jadwal mengajar
 Route::get('/jadwal_mengajar', [GuruController::class, 'jadwalMengajar'])->name('jadwal_mengajar');
@@ -222,3 +227,9 @@ Route::get('/siswa/siswa_materi', function () {
 Route::get('/siswa/siswa_video', function () {
     return view('siswa.siswa_video');
 });
+
+Route::get('/siswa_videomateri', [SiswaController::class, 'videoMateri'])->name('siswa.video');
+
+
+
+Route::get('/siswa_laporanperkembangan', [SiswaController::class, 'laporanPerkembangan'])->name('siswa.laporan');
