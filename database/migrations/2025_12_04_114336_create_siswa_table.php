@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('siswa', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_user')->constrained('user')->onDelete('cascade');
+            $table->foreignId('id_user')->constrained('users')->onDelete('cascade');
             $table->char('nama',50);
             $table->string('email', 50);// VARCHAR
-            $table->string('password', 8);// VARCHAR
+            $table->string('alamat', 50);// VARCHAR
             $table->char('jenjang',20);
             $table->string('kelas', 20);// VARCHAR
             $table->string('asal_sekolah', 100);// VARCHAR
