@@ -38,11 +38,19 @@
             </div>
         </form>
 
-        {{-- TOMBOL TAMBAH (Menggunakan sisa grid col-md-3) --}}
+        {{-- TOMBOL TAMBAH --}}
         <div class="col-md-3 text-end">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahModal">
-                Tambah +
-            </button>
+            @if ($jadwalAktif)
+                {{-- Jika Jadwal Ada (Masuk Range Jam), Tombol Muncul --}}
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahModal">
+                    Tambah +
+                </button>
+            @else
+                {{-- Jika Diluar Jam, Tombol Disabled / Info --}}
+                <button type="button" class="btn btn-secondary" disabled title="Menu hanya aktif saat jam mengajar">
+                    Belum Waktunya Absen
+                </button>
+            @endif
         </div>
 
     </div>
@@ -61,36 +69,36 @@
                     </div>
 
                     <div class="modal-body">
+                        {{-- Hidden Input untuk ID Jadwal Bimbel (PENTING BUAT STORE) --}}
+                        <input type="hidden" name="id_jadwal_bimbel" value="{{ $jadwalAktif->id ?? '' }}">
 
                         <div class="row">
                             {{-- Kolom Kiri --}}
                             <div class="col-md-6">
 
-                                {{-- Hari --}}
+                                {{-- Hari: Otomatis Terisi & Terkunci Tampilannya --}}
                                 <div class="mb-3">
                                     <label class="form-label">Hari</label>
-                                    <select name="hari" class="form-control" required>
-                                        <option value="">-- Pilih Hari --</option>
-                                        <option>Senin</option>
-                                        <option>Selasa</option>
-                                        <option>Rabu</option>
-                                        <option>Kamis</option>
-                                        <option>Jumat</option>
-                                        <option>Sabtu</option>
-                                        <option>Minggu</option>
+                                    {{-- Kita gunakan style pointer-events:none dan bg abu-abu agar terlihat mati --}}
+                                    <select name="hari" class="form-control" required
+                                        style="pointer-events: none; background-color: #e9ecef;">
+                                        <option value="{{ $jadwalAktif->hari ?? '' }}" selected>
+                                            {{ $jadwalAktif->hari ?? '-' }}</option>
                                     </select>
                                 </div>
 
-                                {{-- Tanggal --}}
+                                {{-- Tanggal: Otomatis Hari Ini --}}
                                 <div class="mb-3">
                                     <label class="form-label">Tanggal</label>
-                                    <input type="date" name="tanggal" class="form-control" required>
+                                    <input type="date" name="tanggal" class="form-control" value="{{ date('Y-m-d') }}"
+                                        readonly style="background-color: #e9ecef;">
                                 </div>
 
-                                {{-- Waktu --}}
+                                {{-- Waktu: Otomatis Jam Sekarang --}}
                                 <div class="mb-3">
                                     <label class="form-label">Waktu</label>
-                                    <input type="time" name="waktu" class="form-control" required>
+                                    <input type="time" name="waktu" class="form-control" value="{{ date('H:i') }}"
+                                        readonly style="background-color: #e9ecef;">
                                 </div>
 
                             </div>
@@ -98,11 +106,12 @@
                             {{-- Kolom Kanan --}}
                             <div class="col-md-6">
 
-                                {{-- Mapel --}}
+                                {{-- Mapel: Otomatis ambil dari Jadwal --}}
                                 <div class="mb-3">
                                     <label class="form-label">Mapel</label>
-                                    <input type="text" name="mapel" class="form-control" placeholder="Contoh: IPAS"
-                                        required>
+                                    <input type="text" name="mapel" class="form-control"
+                                        value="{{ $jadwalAktif->mapel->nama_mapel ?? ($jadwalAktif->nama_mapel ?? '') }}"
+                                        readonly style="background-color: #e9ecef;">
                                 </div>
 
                                 {{-- Bukti Kehadiran --}}
@@ -119,7 +128,6 @@
 
                             </div>
                         </div>
-
                     </div>
 
                     <div class="modal-footer">

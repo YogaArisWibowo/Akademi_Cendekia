@@ -26,6 +26,8 @@ Route::get('/register', function () {
 })->name('register');
 
 
+
+
 Route::post('/register', [RegisterController::class, 'store'])->name('Register.post');
 
 Route::middleware(['auth', 'admin'])->group(function () {

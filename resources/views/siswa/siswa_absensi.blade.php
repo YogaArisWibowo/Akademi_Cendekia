@@ -33,10 +33,19 @@
         </form>
 
         {{-- Tombol Tambah --}}
+        {{-- Tombol Tambah: Hanya muncul jika ada jadwal aktif --}}
         <div class="col-md-3 text-end">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahModal">
-                Tambah +
-            </button>
+            @if ($jadwalAktif)
+                {{-- Jika waktunya pas, tombol muncul normal --}}
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahModal">
+                    Tambah +
+                </button>
+            @else
+                {{-- Jika diluar jam, tombol disable/info --}}
+                <button type="button" class="btn btn-secondary" disabled>
+                    Belum Waktunya Absen
+                </button>
+            @endif
         </div>
     </div>
     {{-- modal tambah absensi --}}
@@ -55,37 +64,39 @@
                         <div class="row">
                             {{-- Kolom Kiri --}}
                             <div class="col-md-6">
+
+                                {{-- INPUT HARI OTOMATIS (READONLY) --}}
                                 <div class="mb-3">
                                     <label class="form-label">Hari</label>
-                                    <select name="hari" class="form-control" required>
-                                        <option value="">-- Pilih Hari --</option>
-                                        <option>Senin</option>
-                                        <option>Selasa</option>
-                                        <option>Rabu</option>
-                                        <option>Kamis</option>
-                                        <option>Jumat</option>
-                                        <option>Sabtu</option>
-                                        <option>Minggu</option>
-                                    </select>
+                                    <input type="text" name="hari" class="form-control"
+                                        value="{{ $jadwalAktif->hari ?? '' }}" readonly>
                                 </div>
+
                                 <div class="mb-3">
                                     <label class="form-label">Tanggal</label>
-                                    <input type="date" name="tanggal" class="form-control" required>
+                                    {{-- Set tanggal hari ini otomatis --}}
+                                    <input type="date" name="tanggal" class="form-control" value="{{ date('Y-m-d') }}"
+                                        readonly>
                                 </div>
+
                                 <div class="mb-3">
                                     <label class="form-label">Waktu</label>
-                                    <input type="time" name="waktu" class="form-control" required>
+                                    {{-- Set jam sekarang otomatis --}}
+                                    <input type="time" name="waktu" class="form-control" value="{{ date('H:i') }}"
+                                        readonly>
                                 </div>
                             </div>
 
                             {{-- Kolom Kanan --}}
                             <div class="col-md-6">
+                                {{-- INPUT MAPEL OTOMATIS (READONLY) --}}
                                 <div class="mb-3">
                                     <label class="form-label">Mapel</label>
-                                    <input type="text" name="mapel" class="form-control" placeholder="Contoh: IPAS"
-                                        required>
+                                    <input type="text" name="mapel" class="form-control"
+                                        value="{{ $jadwalAktif->nama_mapel ?? '' }}" readonly>
                                 </div>
 
+                                {{-- Sisa input biarkan seperti semula --}}
                                 <div class="mb-3">
                                     <label class="form-label">Kehadiran</label>
                                     <select name="kehadiran" class="form-control" required>
@@ -95,6 +106,8 @@
                                         <option value="Sakit">Sakit</option>
                                     </select>
                                 </div>
+                                {{-- PERBAIKAN: Tambahkan ini agar 'id_jadwal_bimbel' terkirim ke controller --}}
+                                <input type="hidden" name="id_jadwal_bimbel" value="{{ $jadwalAktif->id ?? '' }}">
 
                                 {{-- TAMBAHAN INPUT BUKTI (Wajib ada karena Controller minta) --}}
                                 <div class="mb-3">

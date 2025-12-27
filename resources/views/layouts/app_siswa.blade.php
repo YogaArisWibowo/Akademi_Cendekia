@@ -24,6 +24,7 @@
     </div>
 
     {{-- Topbar --}}
+    {{-- Topbar Siswa --}}
     <div class="topbar">
         <button class="hamburger-btn" id="hamburgerBtn">
             <i class="bi bi-list"></i>
@@ -31,14 +32,41 @@
 
         <div class="title">{{ $title }}</div>
 
-        <div class="profile d-flex align-items-center">
-            <div class="vertical-line me-3 d-none d-md-block"></div>
-            <div class="profile-icon me-2 d-flex justify-content-center align-items-center">
-                <i class="bi bi-person-fill"></i>
+        {{-- Bagian Profile dengan Dropdown --}}
+        <div class="dropdown">
+            <div class="profile d-flex align-items-center" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false" style="cursor: pointer;">
+                <div class="vertical-line me-3 d-none d-md-block"></div>
+
+                <div class="profile-icon me-2 d-flex justify-content-center align-items-center">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+
+                <div class="d-none d-md-flex flex-column text-end me-2">
+                    {{-- Ambil Nama Siswa --}}
+                    <span class="fw-semibold text-dark" style="font-size: 0.9rem;">
+                        {{ Auth::user()->siswa->nama ?? Auth::user()->name }}
+                    </span>
+                    {{-- Ambil Jenjang dan Kelas (Contoh: SMA - X IPA 1) --}}
+                    <span class="text-muted" style="font-size: 0.75rem;">
+                        {{ Auth::user()->siswa->jenjang ?? '-' }} - {{ Auth::user()->siswa->kelas ?? '-' }}
+                    </span>
+                </div>
+
+                <i class="bi bi-caret-down-fill text-dark"></i>
             </div>
 
-            <span class="fw-semibold text-dark me-2 d-none d-md-inline">Guru MTK</span>
-            <i class="bi bi-caret-down-fill text-dark"></i>
+            {{-- Menu Dropdown Logout --}}
+            <ul class="dropdown-menu dropdown-menu-end mt-2">
+                <li>
+                    <form action="/logout" method="POST">
+                        @csrf
+                        <button type="submit" class="dropdown-item d-flex align-items-center text-danger">
+                            <i class="bi bi-box-arrow-right me-2"></i> Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
         </div>
     </div>
 

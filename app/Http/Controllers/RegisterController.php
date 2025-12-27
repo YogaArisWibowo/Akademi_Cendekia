@@ -59,7 +59,7 @@ class RegisterController extends Controller
                     'no_hp'            => $request->no_hp,
                     'pendidikan_terakhir' => $request->pendidikan_terakhir,
                 ]);
-                $redirect = redirect()->route('Login')('info', 'Pendaftaran Guru berhasil.');
+                $redirect = redirect()->route('Login')->with('info', 'Pendaftaran Guru berhasil.');
             } 
             
             else { // Siswa

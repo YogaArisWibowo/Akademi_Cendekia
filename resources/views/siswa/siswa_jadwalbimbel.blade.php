@@ -32,12 +32,8 @@
             </tbody>
         </table>
 
-        <div class="pagination-wrapper">
-            <button class="btn page">Sebelumnya</button>
-            <button class="btn page active">1</button>
-            <button class="btn page">2</button>
-            <button class="btn page">3</button>
-            <button class="btn page active">Selanjutnya</button>
+        <div class="d-flex justify-content-center mt-4">
+            {{ $jadwal->links('pagination::bootstrap-5') }}
         </div>
 
     </div>

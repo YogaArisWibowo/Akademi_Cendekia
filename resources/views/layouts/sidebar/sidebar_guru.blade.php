@@ -8,14 +8,14 @@
 
         <li class="menu-item {{ request()->routeIs('jadwal_mengajar') ? 'active' : '' }}">
             <a href="{{ route('jadwal_mengajar') }}">
-                <i class="bi bi-calendar-event-fill"></i>
+                <i class="bi bi-calendar3"></i>
                 Jadwal Mengajar
             </a>
         </li>
 
         <li class="menu-item {{ request()->routeIs('absensi_guru') ? 'active' : '' }}">
             <a href="{{ route('absensi_guru') }}">
-                <i class="bi bi-clipboard-check-fill"></i>
+                <i class="bi bi-check-square"></i>
                 Absensi
             </a>
         </li>
@@ -36,7 +36,7 @@
 
         <li class="menu-item {{ request()->routeIs('materi_pembelajaran') || request()->routeIs('detail_materi_pembelajaran') ? 'active' : '' }}">
             <a href="{{ route('materi_pembelajaran') }}">
-                <i class="bi bi-book-fill"></i>
+                <i class="bi bi-book"></i>
                 Materi Pembelajaran
             </a>
         </li>
