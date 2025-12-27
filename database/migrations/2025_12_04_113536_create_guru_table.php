@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('guru', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_user')->constrained('user')->onDelete('cascade');
+            $table->foreignId('id_user')->constrained('users')->onDelete('cascade');
             $table->char('nama', 50);
             $table->string('email', 50);// VARCHAR
-            $table->string('password', 8);// VARCHAR
             $table->string('pendidikan_terakhir', 50);// VARCHAR
             $table->char('mapel', 50);
             $table->string('no_hp', 14); // VARCHAR(14)
