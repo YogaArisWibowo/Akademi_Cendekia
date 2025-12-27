@@ -6,7 +6,6 @@
 
 <style>
     .swal2-container { z-index: 10000 !important; }
-    
     .tambah { 
         margin-bottom: 10px; display: flex; justify-content: center; color: white !important; border: none; 
         border-radius: 8px; background-color: #ffd700; font-weight: 600 !important; 
@@ -28,42 +27,11 @@
     }
     .status-aktif { background-color: #52D669 !important; }
     .status-non-aktif { background-color: #FF7676 !important; }
-    .form-control { border-radius: 10px; }
-
-    /* Pagination Styling */
-    .pagination-wrapper {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        margin-top: 20px;
-    }
-    .pagination-container {
-        display: flex;
-        gap: 8px;
-        justify-content: center;
-    }
-    .btn-page {
-        border: 1px solid #e2e8f0;
-        background: white;
-        padding: 6px 14px;
-        border-radius: 8px;
-        font-size: 13px;
-        color: #4a5568;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-    .btn-page.active {
-        background-color: #ebf4ff;
-        color: #3182ce;
-        font-weight: 600;
-        border-color: #3182ce;
-    }
-    .btn-page:disabled {
-        cursor: default;
-        background-color: #f7fafc;
-        color: #cbd5e0;
-        border-color: #edf2f7;
-    }
+    
+    .pagination-wrapper { display: flex; justify-content: center; width: 100%; margin-top: 20px; }
+    .pagination-container { display: flex; gap: 8px; justify-content: center; }
+    .btn-page { border: 1px solid #e2e8f0; background: white; padding: 6px 14px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+    .btn-page.active { background-color: #ebf4ff; color: #3182ce; font-weight: 600; border-color: #3182ce; }
 </style>
 
 <div class="d-flex justify-content-between align-items-center mb-2 px-3">
@@ -75,7 +43,7 @@
         <table class="table-general" id="tableGuru">
             <thead>
                 <tr>
-                    <th>No</th><th>Nama</th><th>Mapel</th><th>No HP</th><th>Alamat</th><th>Pendidikan</th><th>E-Wallet</th><th>Rekening</th><th>Status</th><th class="text-center">Aksi</th>
+                    <th>No</th><th>Nama</th><th>Mapel</th><th>No HP</th><th>Alamat</th><th>Status</th><th class="text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -85,10 +53,7 @@
                     <td>{{ $g->nama }}</td>
                     <td>{{ $g->mapel }}</td>
                     <td>{{ $g->no_hp }}</td>
-                    <td>{{ \Str::limit($g->alamat_guru, 15) }}</td>
-                    <td>{{ $g->pendidikan_terakhir }}</td>
-                    <td>{{ $g->jenis_e_wallet }} ({{ $g->no_e_wallet }})</td>
-                    <td>{{ $g->rekening }}</td>
+                    <td>{{ \Str::limit($g->alamat_guru, 20) }}</td>
                     <td>
                         <select class="custom-status-dropdown select-status {{ strtolower($g->status_aktif) == 'aktif' ? 'status-aktif' : 'status-non-aktif' }}" data-id="{{ $g->id }}" data-tipe="guru">
                             <option value="aktif" {{ strtolower($g->status_aktif) == 'aktif' ? 'selected' : '' }}>Aktif</option>
@@ -117,7 +82,7 @@
         <table class="table-general" id="tableSiswa">
             <thead>
                 <tr>
-                    <th>No</th><th>Nama</th><th>Jenjang</th><th>No HP</th><th>Alamat</th><th>Kelas</th><th>Asal Sekolah</th><th>Orang Tua</th><th>Status</th><th class="text-center">Aksi</th>
+                    <th>No</th><th>Nama</th><th>Jenjang</th><th>No HP</th><th>Kelas</th><th>Status</th><th class="text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -127,10 +92,7 @@
                     <td>{{ $s->nama }}</td>
                     <td>{{ $s->jenjang }}</td>
                     <td>{{ $s->no_hp }}</td>
-                    <td>{{ \Str::limit($s->alamat, 15) }}</td>
                     <td>{{ $s->kelas }}</td>
-                    <td>{{ $s->asal_sekolah }}</td>
-                    <td>{{ $s->nama_orang_tua }}</td>
                     <td>
                         <select class="custom-status-dropdown select-status {{ strtolower($s->status_aktif) == 'aktif' ? 'status-aktif' : 'status-non-aktif' }}" data-id="{{ $s->id }}" data-tipe="siswa">
                             <option value="aktif" {{ strtolower($s->status_aktif) == 'aktif' ? 'selected' : '' }}>Aktif</option>
@@ -150,49 +112,207 @@
     </div>
 </div>
 
-{{-- MODAL GURU & SISWA TETAP SAMA SEPERTI KODE SEBELUMNYA --}}
+<div class="modal fade" id="modalGuru" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form id="formGuru" method="POST">
+            @csrf
+            <div id="methodGuru"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Form Guru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Nama Lengkap</label>
+                            <input type="text" name="nama" id="g_nama" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Mata Pelajaran</label>
+                            <input type="text" name="mapel" id="g_mapel" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>No HP (WhatsApp)</label>
+                            <input type="text" name="no_hp" id="g_no_hp" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Pendidikan Terakhir</label>
+                            <input type="text" name="pendidikan_terakhir" id="g_pendidikan" class="form-control">
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label>Alamat Lengkap</label>
+                            <textarea name="alamat_guru" id="g_alamat" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Jenis E-Wallet</label>
+                            <input type="text" name="jenis_e_wallet" id="g_wallet_tipe" class="form-control" placeholder="Dana/OVO/dll">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>No E-Wallet</label>
+                            <input type="text" name="no_e_wallet" id="g_wallet_no" class="form-control">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Rekening Bank</label>
+                            <input type="text" name="rekening" id="g_rekening" class="form-control" placeholder="BCA - 123456">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Simpan Data</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="modalSiswa" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form id="formSiswa" method="POST">
+            @csrf
+            <div id="methodSiswa"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Form Siswa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Nama Siswa</label>
+                            <input type="text" name="nama" id="s_nama" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Jenjang</label>
+                            <select name="jenjang" id="s_jenjang" class="form-control">
+                                <option value="SD">SD</option>
+                                <option value="SMP">SMP</option>
+                                <option value="SMA">SMA</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Kelas</label>
+                            <input type="text" name="kelas" id="s_kelas" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>No HP</label>
+                            <input type="text" name="no_hp" id="s_no_hp" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Asal Sekolah</label>
+                            <input type="text" name="asal_sekolah" id="s_asal_sekolah" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Nama Orang Tua</label>
+                            <input type="text" name="nama_orang_tua" id="s_ortu" class="form-control">
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label>Alamat Lengkap</label>
+                            <textarea name="alamat" id="s_alamat" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Simpan Data</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    const dataGuru = JSON.parse('{!! json_encode($guru->keyBy("id")) !!}');
-    const dataSiswa = JSON.parse('{!! json_encode($siswa->keyBy("id")) !!}');
+    const dataGuru = JSON.parse('{!! addslashes(json_encode($guru->keyBy("id"))) !!}');
+    const dataSiswa = JSON.parse('{!! addslashes(json_encode($siswa->keyBy("id"))) !!}');
 
     $(document).ready(function() {
         const mGuru = new bootstrap.Modal(document.getElementById('modalGuru'));
         const mSiswa = new bootstrap.Modal(document.getElementById('modalSiswa'));
 
-        // --- LOGIKA PAGINATION DINAMIS ---
-        function createPagination(tableId, paginationId) {
+        // --- PAGINATION LOGIC ---
+        function setupPagination(tableId, paginationId) {
             const rowsPerPage = 10;
             let currentPage = 1;
-            const $rows = $(`#${tableId} tbody tr`);
+            const $table = $(`#${tableId}`);
             
             function render() {
-                const totalPages = Math.ceil($rows.length / rowsPerPage);
+                const $rows = $table.find('tbody tr');
+                const totalRows = $rows.length;
+                const totalPages = Math.ceil(totalRows / rowsPerPage);
                 const $container = $(`#${paginationId}`);
+                
                 $container.empty();
-
                 if (totalPages > 1) {
-                    $container.append(`<button class="btn-page prev" ${currentPage === 1 ? 'disabled' : ''}>Sebelumnya</button>`);
+                    $container.append(`<button class="btn-page prev" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`);
                     for (let i = 1; i <= totalPages; i++) {
                         $container.append(`<button class="btn-page num ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`);
                     }
-                    $container.append(`<button class="btn-page next" ${currentPage === totalPages ? 'disabled' : ''}>Selanjutnya</button>`);
+                    $container.append(`<button class="btn-page next" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`);
                 }
                 $rows.hide().slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage).show();
             }
 
-            $(document).on('click', `#${paginationId} .num`, function() { currentPage = parseInt($(this).data('page')); render(); });
+            $(document).on('click', `#${paginationId} .num`, function() { currentPage = $(this).data('page'); render(); });
             $(document).on('click', `#${paginationId} .prev`, function() { if (currentPage > 1) { currentPage--; render(); } });
-            $(document).on('click', `#${paginationId} .next`, function() { if (currentPage < Math.ceil($rows.length / rowsPerPage)) { currentPage++; render(); } });
-
+            $(document).on('click', `#${paginationId} .next`, function() { if (currentPage < 100) { currentPage++; render(); } });
             render();
         }
 
-        createPagination('tableGuru', 'paginationGuru');
-        createPagination('tableSiswa', 'paginationSiswa');
+        setupPagination('tableGuru', 'paginationGuru');
+        setupPagination('tableSiswa', 'paginationSiswa');
 
-        // ... Logika AJAX Status & Edit Modal (Jangan Ubah) ...
+        // --- TAMBAH DATA ---
+        $('#btn-tambah-guru').click(function() {
+            $('#modalGuru .modal-title').text('Tambah Data Guru');
+            $('#formGuru').attr('action', '/admin/guru/store');
+            $('#methodGuru').empty();
+            $('#formGuru')[0].reset();
+            mGuru.show();
+        });
+
+        $('#btn-tambah-siswa').click(function() {
+            $('#modalSiswa .modal-title').text('Tambah Data Siswa');
+            $('#formSiswa').attr('action', '/admin/siswa/store');
+            $('#methodSiswa').empty();
+            $('#formSiswa')[0].reset();
+            mSiswa.show();
+        });
+
+        // --- EDIT DATA ---
+        $('.btn-edit-guru').click(function() {
+            const id = $(this).data('id');
+            const g = dataGuru[id];
+            $('#modalGuru .modal-title').text('Edit Data Guru');
+            $('#formGuru').attr('action', '/admin/guru/update/' + id);
+            $('#methodGuru').html('<input type="hidden" name="_method" value="PUT">');
+            
+            $('#g_nama').val(g.nama);
+            $('#g_mapel').val(g.mapel);
+            $('#g_no_hp').val(g.no_hp);
+            $('#g_pendidikan').val(g.pendidikan_terakhir);
+            $('#g_alamat').val(g.alamat_guru);
+            $('#g_wallet_tipe').val(g.jenis_e_wallet);
+            $('#g_wallet_no').val(g.no_e_wallet);
+            $('#g_rekening').val(g.rekening);
+            mGuru.show();
+        });
+
+        $('.btn-edit-siswa').click(function() {
+            const id = $(this).data('id');
+            const s = dataSiswa[id];
+            $('#modalSiswa .modal-title').text('Edit Data Siswa');
+            $('#formSiswa').attr('action', '/admin/siswa/update/' + id);
+            $('#methodSiswa').html('<input type="hidden" name="_method" value="PUT">');
+            
+            $('#s_nama').val(s.nama);
+            $('#s_jenjang').val(s.jenjang);
+            $('#s_kelas').val(s.kelas);
+            $('#s_no_hp').val(s.no_hp);
+            $('#s_asal_sekolah').val(s.asal_sekolah);
+            $('#s_ortu').val(s.nama_orang_tua);
+            $('#s_alamat').val(s.alamat);
+            mSiswa.show();
+        });
     });
 </script>
 @endsection
