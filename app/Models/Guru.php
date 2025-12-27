@@ -29,6 +29,7 @@ class Guru extends Authenticatable
         'no_e_wallet',
         'rekening',
         'pendidikan_terakhir',
+        'status_aktif'
     ];
 
     /**

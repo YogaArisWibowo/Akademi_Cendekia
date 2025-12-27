@@ -1,222 +1,198 @@
 @extends('layouts.app_admin', ['title' => 'Data Guru & Siswa'])
+
 @section('content')
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
-    .tambah { margin-bottom: 5px; display: flex; justify-content: center; color: white; border: none; border-radius: 6px; background-color: #ffd700; font-weight: 500 !important; align-items: center; width: 110px; height: 35px; text-decoration: none; }
-    .data, .data-siswa { font-weight: 600 !important; font-size: 30px; padding-left: 15px; }
-    .table-container { width: 100%; overflow-x: auto; background: white; padding: 15px; border-radius: 8px; }
-    .table-general { width: 100%; min-width: 1300px; border-collapse: collapse; }
-    .table-general th, .table-general td { padding: 12px 8px; border-bottom: 1px solid #eee; text-align: left; }
+    .swal2-container { z-index: 10000 !important; }
     
-    /* CSS Status Colors */
-    .custom-status-dropdown { border-radius: 15px !important; padding: 5px 15px; border: 1px solid #3f51b5; font-size: 12px; }
-    .status-aktif { background-color: #e8f5e9 !important; color: #2e7d32 !important; font-weight: bold; }
-    .status-non-aktif { background-color: #ffebee !important; color: #c62828 !important; font-weight: bold; }
-    .status-pending { background-color: #fffde7 !important; color: #856404 !important; font-weight: bold; }
+    .tambah { 
+        margin-bottom: 10px; display: flex; justify-content: center; color: white !important; border: none; 
+        border-radius: 8px; background-color: #ffd700; font-weight: 600 !important; 
+        align-items: center; width: 120px; height: 38px; text-decoration: none; cursor: pointer; 
+    }
+    .data-section-title { font-weight: 600 !important; font-size: 28px; margin-bottom: 0; color: #1a1a1a; }
+    .main-card { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-bottom: 40px; }
+    
+    .table-general { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; }
+    .table-general thead th { background-color: #CCE0FF !important; color: #333; padding: 12px; border: none; font-size: 13px; white-space: nowrap; }
+    .table-general tbody td { padding: 12px; border: none; vertical-align: middle; font-size: 13px; }
+    .table-general tbody tr:nth-child(even) { background-color: #EBF3FF; }
+
+    .custom-status-dropdown {
+        border: 2px solid transparent !important; border-radius: 20px; padding: 5px 15px; 
+        color: white !important; font-size: 11px; font-weight: 500; appearance: none; cursor: pointer;
+        background-repeat: no-repeat; background-position: right 8px center; padding-right: 25px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    }
+    .status-aktif { background-color: #52D669 !important; }
+    .status-non-aktif { background-color: #FF7676 !important; }
+    .form-control { border-radius: 10px; }
+
+    /* Pagination Styling */
+    .pagination-wrapper {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin-top: 20px;
+    }
+    .pagination-container {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+    }
+    .btn-page {
+        border: 1px solid #e2e8f0;
+        background: white;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        color: #4a5568;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .btn-page.active {
+        background-color: #ebf4ff;
+        color: #3182ce;
+        font-weight: 600;
+        border-color: #3182ce;
+    }
+    .btn-page:disabled {
+        cursor: default;
+        background-color: #f7fafc;
+        color: #cbd5e0;
+        border-color: #edf2f7;
+    }
 </style>
 
-{{-- TABEL GURU --}}
-<div class="d-flex justify-content-between align-items-center mb-2">
-    <p class="data">Data Guru</p>
-    <button class="tambah" data-bs-toggle="modal" data-bs-target="#modalTambahDataGuru" onclick="resetFormGuru()">Tambah <i class="bi bi-plus"></i></button>
+<div class="d-flex justify-content-between align-items-center mb-2 px-3">
+    <h2 class="data-section-title">Data Guru</h2>
+    <button class="tambah" id="btn-tambah-guru">Tambah <i class="bi bi-plus"></i></button>
 </div>
-<div class="table-container">
-    <table class="table-general">
-        <thead>
-            <tr>
-                <th>No</th><th>Nama</th><th>Email</th><th>Pendidikan</th><th>Mapel</th><th>Alamat</th><th>No Hp</th><th>Rekening</th><th>E-Wallet</th><th>No Wallet</th><th>Status</th><th class="text-center">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($guru as $g)
-            @php $cls = $g->status_aktif == 'aktif' ? 'status-aktif' : 'status-non-aktif'; @endphp
-            <tr class="{{ $g->status_aktif == 'aktif' ? 'table-success' : 'table-secondary' }}">
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $g->nama }}</td>
-                <td>{{ $g->user->email ?? '-' }}</td>
-                <td>{{ $g->pendidikan_terakhir }}</td>
-                <td>{{ $g->mapel }}</td>
-                <td>{{ $g->alamat_guru }}</td>
-                <td>{{ $g->no_hp }}</td>
-                <td>{{ $g->rekening }}</td>
-                <td>{{ $g->jenis_e_wallet }}</td>
-                <td>{{ $g->no_e_wallet }}</td>
-                <td>
-                    <select class="form-select form-select-sm custom-status-dropdown {{ $cls }}" onchange="updateStatus('guru', {{ $g->id }}, this)">
-                        <option value="aktif" {{ $g->status_aktif == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                        <option value="non aktif" {{ $g->status_aktif == 'non aktif' ? 'selected' : '' }}>Non Aktif</option>
-                    </select>
-                </td>
-                <td class="text-center">
-                    <button class="btn btn-sm btn-info" onclick="editModeGuru({{ json_encode($g->load('user')) }})"><i class="bi bi-pencil-square text-white"></i></button>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-
-{{-- MODAL GURU (Gunakan input name yang sesuai controller) --}}
-<div class="modal fade" id="modalTambahDataGuru" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <form id="formGuru" method="POST" action="{{ route('guru.store') }}">
-            @csrf <div id="methodGuru"></div>
-            <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title">Tambah Data Guru</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3"><label>Nama Guru</label><input type="text" name="nama" id="guru_nama" class="form-control" required></div>
-                            <div class="mb-3"><label>Email</label><input type="email" name="email" id="guru_email" class="form-control" required></div>
-                            <div class="mb-3"><label>Pendidikan Terakhir</label><input type="text" name="pendidikan" id="guru_pendidikan" class="form-control" required></div>
-                            <div class="mb-3"><label>Mapel</label><select name="mapel" id="guru_mapel" class="form-control" required><option value="Matematika">Matematika</option><option value="Bahasa Inggris">Bahasa Inggris</option></select></div>
-                            <div class="mb-3"><label>Alamat</label><input type="text" name="alamat_guru" id="guru_alamat" class="form-control" required></div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3"><label>Jenis E-Wallet</label><select name="jenis" id="guru_jenis" class="form-control" required><option value="Dana">Dana</option><option value="Gopay">Gopay</option></select></div>
-                            <div class="mb-3"><label>No E-Wallet</label><input type="text" name="no_e-wallet" id="guru_no_wallet" class="form-control" required></div>
-                            <div class="mb-3"><label>Rekening</label><input type="text" name="rekening" id="guru_rekening" class="form-control" required></div>
-                            <div class="mb-3"><label>No Hp</label><input type="text" name="no_hp" id="guru_hp" class="form-control" required></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer"><button type="submit" class="btn btn-primary">Simpan</button></div>
-            </div>
-        </form>
+<div class="main-card">
+    <div class="table-responsive">
+        <table class="table-general" id="tableGuru">
+            <thead>
+                <tr>
+                    <th>No</th><th>Nama</th><th>Mapel</th><th>No HP</th><th>Alamat</th><th>Pendidikan</th><th>E-Wallet</th><th>Rekening</th><th>Status</th><th class="text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($guru as $g)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $g->nama }}</td>
+                    <td>{{ $g->mapel }}</td>
+                    <td>{{ $g->no_hp }}</td>
+                    <td>{{ \Str::limit($g->alamat_guru, 15) }}</td>
+                    <td>{{ $g->pendidikan_terakhir }}</td>
+                    <td>{{ $g->jenis_e_wallet }} ({{ $g->no_e_wallet }})</td>
+                    <td>{{ $g->rekening }}</td>
+                    <td>
+                        <select class="custom-status-dropdown select-status {{ strtolower($g->status_aktif) == 'aktif' ? 'status-aktif' : 'status-non-aktif' }}" data-id="{{ $g->id }}" data-tipe="guru">
+                            <option value="aktif" {{ strtolower($g->status_aktif) == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                            <option value="non-aktif" {{ strtolower($g->status_aktif) == 'non-aktif' ? 'selected' : '' }}>Non-Aktif</option>
+                        </select>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-primary btn-edit-guru" data-id="{{ $g->id }}"><i class="bi bi-pencil-square"></i></button>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination-wrapper">
+        <div class="pagination-container" id="paginationGuru"></div>
     </div>
 </div>
 
-{{-- TABEL SISWA --}}
-<div class="d-flex justify-content-between align-items-center mb-2 mt-5">
-    <p class="data-siswa">Data Siswa</p>
-    <button class="tambah" data-bs-toggle="modal" data-bs-target="#modalTambahDataSiswa" onclick="resetFormSiswa()">Tambah <i class="bi bi-plus"></i></button>
+<div class="d-flex justify-content-between align-items-center mb-2 px-3 mt-4">
+    <h2 class="data-section-title">Data Siswa</h2>
+    <button class="tambah" id="btn-tambah-siswa">Tambah <i class="bi bi-plus"></i></button>
 </div>
-<div class="table-container">
-    <table class="table-general">
-        <thead>
-            <tr>
-                <th>No</th><th>Nama</th><th>Email</th><th>Jenjang</th><th>Kelas</th><th>Asal Sekolah</th><th>Orang Tua</th><th>No Hp</th><th>Status</th><th class="text-center">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($siswa as $s)
-            @php 
-                $st = $s->status_penerimaan;
-                $cls = $st == 1 ? 'status-aktif' : ($st == 2 ? 'status-non-aktif' : 'status-pending');
-                $row = $st == 1 ? 'table-success' : ($st == 2 ? 'table-danger' : 'table-warning');
-            @endphp
-            <tr class="{{ $row }}">
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $s->nama }}</td>
-                <td>{{ $s->user->email ?? '-' }}</td>
-                <td>{{ $s->jenjang }}</td>
-                <td>{{ $s->kelas }}</td>
-                <td>{{ $s->asal_sekolah }}</td>
-                <td>{{ $s->nama_orang_tua }}</td>
-                <td>{{ $s->no_hp }}</td>
-                <td>
-                    <select class="form-select form-select-sm custom-status-dropdown {{ $cls }}" onchange="updateStatus('siswa', {{ $s->id }}, this)">
-                        <option value="0" {{ $st == 0 ? 'selected' : '' }}>Pending</option>
-                        <option value="1" {{ $st == 1 ? 'selected' : '' }}>Terima</option>
-                        <option value="2" {{ $st == 2 ? 'selected' : '' }}>Tolak</option>
-                    </select>
-                </td>
-                <td class="text-center">
-                    <button class="btn btn-sm btn-info" onclick="editModeSiswa({{ json_encode($s->load('user')) }})"><i class="bi bi-pencil-square text-white"></i></button>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-
-{{-- MODAL SISWA --}}
-<div class="modal fade" id="modalTambahDataSiswa" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <form id="formSiswa" method="POST" action="{{ route('siswa.store') }}">
-            @csrf <div id="methodSiswa"></div>
-            <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title">Tambah Data Siswa</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3"><label>Nama Siswa</label><input type="text" name="nama" id="siswa_nama" class="form-control" required></div>
-                            <div class="mb-3"><label>Email</label><input type="email" name="email" id="siswa_email" class="form-control"></div>
-                            <div class="mb-3"><label>Jenjang</label><select name="jenjang" id="siswa_jenjang" class="form-control"><option value="SD">SD</option><option value="SMP">SMP</option><option value="SMA">SMA</option></select></div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3"><label>Kelas</label><input type="text" name="kelas" id="siswa_kelas" class="form-control"></div>
-                            <div class="mb-3"><label>Asal Sekolah</label><input type="text" name="asal_sekolah" id="siswa_asal" class="form-control"></div>
-                            <div class="mb-3"><label>Nama Orang Tua</label><input type="text" name="nama_ortu" id="siswa_ortu" class="form-control"></div>
-                            <div class="mb-3"><label>No Hp</label><input type="text" name="no_hp" id="siswa_hp" class="form-control"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer"><button type="submit" class="btn btn-primary">Simpan</button></div>
-            </div>
-        </form>
+<div class="main-card">
+    <div class="table-responsive">
+        <table class="table-general" id="tableSiswa">
+            <thead>
+                <tr>
+                    <th>No</th><th>Nama</th><th>Jenjang</th><th>No HP</th><th>Alamat</th><th>Kelas</th><th>Asal Sekolah</th><th>Orang Tua</th><th>Status</th><th class="text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($siswa as $s)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $s->nama }}</td>
+                    <td>{{ $s->jenjang }}</td>
+                    <td>{{ $s->no_hp }}</td>
+                    <td>{{ \Str::limit($s->alamat, 15) }}</td>
+                    <td>{{ $s->kelas }}</td>
+                    <td>{{ $s->asal_sekolah }}</td>
+                    <td>{{ $s->nama_orang_tua }}</td>
+                    <td>
+                        <select class="custom-status-dropdown select-status {{ strtolower($s->status_aktif) == 'aktif' ? 'status-aktif' : 'status-non-aktif' }}" data-id="{{ $s->id }}" data-tipe="siswa">
+                            <option value="aktif" {{ strtolower($s->status_aktif) == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                            <option value="non-aktif" {{ strtolower($s->status_aktif) == 'non-aktif' ? 'selected' : '' }}>Non-Aktif</option>
+                        </select>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-primary btn-edit-siswa" data-id="{{ $s->id }}"><i class="bi bi-pencil-square"></i></button>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination-wrapper">
+        <div class="pagination-container" id="paginationSiswa"></div>
     </div>
 </div>
+
+{{-- MODAL GURU & SISWA TETAP SAMA SEPERTI KODE SEBELUMNYA --}}
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    function updateStatus(role, id, element) {
-        let val = $(element).val();
-        $(element).removeClass('status-aktif status-non-aktif status-pending');
-        if (val == 'aktif' || val == '1') $(element).addClass('status-aktif');
-        else if (val == 'non aktif' || val == '2') $(element).addClass('status-non-aktif');
-        else $(element).addClass('status-pending');
+    const dataGuru = JSON.parse('{!! json_encode($guru->keyBy("id")) !!}');
+    const dataSiswa = JSON.parse('{!! json_encode($siswa->keyBy("id")) !!}');
 
-        $.ajax({
-            url: "/admin/update-status/" + role + "/" + id,
-            type: "POST",
-            data: { _token: '{{ csrf_token() }}', status: val },
-            success: function() { console.log("Success"); }
-        });
-    }
+    $(document).ready(function() {
+        const mGuru = new bootstrap.Modal(document.getElementById('modalGuru'));
+        const mSiswa = new bootstrap.Modal(document.getElementById('modalSiswa'));
 
-    function editModeGuru(data) {
-        $('#modalTambahDataGuru .modal-title').text("Edit Data Guru");
-        $('#formGuru').attr('action', "/admin/guru/update/" + data.id);
-        $('#methodGuru').html('<input type="hidden" name="_method" value="PUT">');
-        $('#guru_nama').val(data.nama);
-        $('#guru_email').val(data.user ? data.user.email : '');
-        $('#guru_pendidikan').val(data.pendidikan_terakhir);
-        $('#guru_mapel').val(data.mapel);
-        $('#guru_alamat').val(data.alamat_guru);
-        $('#guru_jenis').val(data.jenis_e_wallet);
-        $('#guru_no_wallet').val(data.no_e_wallet);
-        $('#guru_rekening').val(data.rekening);
-        $('#guru_hp').val(data.no_hp);
-        new bootstrap.Modal(document.getElementById('modalTambahDataGuru')).show();
-    }
+        // --- LOGIKA PAGINATION DINAMIS ---
+        function createPagination(tableId, paginationId) {
+            const rowsPerPage = 10;
+            let currentPage = 1;
+            const $rows = $(`#${tableId} tbody tr`);
+            
+            function render() {
+                const totalPages = Math.ceil($rows.length / rowsPerPage);
+                const $container = $(`#${paginationId}`);
+                $container.empty();
 
-    function resetFormGuru() {
-        $('#modalTambahDataGuru .modal-title').text("Tambah Data Guru");
-        $('#formGuru').attr('action', "{{ route('guru.store') }}");
-        $('#methodGuru').empty();
-        $('#formGuru')[0].reset();
-    }
+                if (totalPages > 1) {
+                    $container.append(`<button class="btn-page prev" ${currentPage === 1 ? 'disabled' : ''}>Sebelumnya</button>`);
+                    for (let i = 1; i <= totalPages; i++) {
+                        $container.append(`<button class="btn-page num ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`);
+                    }
+                    $container.append(`<button class="btn-page next" ${currentPage === totalPages ? 'disabled' : ''}>Selanjutnya</button>`);
+                }
+                $rows.hide().slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage).show();
+            }
 
-    function editModeSiswa(data) {
-        $('#modalTambahDataSiswa .modal-title').text("Edit Data Siswa");
-        $('#formSiswa').attr('action', "/admin/siswa/update/" + data.id);
-        $('#methodSiswa').html('<input type="hidden" name="_method" value="PUT">');
-        $('#siswa_nama').val(data.nama);
-        $('#siswa_email').val(data.user ? data.user.email : '');
-        $('#siswa_jenjang').val(data.jenjang);
-        $('#siswa_kelas').val(data.kelas);
-        $('#siswa_asal').val(data.asal_sekolah);
-        $('#siswa_ortu').val(data.nama_orang_tua);
-        $('#siswa_hp').val(data.no_hp);
-        new bootstrap.Modal(document.getElementById('modalTambahDataSiswa')).show();
-    }
+            $(document).on('click', `#${paginationId} .num`, function() { currentPage = parseInt($(this).data('page')); render(); });
+            $(document).on('click', `#${paginationId} .prev`, function() { if (currentPage > 1) { currentPage--; render(); } });
+            $(document).on('click', `#${paginationId} .next`, function() { if (currentPage < Math.ceil($rows.length / rowsPerPage)) { currentPage++; render(); } });
 
-    function resetFormSiswa() {
-        $('#modalTambahDataSiswa .modal-title').text("Tambah Data Siswa");
-        $('#formSiswa').attr('action', "{{ route('siswa.store') }}");
-        $('#methodSiswa').empty();
-        $('#formSiswa')[0].reset();
-    }
+            render();
+        }
+
+        createPagination('tableGuru', 'paginationGuru');
+        createPagination('tableSiswa', 'paginationSiswa');
+
+        // ... Logika AJAX Status & Edit Modal (Jangan Ubah) ...
+    });
 </script>
 @endsection

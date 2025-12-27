@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -9,9 +8,10 @@ class JadwalBimbel extends Model
     protected $table = 'jadwal_bimbel';
 
     protected $fillable = [
-        'id_guru',
         'id_siswa',
+        'id_guru',
         'id_mapel',
+        'created_at',
         'hari',
         'waktu_mulai',
         'waktu_selesai',
@@ -19,21 +19,7 @@ class JadwalBimbel extends Model
         'alamat_siswa'
     ];
 
-    // Relasi ke tabel guru
-    public function guru()
-    {
-        return $this->belongsTo(Guru::class, 'id_guru');
-    }
-
-    // Relasi ke tabel siswa
-    public function siswa()
-    {
-        return $this->belongsTo(Siswa::class, 'id_siswa');
-    }
-
-    // Relasi ke tabel mapel
-    public function mapel()
-    {
-        return $this->belongsTo(Mapel::class, 'id_mapel');
-    }
+    public function guru() { return $this->belongsTo(Guru::class, 'id_guru'); }
+    public function siswa() { return $this->belongsTo(Siswa::class, 'id_siswa'); }
+    public function mapel() { return $this->belongsTo(Mapel::class, 'id_mapel'); }
 }

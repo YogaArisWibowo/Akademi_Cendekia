@@ -32,9 +32,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Halaman Utama Data Guru & Siswa
     Route::get('/admin/admin_Data_GurudanSiswa', [AdminController::class, 'dataPengguna'])->name('admin_Data_GurudanSiswa');
     Route::post('/admin/store-guru', [AdminController::class, 'storeGuru'])->name('guru.store');
-    Route::put('/admin/guru/update/{id}', [AdminController::class, 'updateGuru'])->name('guru.update');
+    Route::put('/admin/guru/update-status/{id}', [AdminController::class, 'updateGuru'])->name('guru.update');
     Route::post('/admin/store-siswa', [AdminController::class, 'storeSiswa'])->name('siswa.store');
-    Route::put('/admin/siswa/update/{id}', [AdminController::class, 'updateSiswa'])->name('siswa.update');
+    Route::put('/admin/siswa/update-status/{id}', [AdminController::class, 'updateSiswa'])->name('siswa.update');
     Route::post('/admin/update-status/{role}/{id}', [AdminController::class, 'updateStatus']);
     
     Route::get('/admin/admin_Pencatatan_Gaji_Guru', function () {
@@ -93,7 +93,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
         return view('admin.detail_laporan_perkembangan_siswa ');
     })->name('admin_detail_laporan_perkembangan_siswa');
 
-    Route::get('/admin/admin_jadwal_bimbel',[JadwalController::class, 'adminindex'])->name('admin_Jadwal_Bimbel');
+    Route::get('/admin/admin_jadwal_bimbel', [JadwalController::class, 'index'])->name('admin_Jadwal_Bimbel');
+    Route::post('/admin/admin_jadwal_bimbel/store', [JadwalController::class, 'store'])->name('jadwal.store');
+    Route::put('/admin/admin_jadwal_bimbel/update/{id}', [JadwalController::class, 'update'])->name('jadwal.update');
+    Route::delete('/delete/{id}', [JadwalController::class, 'destroy'])->name('jadwal.destroy');
     Route::get('/admin/admin_Penerimaan_Siswa', [Penerimaan_Siswacontroller::class, 'index'])->name('admin_Penerimaan_Siswa');
     Route::post('/admin/update-status-siswa/{id}', [Penerimaan_Siswacontroller::class, 'updateStatusSiswa'])->name('update.status.siswa');
 });

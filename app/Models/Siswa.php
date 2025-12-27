@@ -19,7 +19,8 @@ class Siswa extends Authenticatable
         'kelas', 
         'asal_sekolah', 
         'nama_orang_tua', 
-        'status_penerimaan'
+        'status_penerimaan'.
+        'status_aktif'
     ];
 
     public function user()
