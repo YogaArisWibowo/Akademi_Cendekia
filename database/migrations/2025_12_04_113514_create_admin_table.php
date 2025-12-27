@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('admin', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_user')->constrained('user')->onDelete('cascade');
+            // Ubah 'user' menjadi 'users'
+            $table->foreignId('id_user')->constrained('users')->onDelete('cascade');
             $table->string('nama');
-            $table->string('username',50);
-            $table->string('password',8);
+            $table->string('username', 50);
+            $table->string('password', 8); // Hati-hati, password hash biasanya butuh 60+ karakter (string default 255)
             $table->timestamps();
         });
     }
