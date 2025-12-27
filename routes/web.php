@@ -25,7 +25,7 @@ Route::get('/register', function () {
     return view('register');
 })->name('register');
 
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
 
 
 Route::post('/register', [RegisterController::class, 'store'])->name('Register.post');

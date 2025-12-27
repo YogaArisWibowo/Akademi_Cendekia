@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use App\Models\JadwalBimbel;
 use App\Models\TugasSiswa;
 use App\Models\MateriPembelajaran;
@@ -22,7 +23,15 @@ class GuruController extends Controller
     // UNTUK MENAMPILKAN JADWAL 
     public function jadwalMengajar()
     {
-        $jadwal = JadwalBimbel::with(['guru', 'siswa', 'mapel'])->get();
+        // 1. Ambil ID Guru dari user yang sedang login
+        // Kita menggunakan relasi 'guru' yang ada di model User
+        $idGuru = Auth::user()->guru->id;
+
+        // 2. Tambahkan filter ->where('id_guru', $idGuru)
+        $jadwal = JadwalBimbel::with(['guru', 'siswa', 'mapel'])
+            ->where('id_guru', $idGuru) // Filter di sini
+            ->orderBy('created_at', 'desc') // Opsional: Urutkan dari yang terbaru
+            ->paginate(10); // Gunakan paginate agar halaman tidak terlalu panjang
 
         return view('guru.jadwal_mengajar', compact('jadwal'));
     }
@@ -30,6 +39,7 @@ class GuruController extends Controller
     // UNTUK TAMBAH ABSENSI GURU
     public function index(Request $request)
     {
+        // --- BAGIAN 1: FILTER HISTORY ABSENSI ---
         $bulan = $request->bulan;
         $tahun = $request->tahun;
 
@@ -42,7 +52,45 @@ class GuruController extends Controller
             ->orderBy('tanggal', 'desc')
             ->get();
 
-        return view('guru.absensi', compact('data', 'bulan', 'tahun'));
+        // --- BAGIAN 2: LOGIKA PENGECEKAN JADWAL (PERBAIKAN) ---
+
+        // 1. Ambil Waktu Sekarang
+        $waktuSekarang = Carbon::now();
+        $jamSekarang = $waktuSekarang->format('H:i:s'); // Jam Server (WIB jika config sudah benar)
+
+        // 2. Mapping Hari Manual (Inggris -> Indo Uppercase)
+        // Ini solusi untuk masalah "Saturday" vs "SABTU"
+        $hariInggris = $waktuSekarang->format('l');
+
+        $mapHari = [
+            'Sunday'    => 'MINGGU',
+            'Monday'    => 'SENIN',
+            'Tuesday'   => 'SELASA',
+            'Wednesday' => 'RABU',
+            'Thursday'  => 'KAMIS',
+            'Friday'    => 'JUMAT',
+            'Saturday'  => 'SABTU'
+        ];
+
+        // Pakai array map, jika tidak ketemu default ke string aslinya
+        $hariIni = $mapHari[$hariInggris] ?? strtoupper($hariInggris);
+
+        // 3. Ambil ID Guru yang sedang login
+        $idGuru = Auth::user()->guru->id;
+
+        // 4. Cari Jadwal yang Sesuai
+        // Logika: Guru Benar + Hari Benar + Jam Sekarang ada di antara Mulai & Selesai
+        $jadwalAktif = JadwalBimbel::where('id_guru', $idGuru)
+            ->where('hari', $hariIni) // Menggunakan hasil mapping (misal: SABTU)
+            ->whereTime('waktu_mulai', '<=', $jamSekarang)
+            ->whereTime('waktu_selesai', '>=', $jamSekarang)
+            ->first();
+
+        // Debugging (Opsional: Hapus tanda komentar // di bawah jika ingin cek isi variabel di layar)
+        // dd($hariIni, $jamSekarang, $jadwalAktif);
+
+        // --- BAGIAN 3: LEMPAR KE VIEW ---
+        return view('guru.absensi', compact('data', 'bulan', 'tahun', 'jadwalAktif'));
     }
 
     public function store(Request $request)
@@ -52,19 +100,19 @@ class GuruController extends Controller
             'tanggal' => 'required|date',
             'waktu' => 'required',
             'mapel' => 'required',
-            'bukti' => 'required|mimes:jpg,jpeg',
-            'catatan' => 'nullable'
+            'bukti' => 'required|mimes:jpg,jpeg,png', // Tambahkan png jika perlu
+            'catatan' => 'nullable',
+            'id_jadwal_bimbel' => 'required'
         ]);
 
-        // Simpan file bukti foto
         $file = $request->file('bukti');
         $namaFile = time() . '_' . $file->getClientOriginalName();
         $file->move(public_path('bukti_absensi'), $namaFile);
 
         AbsensiGuru::create([
-            'id_guru' => 1,
-            'id_jadwal_bimbel' => 1,
-            'mapel' => $request->mapel, // INI WAJIB ADA
+            'id_guru' => Auth::user()->guru->id,
+            'id_jadwal_bimbel' => $request->id_jadwal_bimbel,
+            'mapel' => $request->mapel,
             'bukti_foto' => $namaFile,
             'laporan_kegiatan' => $request->catatan,
             'hari' => $request->hari,

@@ -8,14 +8,14 @@
 
         <li class="menu-item {{ Request::is('jadwal_siswa') ? 'active' : '' }}">
             <a href="/jadwal_siswa">
-                <i class="bi bi-calendar-event-fill"></i>
+                <i class="bi bi-calendar3"></i>
                 Jadwal Bimbel
             </a>
         </li>
 
         <li class="menu-item {{ Request::is('siswa_absensi') ? 'active' : '' }}">
             <a href="/siswa_absensi">
-                <i class="bi bi-clipboard-check-fill"></i>
+                <i class="bi bi-check-square"></i>
                 Absensi
             </a>
         </li>
@@ -38,7 +38,7 @@
         <li
             class="menu-item {{ Request::is('siswa/siswa_daftarmateri') || Request::is('siswa/siswa_materi') ? 'active' : '' }}">
             <a href="/siswa/siswa_daftarmateri">
-                <i class="bi bi-book-fill"></i>
+                <i class="bi bi-book"></i>
                 Materi Pembelajaran
             </a>
         </li>

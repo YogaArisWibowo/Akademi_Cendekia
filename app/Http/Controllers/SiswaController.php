@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\AbsensiSiswa;
-
+use Illuminate\Support\Facades\Auth;
 use App\Models\JadwalBimbel;
 use App\Models\LaporanPerkembanganSiswa;
 use App\Models\PembayaranSiswa;
@@ -15,7 +16,22 @@ class SiswaController extends Controller
     //jadwal bimbel siswa
     public function jadwal()
     {
-        $jadwal = JadwalBimbel::with(['guru', 'siswa', 'mapel'])->get();
+        // 1. Ambil data siswa dari user yang sedang login
+        // Pastikan di Model User sudah ada relasi 'siswa' (seperti langkah sebelumnya)
+        $siswa = Auth::user()->siswa;
+
+        // Cek jaga-jaga jika akun user belum terhubung ke data siswa
+        if (!$siswa) {
+            return redirect()->back()->with('error', 'Data siswa tidak ditemukan untuk akun ini.');
+        }
+
+        // 2. Ambil jadwal hanya milik siswa tersebut
+        // Kita gunakan paginate() agar pagination di view nanti berfungsi (bukan get())
+        $jadwal = JadwalBimbel::with(['guru', 'siswa', 'mapel'])
+            ->where('id_siswa', $siswa->id) // <--- INI KUNCINYA
+            ->orderBy('hari', 'desc') // Opsional: urutkan data
+            ->paginate(10); // Menampilkan 10 data per halaman
+
         return view('siswa.siswa_jadwalbimbel', compact('jadwal'));
     }
 
@@ -24,75 +40,80 @@ class SiswaController extends Controller
     // TAMPILKAN HALAMAN ABSENSI + FILTER
     public function absensi(Request $request)
     {
-        // ... (kode absensi anda sudah benar, biarkan saja) ...
+        // 1. Setup Waktu & Hari (PENTING: Timezone Asia/Jakarta)
+        date_default_timezone_set('Asia/Jakarta');
+        Carbon::setLocale('id');
+
+        $waktuSekarang = Carbon::now();
+        $jamSekarang   = $waktuSekarang->format('H:i:s');
+        $hariInggris   = $waktuSekarang->format('l');
+
+        // Mapping Hari (Server Inggris -> DB Indonesia Uppercase)
+        $mapHari = [
+            'Sunday' => 'MINGGU',
+            'Monday' => 'SENIN',
+            'Tuesday' => 'SELASA',
+            'Wednesday' => 'RABU',
+            'Thursday' => 'KAMIS',
+            'Friday' => 'JUMAT',
+            'Saturday' => 'SABTU'
+        ];
+        $hariIni = $mapHari[$hariInggris];
+
+        // 2. Cari Jadwal Aktif untuk Siswa yang Login
+        // Asumsi: Anda punya relasi siswa di user, atau sesuaikan id_siswa
+        $idSiswa = Auth::user()->siswa->id ?? Auth::id();
+
+        $jadwalAktif = JadwalBimbel::where('id_siswa', $idSiswa)
+            ->where('hari', $hariIni)
+            ->whereTime('waktu_mulai', '<=', $jamSekarang)
+            ->whereTime('waktu_selesai', '>=', $jamSekarang)
+            ->first(); // Ambil 1 data saja
+
+        // 3. Ambil Data History Absensi (Kode lama Anda)
         $bulan = $request->bulan;
         $tahun = $request->tahun;
 
-        // Tips: Sebaiknya filter berdasarkan siswa yang login agar tidak melihat data orang lain
-        // $userId = Auth::id(); 
-
-        $data = AbsensiSiswa::when($bulan, fn($q) => $q->whereMonth('tanggal', $bulan))
+        // Filter history milik siswa ini saja
+        $data = AbsensiSiswa::where('id_siswa', $idSiswa)
+            ->when($bulan, fn($q) => $q->whereMonth('tanggal', $bulan))
             ->when($tahun, fn($q) => $q->whereYear('tanggal', $tahun))
             ->orderBy('tanggal', 'desc')
             ->get();
 
-        return view('siswa.siswa_absensi', compact('data', 'bulan', 'tahun'));
+        // Kirim $jadwalAktif ke view
+        return view('siswa.siswa_absensi', compact('data', 'bulan', 'tahun', 'jadwalAktif'));
     }
 
     public function store(Request $request)
     {
-        // 1. Validasi
         $request->validate([
-            'hari'      => 'required',
-            'tanggal'   => 'required|date',
-            'waktu'     => 'required',
-            'mapel'     => 'required',
             'kehadiran' => 'required',
-            'bukti'     => 'nullable|image|max:2048', // Validasi file (opsional, max 2MB)
+            'bukti'     => 'nullable|image|max:2048',
+            'id_jadwal_bimbel' => 'required' // Wajib ada dari hidden input
         ]);
 
         try {
-            // 2. Handle Upload Bukti (Cek dulu apakah ada file)
             $buktiPath = null;
             if ($request->hasFile('bukti')) {
-                // Simpan ke storage/app/public/bukti_absensi
                 $buktiPath = $request->file('bukti')->store('bukti_absensi', 'public');
             }
 
-            // 3. Cek Ketersediaan ID Jadwal Bimbel (PENTING!)
-            // Karena di database kolom id_jadwal_bimbel TIDAK BOLEH NULL,
-            // Kita harus pastikan ID 1 itu ada, atau gunakan trik ini.
-            $idJadwal = 1; // Default dummy
-
-            // Opsional: Cek apakah id 1 ada di tabel jadwal_bimbel, jika tidak ada, ambil id pertama yang ada
-            if (!JadwalBimbel::find($idJadwal)) {
-                // Jika ID 1 tidak ada, kita coba ambil sembarang ID yang ada agar tidak error Foreign Key
-                $firstJadwal = JadwalBimbel::first();
-                if ($firstJadwal) {
-                    $idJadwal = $firstJadwal->id;
-                } else {
-                    // Jika tabel jadwal kosong sama sekali, ini akan error. 
-                    // Solusi: Admin harus isi tabel jadwal_bimbel dulu minimal 1 data.
-                    return redirect()->back()->with('error', 'Data Jadwal Bimbel kosong. Hubungi Admin.');
-                }
-            }
-
-            // 4. Simpan Data
+            // Simpan Data
             AbsensiSiswa::create([
-                'id_siswa' => 1, // Sebaiknya ganti Auth::id() atau id siswa yang sedang login
-                'id_jadwal_bimbel' => $idJadwal,
+                'id_siswa' => Auth::user()->siswa->id, // Sesuaikan dengan auth anda
+                'id_jadwal_bimbel' => $request->id_jadwal_bimbel, // Ambil ID asli
                 'kehadiran' => $request->kehadiran,
                 'hari'      => $request->hari,
                 'tanggal'   => $request->tanggal,
                 'waktu'     => $request->waktu,
                 'mapel'     => $request->mapel,
                 'catatan'   => $request->catatan,
-                'bukti'     => $buktiPath, // Masukkan path file atau null
+                'bukti'     => $buktiPath,
             ]);
 
             return redirect()->route('absensi.index')->with('success', 'Absensi berhasil ditambahkan');
         } catch (\Exception $e) {
-            // Tampilkan error jika gagal (berguna untuk debugging)
             return redirect()->back()->with('error', 'Gagal menyimpan: ' . $e->getMessage());
         }
     }
@@ -135,7 +156,7 @@ class SiswaController extends Controller
 
             PembayaranSiswa::create([
                 'id_siswa'          => $idSiswa,
-                'tanggal_pembayaran'=> $request->tanggal_pembayaran,
+                'tanggal_pembayaran' => $request->tanggal_pembayaran,
                 'nama_orangtua'     => $request->nama_orangtua,
                 'nominal'           => $request->nominal,
                 'bukti_pembayaran'  => $buktiPath,
@@ -177,8 +198,8 @@ class SiswaController extends Controller
 
         // 1. Ambil Data Laporan (Paginate 5 atau 10 baris)
         $laporan = LaporanPerkembanganSiswa::where('id_siswa', $idSiswa)
-                    ->orderBy('tanggal', 'desc')
-                    ->paginate(5);
+            ->orderBy('tanggal', 'desc')
+            ->paginate(5);
         $rataRata = LaporanPerkembanganSiswa::where('id_siswa', $idSiswa)->avg('nilai_rata_rata');
 
         // Jika datanya kosong, set 0 agar tidak error
@@ -186,5 +207,4 @@ class SiswaController extends Controller
 
         return view('siswa.siswa_laporanperkembangan', compact('laporan', 'rataRata'));
     }
-
 }
