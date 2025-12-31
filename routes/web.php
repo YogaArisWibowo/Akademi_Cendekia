@@ -9,6 +9,8 @@ use App\Http\Controllers\Penerimaan_Siswacontroller;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\Logincontroller;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\GajiGuruController;
+use App\Http\Controllers\MapelController;
 
 Route::get('/', function () {
     return view('landingpages');
@@ -21,13 +23,7 @@ Route::get('/login', function () {
 
 Route::post('/login', [Logincontroller::class, 'authenticate'])->name('Login.post');
 
-Route::get('/register', function () {
-    return view('register');
-})->name('register');
-
-
-
-
+Route::get('/register', [RegisterController::class, 'index'])->name('register');
 Route::post('/register', [RegisterController::class, 'store'])->name('Register.post');
 
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -38,10 +34,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/store-siswa', [AdminController::class, 'storeSiswa'])->name('siswa.store');
     Route::put('/admin/siswa/update-status/{id}', [AdminController::class, 'updateSiswa'])->name('siswa.update');
     Route::post('/admin/update-status/{role}/{id}', [AdminController::class, 'updateStatus']);
+
+    Route::get('/admin/Tambah_Mapel', [MapelController::class, 'index'])->name('admin_Tambah_Mapel');
+    Route::post('/admin/Tambah_Mapel/store', [MapelController::class, 'store'])->name('mapel.store');
     
     Route::get('/admin/admin_Pencatatan_Gaji_Guru', function () {
     return view('admin.Pencatatan_Gaji_Guru');
     })->name('admin_Pencatatan_Gaji_Guru');
+
+    Route::get('/admin/admin_Pencatatan_Gaji_Guru', [GajiGuruController::class, 'index'])->name('admin_Pencatatan_Gaji_Guru');
 
     Route::get('/admin/admin_detail_pencatatan_gaji_guru', function () {
         return view('admin.detail_pencatatan_gaji_guru');

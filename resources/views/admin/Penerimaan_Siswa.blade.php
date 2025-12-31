@@ -58,7 +58,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function () {
-    // --- PAGINATION ---
+    // --- PAGINATION (Tetap Sama) ---
     const rowsPerPage = 10;
     let currentPage = 1;
     const $rows = $("#penerimaanTable tbody tr");
@@ -84,7 +84,38 @@ $(document).ready(function () {
 
     renderPagination();
 
-    // ... Logika AJAX Update Status (Jangan Ubah) ...
+    // --- AJAX UPDATE STATUS (PERBAIKAN DI SINI) ---
+    $(document).on("change", ".custom-status-dropdown", function () {
+    const statusVal = $(this).val(); 
+    const idSiswa = $(this).data("id"); 
+    const $dropdown = $(this);
+
+    $.ajax({
+        // Gunakan variabel idSiswa untuk mengisi {id}
+        url: "/admin/update-status-siswa/" + idSiswa, 
+        method: "POST",
+        data: {
+            _token: "{{ csrf_token() }}",
+            status_penerimaan: statusVal // Nama kunci harus sama dengan di Controller
+        },
+            success: function (response) {
+                // Update warna CSS
+                $dropdown.removeClass('status-pending status-diterima status-ditolak');
+                
+                if (statusVal == 1) {
+                    $dropdown.addClass('status-diterima');
+                } else if (statusVal == 2) {
+                    $dropdown.addClass('status-ditolak');
+                } else {
+                    $dropdown.addClass('status-pending');
+                }
+                console.log(response.message);
+            },
+            error: function (xhr) {
+                alert("Terjadi kesalahan: " + xhr.statusText);
+            }
+        });
+    });
 });
 </script>
 @endsection

@@ -66,10 +66,9 @@
                 display: inline-flex;
                 padding: 5px;
                 margin-bottom: 30px;
-                position: relative; /* Tambahan untuk posisi animasi */
+                position: relative;
             }
 
-            /* TAMBAHAN: Elemen Animasi Switch */
             .slide-bg {
                 position: absolute;
                 top: 5px;
@@ -90,15 +89,14 @@
                 font-weight: 600;
                 font-size: 14px;
                 transition: 0.3s;
-                position: relative; /* Agar di atas slide-bg */
+                position: relative;
                 z-index: 1;
             }
             .role-btn.active {
-                background: transparent; /* Ubah ke transparan karena sudah ada slide-bg */
+                background: transparent;
                 color: #2F6FCA;
             }
 
-            /* Input & Icon Styling */
             .custom-input .form-control {
                 background: transparent !important;
                 border: none !important;
@@ -109,6 +107,20 @@
                 margin-bottom: 25px;
                 font-size: 16px;
             }
+
+            /* Styling Khusus Dropdown Select */
+            .custom-input select.form-control {
+                appearance: none;
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right 0.75rem center;
+                background-size: 16px 12px;
+            }
+            .custom-input select option {
+                background-color: #1877ff;
+                color: white;
+            }
+
             .custom-input .form-control::placeholder {
                 color: rgba(255, 255, 255, 0.6) !important;
             }
@@ -117,7 +129,6 @@
                 border-bottom-color: #fff !important;
             }
 
-            /* Password Icon Wrapper */
             .password-wrapper {
                 position: relative;
             }
@@ -190,7 +201,8 @@
                 <h3 class="mb-4 fw-bold">DAFTAR AKUN</h3>
                 
                 <div class="role-switcher" id="roleContainer">
-                    <div class="slide-bg" id="slide-bg"></div> <button type="button" class="role-btn active" onclick="setRole(this, 'siswa')">SISWA</button>
+                    <div class="slide-bg" id="slide-bg"></div> 
+                    <button type="button" class="role-btn active" onclick="setRole(this, 'siswa')">SISWA</button>
                     <button type="button" class="role-btn" onclick="setRole(this, 'guru')">GURU</button>
                     <button type="button" class="role-btn" onclick="setRole(this, 'admin')">ADMIN</button>
                 </div>
@@ -209,7 +221,12 @@
                             </div>
 
                             <div id="guru_specific_fields" style="display: none;">
-                                <input type="text" name="mapel" class="form-control" placeholder="Mapel">
+                                <select name="mapel" class="form-control">
+                                    <option value="" disabled selected>Pilih Mapel</option>
+                                    @foreach($data_mapel as $m)
+                                        <option value="{{ $m->nama_mapel }}">{{ $m->nama_mapel }}</option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <div class="password-wrapper">
@@ -218,7 +235,7 @@
                             </div>
 
                             <div class="password-wrapper">
-                                <input type="text" name="password_confirmation" class="form-control" placeholder="Konfirmasi password" required>
+                                <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Konfirmasi password" required>
                             </div>
                         </div>
 
@@ -231,7 +248,6 @@
                                 <input type="text" name="jenis_e_wallet" class="form-control" placeholder="Jenis E-Wallet">
                             </div>
 
-                            
                             <div id="parent_field">
                                 <input type="text" name="kelas" class="form-control" placeholder="Kelas">
                                 <input type="text" name="asal_sekolah" class="form-control" placeholder="Asal Sekolah">
@@ -263,24 +279,20 @@
 
             function resetPasswordFields() {
                 const passInputs = ['password', 'password_confirmation'];
-                const passIcons = ['togglePassword', 'toggleConfirmPassword'];
-
-                passInputs.forEach((id, index) => {
+                passInputs.forEach((id) => {
                     const input = document.getElementById(id);
-                    const icon = document.getElementById(passIcons[index]);
-                    
                     if (input) input.type = "password";
-                    if (icon) {
-                        icon.classList.remove("bi-eye-slash");
-                        icon.classList.add("bi-eye");
-                    }
                 });
+                const icon = document.getElementById('togglePassword');
+                if (icon) {
+                    icon.classList.remove("bi-eye-slash");
+                    icon.classList.add("bi-eye");
+                }
             }
 
             function setRole(btn, roleValue) {
                 resetPasswordFields();
 
-                // Animasi Switch
                 const slideBg = document.getElementById('slide-bg');
                 slideBg.style.width = btn.offsetWidth + 'px';
                 slideBg.style.left = btn.offsetLeft + 'px';
@@ -291,63 +303,55 @@
 
                 document.getElementById('user_role').value = roleValue;
 
-                // Elements
-                const studentFields = document.getElementById('student_specific_fields'); // Group kiri siswa
-                const guruFields = document.getElementById('guru_specific_fields');       // Group kiri guru
-                const guruExtra = document.getElementById('guru_extra_fields');         // Group kanan guru
-                const parentField = document.getElementById('parent_field');            // Group kanan siswa
+                const studentFields = document.getElementById('student_specific_fields');
+                const guruFields = document.getElementById('guru_specific_fields');
+                const guruExtra = document.getElementById('guru_extra_fields');
+                const parentField = document.getElementById('parent_field');
                 const rightCol = document.getElementById('rightCol');
                 const leftCol = document.getElementById('leftCol');
                 const formContainer = document.getElementById('formContainer');
+                const alamatInput = document.getElementsByName('alamat')[0];
 
                 if (roleValue === 'siswa') {
                     formContainer.style.maxWidth = "800px";
                     leftCol.className = "col-md-6 px-4";
                     rightCol.style.display = 'block';
-                    
                     studentFields.style.display = 'block';
                     parentField.style.display = 'block';
                     guruFields.style.display = 'none';
                     guruExtra.style.display = 'none';
+                    alamatInput.style.display = 'block';
+                    alamatInput.required = true;
                 } 
                 else if (roleValue === 'guru') {
                     formContainer.style.maxWidth = "800px";
                     leftCol.className = "col-md-6 px-4";
                     rightCol.style.display = 'block';
-                    
                     studentFields.style.display = 'none';
                     parentField.style.display = 'none';
                     guruFields.style.display = 'block';
                     guruExtra.style.display = 'block';
+                    alamatInput.style.display = 'block';
+                    alamatInput.required = true;
                 } 
                 else if (roleValue === 'admin') {
                     formContainer.style.maxWidth = "450px";
-                    leftCol.className = "col-md-12 px-4 mx-auto"; // Fokus di tengah
+                    leftCol.className = "col-md-12 px-4 mx-auto";
                     rightCol.style.display = 'none';
-                    alamat.style.display = 'none';
-                    
                     studentFields.style.display = 'none';
                     guruFields.style.display = 'none';
-                }
-                const alamatInput = document.getElementsByName('alamat')[0];
-
-                if (roleValue === 'admin') {
-                    // Matikan required saat kolom disembunyikan
-                    alamatInput.required = false; 
-                    // ...
-                } else {
-                    // Aktifkan kembali saat kolom muncul
-                    alamatInput.required = true;
-                    // ...
+                    alamatInput.style.display = 'none';
+                    alamatInput.required = false;
                 }
             }
 
-            // Inisialisasi posisi awal slide-bg
             window.onload = function() {
                 const activeBtn = document.querySelector('.role-btn.active');
                 const slideBg = document.getElementById('slide-bg');
-                slideBg.style.width = activeBtn.offsetWidth + 'px';
-                slideBg.style.left = activeBtn.offsetLeft + 'px';
+                if(activeBtn) {
+                    slideBg.style.width = activeBtn.offsetWidth + 'px';
+                    slideBg.style.left = activeBtn.offsetLeft + 'px';
+                }
             };
         </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
