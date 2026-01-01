@@ -100,6 +100,14 @@
                                 </div>
                             </div>
 
+                            {{-- Input Upload File --}}
+                            <div class="mb-3">
+                                <label for="file" class="form-label">Upload File Soal (Opsional)</label>
+                                <input type="file" class="form-control" id="file" name="file"
+                                    accept=".pdf,.jpg,.jpeg,.png">
+                                <div class="form-text text-muted small">Format: PDF/Gambar. Max 2MB.</div>
+                            </div>
+
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>

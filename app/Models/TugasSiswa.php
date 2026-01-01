@@ -23,4 +23,15 @@ class TugasSiswa extends Model
         'tanggal',
         'file',
     ];
+    // Di App\Models\TugasSiswa.php
+    public function siswa()
+    {
+        return $this->belongsTo(Siswa::class, 'id_siswa');
+    }
+
+
+    public function guru()
+    {
+        return $this->belongsTo(User::class, 'id_guru'); // Sesuaikan dengan model Guru/User Anda
+    }
 }

@@ -1,80 +1,62 @@
 @extends('layouts.app_siswa', ['title' => 'Laporan Perkembangan Siswa'])
+
 @section('content')
+    <div class="content-wrapper">
+        {{-- Nama Siswa (Dari Siswa yang diampu guru login) --}}
+        <h4 class="fw-bold">{{ $siswa->nama }}</h4>
 
-<div class="nilai-card d-flex align-items-center justify-content-between mb-4">
-    <div class="nilai-text">
-        <span>Nilai Rata-rata</span>
+        {{-- Kelas (Sesuai kolom kelas di tabel siswa) --}}
+        <p class="text-muted">Kelas: {{ $siswa->kelas ?? '-' }}</p>
+
+        {{-- Widget Nilai Rata-Rata & Tombol Tambah --}}
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            {{-- Card Nilai Rata-Rata --}}
+            <div class="card shadow-sm border-0" style="min-width: 250px;">
+                <div class="card-body d-flex justify-content-between align-items-center py-2 px-3">
+                    <span class="fw-bold fs-5">Nilai Rata-Rata</span>
+
+                    {{-- PERBAIKAN TAMPILAN BULAT SEMPURNA --}}
+                    {{-- style ditambahkan flex-shrink:0, padding:0, dan line-height fix --}}
+                    <div class="rounded-circle bg-success d-flex justify-content-center align-items-center text-white"
+                        style="width: 50px; height: 50px; min-width: 50px; aspect-ratio: 1; padding: 0; font-size: 1.2rem; margin-left: 16px;">
+                        {{ round($rata_rata ?? 0) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Tabel Data --}}
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table-general">
+                    <thead>
+                        <tr>
+                            <th class="py-3 px-3">No</th>
+                            <th class="py-3">Hari</th>
+                            <th class="py-3">Tanggal</th>
+                            <th class="py-3">Waktu</th>
+                            <th class="py-3">Mapel</th>
+                            <th class="py-3">Catatan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($laporan as $row)
+                            <tr>
+                                <td class="px-3">{{ $loop->iteration }}</td>
+                                <td>{{ $row->hari }}</td>
+                                <td>{{ \Carbon\Carbon::parse($row->tanggal)->format('d-M-Y') }}</td>
+                                <td>{{ $row->waktu }}</td>
+                                <td>{{ $row->mapel }}</td>
+                                <td>{{ Str::limit($row->laporan_perkembangan, 50) }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">Belum ada catatan perkembangan.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    <div class="nilai-circle">
-        {{-- Tampilkan variabel $rataRata dari Controller --}}
-        {{ $rataRata }}
-    </div>
-</div>
-
-<div class="table-container">
-    <table class="table-general">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Hari</th>
-                <th>Tanggal</th>
-                <th>Waktu</th>
-                <th>Mapel</th>
-                <th>Catatan</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @forelse($laporan as $key => $item)
-            <tr>
-                {{-- Penomoran halaman (agar nomor berlanjut saat ganti page) --}}
-                <td>{{ $laporan->firstItem() + $key }}.</td>
-                
-                <td>{{ $item->hari }}</td>
-                
-                {{-- Format Tanggal (Contoh: 05-Okt-2025) --}}
-                <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d-M-Y') }}</td>
-                
-                <td>{{ $item->waktu }}</td>
-                <td>{{ $item->mapel }}</td>
-                
-                {{-- Kolom 'laporan_perkembangan' di DB ditampilkan sebagai Catatan --}}
-                <td>{{ $item->laporan_perkembangan }}</td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="6" class="text-center">Belum ada data laporan perkembangan.</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
-
-    @if ($laporan->hasPages())
-    <div class="pagination-wrapper mt-3">
-        {{-- Tombol Sebelumnya --}}
-        @if ($laporan->onFirstPage())
-            <button class="btn page" disabled>Sebelumnya</button>
-        @else
-            <a href="{{ $laporan->previousPageUrl() }}" class="btn page">Sebelumnya</a>
-        @endif
-
-        {{-- Loop Nomor Halaman --}}
-        @foreach ($laporan->getUrlRange(1, $laporan->lastPage()) as $page => $url)
-            @if ($page == $laporan->currentPage())
-                <button class="btn page active">{{ $page }}</button>
-            @else
-                <a href="{{ $url }}" class="btn page">{{ $page }}</a>
-            @endif
-        @endforeach
-
-        {{-- Tombol Selanjutnya --}}
-        @if ($laporan->hasMorePages())
-            <a href="{{ $laporan->nextPageUrl() }}" class="btn page">Selanjutnya</a>
-        @else
-            <button class="btn page" disabled>Selanjutnya</button>
-        @endif
-    </div>
-    @endif
-</div>
-
 @endsection

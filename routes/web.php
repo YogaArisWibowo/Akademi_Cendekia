@@ -38,9 +38,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/store-siswa', [AdminController::class, 'storeSiswa'])->name('siswa.store');
     Route::put('/admin/siswa/update-status/{id}', [AdminController::class, 'updateSiswa'])->name('siswa.update');
     Route::post('/admin/update-status/{role}/{id}', [AdminController::class, 'updateStatus']);
-    
+
     Route::get('/admin/admin_Pencatatan_Gaji_Guru', function () {
-    return view('admin.Pencatatan_Gaji_Guru');
+        return view('admin.Pencatatan_Gaji_Guru');
     })->name('admin_Pencatatan_Gaji_Guru');
 
     Route::get('/admin/admin_detail_pencatatan_gaji_guru', function () {
@@ -103,7 +103,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/update-status-siswa/{id}', [Penerimaan_Siswacontroller::class, 'updateStatusSiswa'])->name('update.status.siswa');
 });
 
-
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
 
@@ -159,6 +159,9 @@ Route::post('/materi_pembelajaran/store', [GuruController::class, 'storeMateri']
 // Update materi
 Route::put('/materi_pembelajaran/update/{id}', [GuruController::class, 'updateMateri'])
     ->name('update_materi');
+// Download materi
+Route::get('/materi_pembelajaran/download/{id}', [GuruController::class, 'downloadMateri'])
+    ->name('download_materi');
 
 // Halaman list vidio
 Route::get('/video_materi_belajar', [GuruController::class, 'indexVideoMateri'])->name('video_materi_belajar');
@@ -211,10 +214,20 @@ Route::get('/siswa/siswa_daftartugas', function () {
     return view('siswa.siswa_daftartugas');
 });
 
-Route::get('/siswa/siswa_tugas', function () {
-    return view('siswa.siswa_tugas');
-});
+// Route::get('/siswa/siswa_tugas', function () {
+//     return view('siswa.siswa_tugas');
+// });
 
+
+Route::get('/siswa_daftartugas', [SiswaController::class, 'indexTugas'])
+    ->name('siswa.siswa_daftartugas');
+// Route untuk melihat detail tugas (Wajib ada {id})
+Route::get('/siswa/siswa_tugas/{id}', [SiswaController::class, 'showTugas'])
+    ->name('siswa.tugas.show');
+
+// Route untuk memproses upload file (POST)
+Route::post('/siswa/siswa_tugas/{id}/upload', [SiswaController::class, 'uploadTugas'])
+    ->name('siswa.tugas.upload');
 
 
 
@@ -244,6 +257,9 @@ Route::get('/siswa/siswa_laporanperkembangan', function () {
     return view('siswa.siswa_laporanperkembangan');
 });
 
+
+
+
 Route::get('/siswa/siswa_daftarmateri', function () {
     return view('siswa.siswa_daftarmateri');
 });
@@ -251,6 +267,25 @@ Route::get('/siswa/siswa_daftarmateri', function () {
 Route::get('/siswa/siswa_materi', function () {
     return view('siswa.siswa_materi');
 });
+
+
+
+// 1. Route untuk Daftar Materi (Mengarah ke indexMateri)
+// Nama route saya sesuaikan dengan yang ada di tombol 'Kembali' view Anda: 'materi_pembelajaran'
+Route::get('/siswa/materi', [SiswaController::class, 'indexMateri'])
+    ->name('siswa.siswa_daftarmateri');
+
+// 2. Route untuk Detail Materi (Mengarah ke showMateri)
+Route::get('/siswa/materi/{id}', [SiswaController::class, 'showMateri'])->name('siswa.materi.detail');
+
+// 3. Route untuk Download (Mengarah ke downloadMateri)
+// Nama route sesuaikan dengan view Anda: 'download_materi'
+Route::get('/siswa/materi/download/{id}', [SiswaController::class, 'downloadMateri'])->name('download_materi');
+
+
+
+
+
 
 Route::get('/siswa/siswa_video', function () {
     return view('siswa.siswa_video');

@@ -31,12 +31,23 @@
         <div class="materi-detail-card">
             <p><strong>Ringkasan :</strong></p>
             <p>{{ $materi->materi }}</p>
+
+            {{-- TAMBAHAN: Tombol Download (Hanya muncul jika ada file) --}}
+            @if ($materi->file_materi)
+                <div class="mt-4 border-top pt-3">
+                    <p><strong>File Lampiran :</strong></p>
+                    <a href="{{ route('download_materi', $materi->id) }}" class="btn btn-success btn-sm">
+                        <i class="ri-download-line"></i> Download File
+                    </a>
+                    <small class="text-muted ms-2">{{ $materi->file_materi }}</small>
+                </div>
+            @endif
         </div>
 
-        <!-- Modal Edit -->
         <div class="modal fade" id="editModal" tabindex="-1">
             <div class="modal-dialog">
-                <form action="{{ route('update_materi', $materi->id) }}" method="POST">
+                {{-- TAMBAHAN: enctype="multipart/form-data" WAJIB ADA --}}
+                <form action="{{ route('update_materi', $materi->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -58,6 +69,13 @@
                             <div class="mb-3">
                                 <label>Materi</label>
                                 <textarea name="materi" class="form-control" rows="5" required>{{ $materi->materi }}</textarea>
+                            </div>
+
+                            {{-- TAMBAHAN: Input untuk Ganti File --}}
+                            <div class="mb-3">
+                                <label>Ganti File (Opsional)</label>
+                                <input type="file" name="file_materi" class="form-control">
+                                <small class="text-muted">Biarkan kosong jika tidak ingin mengubah file.</small>
                             </div>
 
                             <div class="mb-3">

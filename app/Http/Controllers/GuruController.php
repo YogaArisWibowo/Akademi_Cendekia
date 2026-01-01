@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use App\Models\JadwalBimbel;
 use App\Models\TugasSiswa;
@@ -11,9 +13,6 @@ use App\Models\Siswa;
 use App\Models\Mapel;
 use App\Models\VideoMateri;
 use App\Models\LaporanPerkembanganSiswa;
-
-
-
 use App\Models\AbsensiGuru;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -125,87 +124,229 @@ class GuruController extends Controller
 
     // UNTUK MATERI PEMBELAJARAN
     //tambah dan view materi
+    // Pastikan namespace dan use di paling atas file tetap ada
+    // use Illuminate\Support\Facades\Auth;
+    // use Illuminate\Support\Facades\DB;
+    // use App\Models\Guru; ... dst
+
     public function indexMateri(Request $request)
     {
-        // Ambil jenjang dari tabel siswa
+        // 1. Ambil User yang Login (ini ID dari tabel users, misal: 6)
+        $userLogin = Auth::user();
+
+        // 2. CARI DATA GURU BERDASARKAN ID_USER
+        // Kita cari baris di tabel 'guru' yang kolom 'id_user'-nya = 6
+        $guruAsli = Guru::where('id_user', $userLogin->id)->first();
+
+        // Cek jika data guru tidak ditemukan (misal admin yang login, bukan guru)
+        if (!$guruAsli) {
+            return redirect()->back()->with('error', 'Akun Anda tidak terdaftar sebagai Guru!');
+        }
+
+        $id_guru_sebenarnya = $guruAsli->id; // Ini akan bernilai 3 (sesuai gambar kamu)
+
+        // 3. Ambil Jenjang (Untuk Filter)
         $jenjang = Siswa::select('jenjang')->distinct()->pluck('jenjang');
 
-        // Query materi
-        $query = MateriPembelajaran::with(['guru', 'mapel', 'siswa']);
+        // 4. Query Materi (Pakai ID Guru yang asli: 3)
+        $query = MateriPembelajaran::with(['guru', 'mapel', 'siswa'])
+            ->where('id_guru', $id_guru_sebenarnya);
 
-        // Jika filter jenjang dipilih
         if ($request->filled('jenjang')) {
             $query->whereHas('siswa', function ($q) use ($request) {
                 $q->where('jenjang', $request->jenjang);
             });
         }
 
-        $materi = $query->get();
+        $materi = $query->orderBy('created_at', 'desc')->get();
 
-        $guru = Guru::all();
-        $siswa = Siswa::all();
-        $mapel = Mapel::all();
+        // 5. FILTER SISWA BERDASARKAN JADWAL (Pakai ID Guru: 3)
+        $id_siswa_bimbingan = DB::table('jadwal_bimbel')
+            ->where('id_guru', $id_guru_sebenarnya)
+            ->pluck('id_siswa');
 
-        return view('guru.materi_pembelajaran', compact('materi', 'guru', 'siswa', 'mapel', 'jenjang'));
+        // Ambil data siswa (akan muncul Mikael id:2 jika sesuai jadwal)
+        $siswa = Siswa::whereIn('id', $id_siswa_bimbingan)->get();
+
+        // 6. FILTER MAPEL BERDASARKAN JADWAL
+        $id_mapel_ajar = DB::table('jadwal_bimbel')
+            ->where('id_guru', $id_guru_sebenarnya)
+            ->pluck('id_mapel');
+
+        $mapel = Mapel::whereIn('id', $id_mapel_ajar)->get();
+
+        // Kirim variable $guruAsli ke view agar namanya benar "Dewi Dini"
+        return view('guru.materi_pembelajaran', compact('materi', 'guruAsli', 'siswa', 'mapel', 'jenjang'));
     }
 
     public function storeMateri(Request $request)
     {
         $request->validate([
-            'id_guru' => 'required',
             'id_siswa' => 'nullable',
             'id_mapel' => 'required',
             'nama_materi' => 'required',
             'materi' => 'required',
-            'jenis_kurikulum' => 'required'
+            'jenis_kurikulum' => 'required',
+            // Validasi file: Opsional, max 5MB, format tertentu
+            'file_materi' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png|max:5120',
         ]);
 
-        MateriPembelajaran::create($request->all());
+        // AMBIL ID GURU ASLI
+        $guru = Guru::where('id_user', Auth::id())->first();
+
+        if (!$guru) {
+            return redirect()->back()->with('error', 'Data Guru tidak valid.');
+        }
+
+        $data = $request->all();
+        $data['id_guru'] = $guru->id;
+
+        // --- LOGIKA UPLOAD FILE ---
+        if ($request->hasFile('file_materi')) {
+            $file = $request->file('file_materi');
+
+            // Buat nama file unik: waktu_namafileasli
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            // Simpan file ke folder: storage/app/public/materi
+            // Pastikan folder ini nanti dilink ke public
+            $file->storeAs('public/materi', $filename);
+
+            // Masukkan nama file ke array data untuk disimpan ke DB
+            $data['file_materi'] = $filename;
+        }
+        // ---------------------------
+
+        MateriPembelajaran::create($data);
 
         return redirect()->route('materi_pembelajaran')->with('success', 'Materi berhasil ditambahkan');
     }
 
-    //untuk mengupdate materi
+    public function downloadMateri($id)
+    {
+        $materi = MateriPembelajaran::findOrFail($id);
+
+        // Cek apakah kolom file_materi ada isinya
+        if (!$materi->file_materi) {
+            return back()->with('error', 'Materi ini tidak memiliki file lampiran.');
+        }
+
+        // Tentukan path file (sesuai dengan tempat kita upload di storeMateri: public/materi)
+        $filePath = 'public/materi/' . $materi->file_materi;
+
+        // Cek fisik file di storage
+        if (Storage::exists($filePath)) {
+            // Download file
+            return Storage::download($filePath, $materi->file_materi);
+        } else {
+            return back()->with('error', 'File fisik tidak ditemukan di server.');
+        }
+    }
+
+    // Halaman Detail Materi
     public function materiPembelajaran($id)
     {
-        $materi = MateriPembelajaran::with(['guru', 'mapel', 'siswa'])->findOrFail($id);
+        // 1. Ambil User Login
+        $userLogin = Auth::user();
+
+        // 2. Cari Data Guru Asli
+        $guruAsli = Guru::where('id_user', $userLogin->id)->first();
+
+        if (!$guruAsli) {
+            abort(403, 'Akses ditolak. Anda bukan Guru.');
+        }
+
+        // 3. Query Materi menggunakan ID GURU ASLI
+        $materi = MateriPembelajaran::with(['guru', 'mapel', 'siswa'])
+            ->where('id_guru', $guruAsli->id) // Pakai ID 3, bukan 6
+            ->findOrFail($id);
 
         return view('guru.detail_materi_pembelajaran', compact('materi'));
     }
 
+    // Proses Update Materi (Termasuk Ganti File)
     public function updateMateri(Request $request, $id)
     {
         $request->validate([
             'nama_materi' => 'required',
             'materi' => 'required',
-            'jenis_kurikulum' => 'required'
+            'jenis_kurikulum' => 'required',
+            'file_materi' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png|max:5120',
         ]);
 
-        $materi = MateriPembelajaran::findOrFail($id);
-        $materi->update($request->all());
+        // Ambil ID Guru Asli untuk keamanan
+        $guru = Guru::where('id_user', Auth::id())->first();
+
+        // Cari materi dan pastikan milik guru yang login
+        $materi = MateriPembelajaran::where('id_guru', $guru->id)->findOrFail($id);
+
+        $data = $request->except(['file_materi']);
+
+        // --- LOGIKA GANTI FILE ---
+        if ($request->hasFile('file_materi')) {
+            // 1. Hapus file lama jika ada (Opsional, agar storage tidak penuh)
+            if ($materi->file_materi && Storage::exists('public/materi/' . $materi->file_materi)) {
+                Storage::delete('public/materi/' . $materi->file_materi);
+            }
+
+            // 2. Upload file baru
+            $file = $request->file('file_materi');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('public/materi', $filename);
+
+            // 3. Masukkan nama file baru ke data update
+            $data['file_materi'] = $filename;
+        }
+        // -------------------------
+
+        $materi->update($data);
 
         return redirect()->back()->with('success', 'Materi berhasil diperbarui');
     }
 
-
-
+    // CONTROLLER MENU VIDEO MATERI
     public function indexVideoMateri()
     {
-        $video = VideoMateri::with(['guru', 'siswa', 'mapel'])->get();
-        $guru = Guru::all();
-        $siswa = Siswa::all();
-        $mapel = Mapel::all();
+        // 1. Ambil ID Guru yang sedang login
+        // Asumsi: Guru login menggunakan sistem Auth Laravel
+        // $guru_login = Auth::user();
 
-        return view('guru.video_materi_belajar', compact('video', 'guru', 'siswa', 'mapel'));
+        // Jika Auth menggunakan tabel users tapi relasi ke guru, gunakan:
+        $guru_login = Guru::where('id_user', Auth::id())->first();
+
+        // 2. Ambil Video KHUSUS milik guru tersebut
+        $video = VideoMateri::with(['guru', 'siswa', 'mapel'])
+            ->where('id_guru', $guru_login->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // 3. Ambil Daftar Siswa sesuai Jadwal Bimbel guru tersebut
+        // Mengambil semua siswa yang ada di jadwal_bimbel dengan id_guru ini
+        $siswa_ampu = Siswa::whereIn('id', function ($query) use ($guru_login) {
+            $query->select('id_siswa')
+                ->from('jadwal_bimbel')
+                ->where('id_guru', $guru_login->id);
+        })->get();
+
+        // 4. Ambil Mapel yang diampu guru tersebut dari Jadwal Bimbel
+        // Kita ambil record jadwal pertama untuk mendapatkan mapelnya
+        $jadwal_guru = DB::table('jadwal_bimbel')
+            ->where('id_guru', $guru_login->id)
+            ->first();
+
+        $mapel_guru = null;
+        if ($jadwal_guru) {
+            $mapel_guru = Mapel::find($jadwal_guru->id_mapel);
+        }
+
+        // Kirim data spesifik ke view
+        return view('guru.video_materi_belajar', compact('video', 'guru_login', 'siswa_ampu', 'mapel_guru'));
     }
-
-
 
     public function storeVideoMateri(Request $request)
     {
         $request->validate([
             'id_guru' => 'required',
-            'id_siswa' => 'nullable',
             'id_mapel' => 'required',
             'link_video' => 'required',
             'jenis_kurikulum' => 'required',
@@ -217,15 +358,16 @@ class GuruController extends Controller
         return redirect()->back()->with('success', 'Video materi berhasil ditambahkan');
     }
 
+    // Update function tetap sama, hanya validasi akses jika perlu
     public function updateVideoMateri(Request $request, $id)
     {
-        $request->validate([
-            'link_video' => 'required',
-            'jenis_kurikulum' => 'required',
-            'nama_materi' => 'required'
-        ]);
-
         $video = VideoMateri::findOrFail($id);
+
+        // Pastikan guru hanya bisa edit videonya sendiri
+        if ($video->id_guru != Auth::id()) { // Sesuaikan jika pakai Auth::user()->id
+            return redirect()->back()->with('error', 'Akses ditolak');
+        }
+
         $video->update($request->all());
 
         return redirect()->back()->with('success', 'Video materi berhasil diperbarui');
@@ -235,7 +377,30 @@ class GuruController extends Controller
     //controller untuk tugas siswa
     public function indexTugas()
     {
-        $siswa = Siswa::all(); // atau bisa pakai paginate jika datanya banyak
+        // 1. Ambil ID User yang sedang login (Contoh: 6 - Dewi Dini)
+        $user_id_login = Auth::id();
+
+        // 2. Cari profil Guru yang punya id_user tersebut
+        // Kita cari di tabel 'guru' kolom 'id_user'
+        $guru_profile = Guru::where('id_user', $user_id_login)->first();
+
+        // Cek keamanan: Jika akun login tapi belum ada data di tabel guru
+        if (!$guru_profile) {
+            // Return halaman kosong agar tidak error
+            return view('guru.tugas_siswa', ['siswa' => \App\Models\Siswa::whereRaw('1 = 0')->paginate(10)]);
+        }
+
+        // 3. Ambil ID Guru Asli (Contoh: akan dapat angka 3)
+        $id_guru_asli = $guru_profile->id;
+
+        // 4. Cari jadwal bimbel yang id_guru-nya adalah 3
+        $id_siswa_diampu = JadwalBimbel::where('id_guru', $id_guru_asli)
+            ->pluck('id_siswa')
+            ->unique();
+
+        // 5. Ambil data Siswa sesuai ID yang ditemukan
+        $siswa = Siswa::whereIn('id', $id_siswa_diampu)->paginate(10);
+
         return view('guru.tugas_siswa', compact('siswa'));
     }
     public function detailTugasSiswa($id)
@@ -250,33 +415,62 @@ class GuruController extends Controller
 
     public function simpanTugas(Request $request)
     {
-        // ... (Validasi tetap sama) ...
+        // 1. Ambil Data Guru yang sedang Login
+        $user_id = Auth::id();
+        $guru = Guru::where('id_user', $user_id)->first();
 
+        if (!$guru) {
+            return redirect()->back()->with('error', 'Data Guru tidak ditemukan.');
+        }
+
+        // 2. Ambil Data Siswa & Mapel
         $siswa = Siswa::find($request->id_siswa);
         $mapel = Mapel::find($request->id_mapel);
 
+        // --- PROSES UPLOAD FILE ---
+        $nama_file_database = null; // Default null jika tidak ada file
+
+        if ($request->hasFile('file')) {
+            // Validasi ekstensi dan ukuran (opsional tapi disarankan)
+            $request->validate([
+                'file' => 'mimes:pdf,jpg,jpeg,png|max:2048' // Max 2MB
+            ]);
+
+            $file = $request->file('file');
+            // Buat nama unik: waktu_namamapel_namasiswa.ext
+            $filename = time() . '_' . preg_replace('/\s+/', '_', $mapel->nama_mapel) . '.' . $file->getClientOriginalExtension();
+
+            // Simpan ke folder: public/uploads/tugas_guru
+            // Pastikan folder ini ada, atau Laravel akan membuatnya
+            $file->move(public_path('uploads/tugas_guru'), $filename);
+
+            $nama_file_database = $filename;
+        }
+        // --------------------------
+
+        // 3. Simpan ke Database
         TugasSiswa::create([
-            'id_siswa'      => $request->id_siswa,
-            'id_mapel'      => $request->id_mapel,
-            'penugasan'     => $request->penugasan,
+            'id_siswa'          => $request->id_siswa,
+            'id_mapel'          => $request->id_mapel,
+            'penugasan'         => $request->penugasan,
 
-            // --- PERBAIKAN DI SINI ---
-            // Ganti 'created_at' menjadi 'tanggal'
-            'tanggal'       => $request->tanggal,
+            // Simpan nama file ke kolom 'file'
+            'file'              => $nama_file_database,
 
-            // HAPUS baris 'created_at'. 
-            // Laravel akan otomatis mengisi created_at dengan jam & tanggal SEKARANG (real-time).
+            // Tanggal & Waktu
+            'tanggal'           => $request->tanggal,
+            'waktu_mulai'       => \Carbon\Carbon::now()->format('H:i:s'),
+            'waktu_selesai'     => $request->waktu_selesai,
 
-            'waktu_selesai' => $request->waktu_selesai,
-            'waktu_mulai'   => Carbon::now()->format('H:i:s'),
+            // Data Otomatis
+            'id_guru'           => $guru->id,
+            'id_jadwal_bimbel'  => null,
 
-            // Data Default
-            'id_guru'          => 1,
-            'id_jadwal_bimbel' => null,
-            'alamat_siswa'     => $siswa->alamat ?? '-',
-            'nama_mapel'       => $mapel->nama_mapel,
-            'jawaban_siswa'    => 'Belum mengerjakan',
-            'nilai_tugas'      => 0,
+            // Data Pelengkap
+            'alamat_siswa'      => $siswa->alamat ?? '-',
+            'nama_mapel'        => $mapel->nama_mapel,
+            'jawaban_siswa'     => 'Belum mengerjakan',
+            'nilai_tugas'       => 0,
         ]);
 
         return redirect()->back()->with('success', 'Tugas berhasil ditambahkan');
@@ -291,86 +485,134 @@ class GuruController extends Controller
 
     public function updateTugas(Request $request, $id)
     {
-        // 1. TAMBAHKAN VALIDASI WAKTU
+        // 1. Validasi (Hapus validasi jawaban_siswa karena inputnya sudah tidak ada)
         $request->validate([
             'nama_mapel'    => 'required|string',
             'penugasan'     => 'required|string',
             'tanggal'       => 'required|date',
-            'waktu_selesai' => 'required', // <--- Pastikan ini ada
+            'waktu_selesai' => 'required',
             'nilai_tugas'   => 'nullable|numeric|min:0|max:100',
-            'file'          => 'nullable|mimes:pdf|max:2048',
+            'file'          => 'nullable|mimes:pdf|max:2048', // Maksimal 2MB
         ]);
 
         $tugas = TugasSiswa::findOrFail($id);
 
-        // ... (Logika file tetap sama jangan diubah) ...
-
-        $tugas->update([
+        // 2. Tampung data yang akan diupdate ke variable array
+        // PERBAIKAN: Hapus 'jawaban_siswa' dari sini agar jawaban siswa yang sudah ada TIDAK TERTIMPA / Error
+        $dataUpdate = [
             'nama_mapel'    => $request->nama_mapel,
             'penugasan'     => $request->penugasan,
             'tanggal'       => $request->tanggal,
-
-            // --- BAGIAN INI AKAN BERHASIL SETELAH VIEW DIPERBAIKI ---
             'waktu_selesai' => $request->waktu_selesai,
-
             'nilai_tugas'   => $request->nilai_tugas ?? 0,
-            'jawaban_siswa' => $request->jawaban_siswa,
-            // Pastikan update file jika ada, jika tidak pakai file lama
-            'file'          => isset($filename) ? $filename : $tugas->file
-        ]);
+        ];
+
+        // 3. Logika Upload File (Hanya jika ada file baru)
+        if ($request->hasFile('file')) {
+            // Hapus file lama jika ada
+            if ($tugas->file && file_exists(public_path('uploads/tugas_guru/' . $tugas->file))) {
+                unlink(public_path('uploads/tugas_guru/' . $tugas->file));
+            }
+
+            // Upload file baru
+            $file = $request->file('file');
+            // Buat nama unik
+            $filename = time() . '_' . preg_replace('/\s+/', '_', $request->nama_mapel) . '.' . $file->getClientOriginalExtension();
+
+            // Simpan ke folder public/uploads/tugas_guru
+            $file->move(public_path('uploads/tugas_guru'), $filename);
+
+            // Masukkan nama file baru ke array update
+            $dataUpdate['file'] = $filename;
+        }
+
+        // 4. Eksekusi Update
+        $tugas->update($dataUpdate);
 
         return redirect()->back()->with('success', 'Tugas berhasil diperbarui');
     }
 
-
     //Controller untuk Laporan Perkembangan siswa
     public function laporanPerkembangan()
     {
-        $siswa = Siswa::all(); // atau paginate(12)
+        // 1. Ambil ID User yang sedang login
+        $id_user_login = Auth::id();
+
+        // 2. Cari data Guru berdasarkan id_user tersebut
+        $data_guru = Guru::where('id_user', $id_user_login)->first();
+
+        // Cek jika data guru tidak ditemukan (misal login sebagai admin bukan guru)
+        if (!$data_guru) {
+            return redirect()->back()->with('error', 'Data Guru tidak ditemukan untuk user ini.');
+        }
+
+        // 3. Ambil ID GURU Asli (Primary Key tabel guru)
+        $id_guru_asli = $data_guru->id;
+
+        // 4. Gunakan ID GURU Asli untuk filter jadwal
+        $siswa = Siswa::whereHas('jadwal_bimbel', function ($q) use ($id_guru_asli) {
+            $q->where('id_guru', $id_guru_asli);
+        })->get();
+
         return view('guru.laporan_perkembangan_siswa', compact('siswa'));
     }
 
     public function detailLaporanPerkembangan($id)
     {
+        $id_user_login = Auth::id();
+        $guru = Guru::where('id_user', $id_user_login)->firstOrFail();
+        $id_guru_asli = $guru->id;
+
         $siswa = Siswa::findOrFail($id);
 
-        // GUNAKAN GET() AGAR TIDAK ERROR PAGINATION
-        // Saya tambahkan orderBy agar data terbaru muncul di atas
+        // Ambil laporan
         $laporan = LaporanPerkembanganSiswa::where('id_siswa', $id)
             ->orderBy('tanggal', 'desc')
             ->get();
 
         // Hitung rata-rata
-        $rata_rata = TugasSiswa::where('id_siswa', $id)->avg('nilai_tugas');
+        $rata_rata = TugasSiswa::where('id_siswa', $id)
+            ->where('id_guru', $id_guru_asli)
+            ->avg('nilai_tugas');
 
-        return view('guru.detail_laporan_perkembangan_siswa', compact('siswa', 'laporan', 'rata_rata'));
+        // Ambil Mapel & Jadwal
+        $jadwal = JadwalBimbel::with('mapel')
+            ->where('id_guru', $id_guru_asli)
+            ->where('id_siswa', $id)
+            ->first();
+
+        $nama_mapel = $jadwal ? $jadwal->mapel->nama_mapel : '-';
+        // TAMBAHAN: Simpan ID Jadwal untuk dikirim ke view
+        $id_jadwal  = $jadwal ? $jadwal->id : null;
+
+        // Jangan lupa kirim 'id_jadwal' ke compact
+        return view('guru.detail_laporan_perkembangan_siswa', compact('siswa', 'laporan', 'rata_rata', 'nama_mapel', 'id_jadwal'));
     }
+
+    // Di dalam GuruController.php
 
     public function tambahLaporan(Request $request)
     {
-        // 1. Validasi Input
+        // Validasi input
         $request->validate([
             'id_siswa' => 'required|exists:siswa,id',
+            // Pastikan id_jadwal_bimbel ada (atau boleh nullable jika logika anda mengizinkan)
+            'id_jadwal_bimbel' => 'required',
             'hari'     => 'required|string',
             'tanggal'  => 'required|date',
             'waktu'    => 'required',
             'mapel'    => 'required|string',
-            'catatan'  => 'required|string', // Di form name-nya 'catatan'
+            'catatan'  => 'required|string',
         ]);
 
-        // 2. Simpan ke Database
-        // Kita simpan input 'catatan' ke kolom 'laporan_perkembangan'
         LaporanPerkembanganSiswa::create([
             'id_siswa' => $request->id_siswa,
+            'id_jadwal_bimbel' => $request->id_jadwal_bimbel, // <--- TAMBAHKAN INI
             'hari'     => $request->hari,
             'tanggal'  => $request->tanggal,
             'waktu'    => $request->waktu,
             'mapel'    => $request->mapel,
             'laporan_perkembangan' => $request->catatan,
-
-            // Default value (jika diperlukan)
-            'id_jadwal_bimbel' => null,
-            'nilai_rata_rata'  => 0,
         ]);
 
         return redirect()->back()->with('success', 'Laporan berhasil ditambahkan');

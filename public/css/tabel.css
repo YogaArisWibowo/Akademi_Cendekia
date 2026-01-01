@@ -48,6 +48,22 @@
 .table-general tbody tr:nth-child(even) {
     background: #C4DAF9;
 }
+/* Tambahkan ini di file CSS Anda atau style block */
+.materi-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column; /* Agar footer tombol ada di bawah */
+    height: 100%;
+}
+
+.materi-thumb img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
 
 /* ============================================================
    RESPONSIVE TABLET & MOBILE (FIX SCROLL SAMPING)

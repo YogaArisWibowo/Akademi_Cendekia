@@ -7,7 +7,10 @@ use App\Models\AbsensiSiswa;
 use Illuminate\Support\Facades\Auth;
 use App\Models\JadwalBimbel;
 use App\Models\LaporanPerkembanganSiswa;
+use App\Models\MateriPembelajaran;
 use App\Models\PembayaranSiswa;
+use App\Models\Siswa;
+use App\Models\TugasSiswa;
 use App\Models\VideoMateri;
 use Illuminate\Http\Request;
 
@@ -118,19 +121,115 @@ class SiswaController extends Controller
         }
     }
 
+
+
+
+    //  UNTUK TUGAS SISWA
+    public function indexTugas()
+    {
+        // 1. Ambil ID User yang sedang login (Ini akan dapat angka 4)
+        $id_user_login = Auth::id();
+
+        // Cek login
+        if (!$id_user_login) {
+            return redirect()->route('login')->with('error', 'Silakan login dulu.');
+        }
+
+        // 2. Cari data Siswa berdasarkan id_user
+        // Kita cari di tabel siswa, mana yang id_user-nya = 4
+        $siswa = Siswa::where('id_user', $id_user_login)->first();
+
+        // Cek apakah data siswa ditemukan
+        if (!$siswa) {
+            // Jika user login tapi datanya tidak ada di tabel siswa
+            return redirect()->back()->with('error', 'Data siswa tidak ditemukan untuk user ini.');
+        }
+
+        // 3. Ambil data tugas menggunakan ID SISWA (Ini akan pakai angka 2)
+        // Sekarang kita pakai $siswa->id (angka 2), BUKAN $id_user_login (angka 4)
+        $daftar_tugas = TugasSiswa::where('id_siswa', $siswa->id)
+            ->orderBy('tanggal', 'desc')
+            ->get();
+
+        // 4. Kirim ke view
+        return view('siswa.siswa_daftartugas', compact('daftar_tugas'));
+    }
+
+
+    public function showTugas($id)
+    {
+        $id_user_login = Auth::id();
+        $siswa = \App\Models\Siswa::where('id_user', $id_user_login)->first();
+
+        if (!$siswa) {
+            return redirect()->back()->with('error', 'Data siswa tidak ditemukan.');
+        }
+
+        // Ambil tugas berdasarkan ID dan pastikan milik siswa tersebut
+        $tugas = TugasSiswa::where('id', $id)
+            ->where('id_siswa', $siswa->id)
+            ->firstOrFail();
+
+        return view('siswa.siswa_tugas', compact('tugas'));
+    }
+
+    public function uploadTugas(Request $request, $id)
+    {
+        // 1. Validasi File (Wajib PDF, Maks 2MB)
+        $request->validate([
+            'file_jawaban' => 'required|mimes:pdf|max:2048',
+        ]);
+
+        // 2. Ambil Data Tugas
+        $tugas = TugasSiswa::find($id);
+
+        if ($request->hasFile('file_jawaban')) {
+            // Hapus file lama jika ada (opsional, agar storage tidak penuh)
+            if ($tugas->jawaban_siswa && file_exists(public_path('uploads/jawaban/' . $tugas->jawaban_siswa))) {
+                unlink(public_path('uploads/jawaban/' . $tugas->jawaban_siswa));
+            }
+
+            // Simpan file baru
+            $file = $request->file('file_jawaban');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            // File akan disimpan di folder: public/uploads/jawaban
+            $file->move(public_path('uploads/jawaban'), $filename);
+
+            // Update Database
+            $tugas->jawaban_siswa = $filename;
+            $tugas->save();
+        }
+
+        return redirect()->back()->with('success', 'Tugas berhasil diunggah!');
+    }
+
+
+
+
+
+
+
+
     // --- FITUR PEMBAYARAN ---
 
     // $idSiswa = 1; // Ganti dengan Auth::id();
     // 1. Tampilkan List Pembayaran (Menggantikan view statis kamu)
     public function pencatatanPembayaran(Request $request)
     {
-        // Ambil id siswa yang login (sesuaikan guard kamu). Jika belum ada Auth untuk siswa,
-        // sementara pakai id 1, tapi disarankan pakai Auth::id().
-        $idSiswa = 1;
+        // 1. Ambil ID User yang login (Mikael login pakai User ID berapa?)
+        $userId = Auth::id();
 
-        // Paginate untuk sinkron dengan UI (misal 10 per halaman)
+        // 2. Cari data siswa berdasarkan user yang login
+        $siswa = Siswa::where('id_user', $userId)->first();
+
+        // Validasi jika data siswa belum disambungkan
+        if (!$siswa) {
+            return redirect()->back()->with('error', 'Data siswa tidak ditemukan.');
+        }
+
+        // 3. Gunakan ID Siswa yang asli (Mikael itu ID 2)
         $pembayaran = PembayaranSiswa::with('siswa')
-            ->where('id_siswa', $idSiswa)
+            ->where('id_siswa', $siswa->id) // Pakai $siswa->id, JANGAN angka 1 manual
             ->orderBy('tanggal_pembayaran', 'desc')
             ->paginate(10);
 
@@ -147,25 +246,91 @@ class SiswaController extends Controller
         ]);
 
         try {
-            $idSiswa = 1;
+            // --- LOGIKA MENCARI ID SISWA YANG BENAR ---
+            $userId = Auth::id();
+            $siswa = Siswa::where('id_user', $userId)->first();
+
+            if (!$siswa) {
+                return back()->with('error', 'Data siswa tidak valid.');
+            }
+            // ------------------------------------------
 
             $buktiPath = null;
             if ($request->hasFile('bukti_pembayaran')) {
+                // Pastikan folder ini permission-nya bisa ditulis
                 $buktiPath = $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public');
             }
 
             PembayaranSiswa::create([
-                'id_siswa'          => $idSiswa,
+                'id_siswa'           => $siswa->id, // Gunakan ID dinamis (2), bukan 1
                 'tanggal_pembayaran' => $request->tanggal_pembayaran,
-                'nama_orangtua'     => $request->nama_orangtua,
-                'nominal'           => $request->nominal,
-                'bukti_pembayaran'  => $buktiPath,
+                'nama_orangtua'      => $request->nama_orangtua,
+                'nominal'            => $request->nominal,
+                'bukti_pembayaran'   => $buktiPath,
             ]);
 
-            return redirect()->route('siswa.pembayaran.index')
+            return redirect()->route('siswa.pembayaran.index') // Pastikan nama route ini benar di web.php
                 ->with('success', 'Pembayaran berhasil disimpan');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menyimpan: ' . $e->getMessage());
+        }
+    }
+
+
+
+
+
+    public function indexMateri(Request $request)
+    {
+        $userId = Auth::id();
+        $siswa = Siswa::where('id_user', $userId)->first();
+
+        if (!$siswa) {
+            return redirect()->back()->with('error', 'Data siswa tidak ditemukan.');
+        }
+
+        // Memuat relasi guru dan mapel untuk mencegah N+1 Query problem
+        $query = MateriPembelajaran::with(['guru', 'mapel'])
+            ->where('id_siswa', $siswa->id);
+
+        // LOGIKA PENCARIAN
+        if ($request->has('search') && $request->search != '') {
+            $query->where('nama_materi', 'like', '%' . $request->search . '%');
+        }
+
+        $materis = $query->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('siswa.siswa_daftarmateri', compact('materis'));
+    }
+
+    public function showMateri($id)
+    {
+        // Mengambil data materi beserta relasinya
+        $materi = MateriPembelajaran::with(['guru', 'mapel'])->findOrFail($id);
+
+        $userId = Auth::id();
+        $siswa = Siswa::where('id_user', $userId)->first();
+
+        // Validasi akses: Pastikan materi ini memang untuk siswa tersebut
+        if ($materi->id_siswa != $siswa->id) {
+            abort(403, 'Anda tidak memiliki akses ke materi ini.');
+        }
+
+        return view('siswa.siswa_materi', compact('materi'));
+    }
+
+    public function downloadMateri($id)
+    {
+        $materi = MateriPembelajaran::findOrFail($id);
+
+        // Pastikan path sesuai dengan tempat Anda menyimpan file (biasanya di public/uploads atau storage)
+        $filePath = public_path('uploads/materi/' . $materi->file_materi);
+
+        if (file_exists($filePath)) {
+            return response()->download($filePath);
+        } else {
+            return back()->with('error', 'File tidak ditemukan.');
         }
     }
 
@@ -193,18 +358,34 @@ class SiswaController extends Controller
 
     public function laporanPerkembangan()
     {
-        // ID Siswa Dummy (Ganti Auth::id() jika sudah pakai login)
-        $idSiswa = 1;
+        // 1. Ambil ID User yang sedang login
+        $userId = Auth::id();
 
-        // 1. Ambil Data Laporan (Paginate 5 atau 10 baris)
+        // 2. Cari data Siswa berdasarkan id_user
+        $siswa = Siswa::where('id_user', $userId)->first();
+
+        // Cek jika data siswa belum ada
+        if (!$siswa) {
+            abort(403, 'Data Siswa tidak ditemukan untuk akun ini.');
+        }
+
+        // 3. Ambil ID Siswa
+        $idSiswa = $siswa->id;
+
+        // 4. Ambil Data Laporan
         $laporan = LaporanPerkembanganSiswa::where('id_siswa', $idSiswa)
             ->orderBy('tanggal', 'desc')
             ->paginate(5);
-        $rataRata = LaporanPerkembanganSiswa::where('id_siswa', $idSiswa)->avg('nilai_rata_rata');
 
-        // Jika datanya kosong, set 0 agar tidak error
-        $rataRata = $rataRata ? round($rataRata) : 0;
+        // 5. Hitung Rata-rata dari tabel TUGAS_SISWA
+        // PERBAIKAN: Gunakan kolom 'nilai_tugas', bukan 'nilai_rata_rata'
+        $average = TugasSiswa::where('id_siswa', $idSiswa)->avg('nilai_tugas');
 
-        return view('siswa.siswa_laporanperkembangan', compact('laporan', 'rataRata'));
+        // Bulatkan nilai. Jika null, set ke 0
+        $rata_rata = $average ? round($average) : 0;
+
+        // 6. Return View
+        // PERBAIKAN: compact harus menggunakan nama variabel yang sama ($rata_rata -> 'rata_rata')
+        return view('siswa.siswa_laporanperkembangan', compact('siswa', 'laporan', 'rata_rata'));
     }
 }

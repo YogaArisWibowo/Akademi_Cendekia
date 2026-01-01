@@ -3,12 +3,7 @@
 @section('content')
     <div class="content-wrapper">
 
-        <div class="materi-search mb-4">
-            <div class="search-input-wrapper">
-                <i class="ri-search-line search-icon"></i>
-                <input type="text" class="search-input" placeholder="Cari">
-            </div>
-        </div>
+        
 
         <div class="materi-grid">
             @foreach ($siswa as $item)

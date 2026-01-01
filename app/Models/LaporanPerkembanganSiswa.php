@@ -16,7 +16,7 @@ class LaporanPerkembanganSiswa extends Model
         'waktu',         // Baru
         'mapel',         // Baru
         'laporan_perkembangan', // Ini akan kita pakai untuk 'Catatan'
-        'nilai_rata_rata',
+        
     ];
 
     public function siswa()
