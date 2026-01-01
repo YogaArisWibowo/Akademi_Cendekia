@@ -338,19 +338,35 @@ class SiswaController extends Controller
     // --- FITUR VIDEO MATERI ---
     public function videoMateri(Request $request)
     {
-        // 1. Ambil keyword pencarian jika ada
+        // 1. Ambil ID User yang sedang login
+        $userId = Auth::id();
+
+        // 2. Cari data Siswa berdasarkan id_user (Relasi dari tabel Siswa)
+        // Lihat Gambar 1 & 2: Kolom 'id_user' menghubungkan user login dengan data siswa
+        $siswa = Siswa::where('id_user', $userId)->first();
+
+        // Cek validasi jika user login bukan siswa (misal admin iseng akses url ini)
+        if (!$siswa) {
+            abort(403, 'Data siswa tidak ditemukan.');
+        }
+
+        // 3. Ambil keyword pencarian jika ada
         $search = $request->input('search');
 
-        // 2. Query data video
+        // 4. Query data video KHUSUS untuk siswa yang login
         $videos = VideoMateri::query()
-            // Filter pencarian berdasarkan nama materi
+            // FILTER UTAMA: Hanya tampilkan video milik siswa ini
+            // Lihat Gambar 3 & 4: Kolom 'id_siswa' di tabel video_materi
+            ->where('id_siswa', $siswa->id)
+
+            // Filter pencarian (jika user mengetik di search bar)
             ->when($search, function ($query) use ($search) {
                 return $query->where('nama_materi', 'like', "%{$search}%");
             })
-            ->orderBy('created_at', 'desc') // Urutkan dari yang terbaru
-            ->paginate(6); // Tampilkan 6 video per halaman agar rapi di grid
+            ->orderBy('created_at', 'desc')
+            ->paginate(6);
 
-        // 3. Return view
+        // 5. Return view
         return view('siswa.siswa_video', compact('videos', 'search'));
     }
 
