@@ -2,15 +2,29 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Mapel extends Model
 {
-    protected $table = 'mapel';
+    use HasFactory;
 
+    protected $table = 'mapel'; // Nama tabel Anda
+
+    protected $fillable = [
+        'id_siswa', 
+        'nama_mapel', 
+        'jenis_kurikulum', 
+        'kelas'
+    ];
+
+    // Relasi ke tabel siswa
+    public function siswa()
+    {
+        return $this->belongsTo(Siswa::class, 'id_siswa', 'id');
+    }
     public function jadwal_bimbel()
     {
-        // Mapel memiliki banyak jadwal bimbel
         return $this->hasMany(JadwalBimbel::class, 'id_mapel');
     }
 }

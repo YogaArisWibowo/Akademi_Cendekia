@@ -22,9 +22,8 @@ class Penerimaan_Siswacontroller extends Controller
         $siswa = Siswa::findOrFail($id);
         
         // UPDATE STATUS AKTIF DI DATABASE
-        $siswa->update([
-            'status_penerimaan' => $request->status_penerimaan 
-        ]);
+        $siswa->status_penerimaan = $request->status_penerimaan;
+        $siswa->save();
 
         return response()->json([
             'success' => true,

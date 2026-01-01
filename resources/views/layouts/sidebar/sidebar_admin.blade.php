@@ -54,6 +54,7 @@
       <img src="{{ asset('img/logo.png') }}" class="logo-img">
     </div>
     <a href="{{ route('admin_Penerimaan_Siswa') }}" class="{{ request()->routeIs('admin_Penerimaan_Siswa') ? 'active' : '' }}"><i class="bi bi-pencil-square me-2"></i> Penerimaan Siswa</a>
+    <a href="{{ route('admin_Tambah_Mapel') }}" class="{{ request()->routeIs('admin_Tambah_Mapel') ? 'active' : '' }}"><i class="bi bi-file-earmark-plus me-2"></i> Tambah Mapel</a>
     <a href="{{ route('admin_Data_GurudanSiswa') }}" class="{{ request()->routeIs('admin_Data_GurudanSiswa') ? 'active' : '' }}"><i class="bi bi-file-earmark-person me-2"></i> Data Guru & Siswa</a>
     <a href="{{ route('admin_Jadwal_Bimbel') }}"  class="{{ request()->routeIs('admin_Jadwal_Bimbel') ? 'active' : '' }}">
       <i class="bi bi-calendar3 me-2"></i> Jadwal Bimbel</a>
