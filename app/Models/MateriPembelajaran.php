@@ -15,7 +15,8 @@ class MateriPembelajaran extends Model
         'id_mapel',
         'materi',
         'jenis_kurikulum',
-        'nama_materi'
+        'nama_materi',
+        'file_materi',
     ];
 
     public function guru()

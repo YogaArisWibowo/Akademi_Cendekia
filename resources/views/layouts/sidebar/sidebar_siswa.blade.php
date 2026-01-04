@@ -21,8 +21,8 @@
         </li>
 
         <li
-            class="menu-item {{ Request::is('siswa/siswa_daftartugas') || Request::is('siswa/siswa_tugas') ? 'active' : '' }}">
-            <a href="/siswa/siswa_daftartugas">
+            class="menu-item {{ request()->routeIs('siswa.siswa_daftartugas') || request()->routeIs('siswa.tugas.*') ? 'active' : '' }}">
+            <a href="{{ route('siswa.siswa_daftartugas') }}">
                 <i class="ri-todo-fill"></i>
                 Tugas Siswa
             </a>
@@ -36,8 +36,8 @@
         </li>
 
         <li
-            class="menu-item {{ Request::is('siswa/siswa_daftarmateri') || Request::is('siswa/siswa_materi') ? 'active' : '' }}">
-            <a href="/siswa/siswa_daftarmateri">
+            class="menu-item {{ request()->routeIs(['siswa.siswa_daftarmateri', 'siswa.materi.detail']) ? 'active' : '' }}">
+            <a href="{{ route('siswa.siswa_daftarmateri') }}">
                 <i class="bi bi-book"></i>
                 Materi Pembelajaran
             </a>
@@ -50,8 +50,8 @@
             </a>
         </li>
 
-        <li class="menu-item {{ Request::is('siswa_laporanperkembangan') ? 'active' : '' }}">
-            <a href="/siswa_laporanperkembangan">
+        <li class="menu-item {{ Route::is('siswa.laporan') ? 'active' : '' }}">
+            <a href="{{ route('siswa.laporan') }}">
                 <i class="bi bi-file-earmark-text-fill"></i>
                 Laporan Perkembangan Siswa
             </a>

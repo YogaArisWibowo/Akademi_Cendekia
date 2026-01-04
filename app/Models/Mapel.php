@@ -23,4 +23,8 @@ class Mapel extends Model
     {
         return $this->belongsTo(Siswa::class, 'id_siswa', 'id');
     }
+    public function jadwal_bimbel()
+    {
+        return $this->hasMany(JadwalBimbel::class, 'id_mapel');
+    }
 }

@@ -51,7 +51,8 @@
 
         <div class="modal fade" id="modalTambahMateri" tabindex="-1">
             <div class="modal-dialog">
-                <form action="{{ route('store_materi') }}" method="POST">
+                {{-- TAMBAHAN 1: enctype="multipart/form-data" AGAR BISA UPLOAD FILE --}}
+                <form action="{{ route('store_materi') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-content">
 
@@ -62,13 +63,12 @@
 
                         <div class="modal-body">
 
+                            {{-- PERBAIKAN: Guru otomatis terisi (Readonly) agar tidak error ID --}}
                             <div class="mb-3">
                                 <label>Guru</label>
-                                <select name="id_guru" class="form-control" required>
-                                    @foreach ($guru as $g)
-                                        <option value="{{ $g->id }}">{{ $g->nama }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="hidden" name="id_guru" value="{{ $guruAsli->id }}">
+                                <input type="text" class="form-control" value="{{ $guruAsli->nama }}" readonly
+                                    style="background-color: #e9ecef;">
                             </div>
 
                             <div class="mb-3">
@@ -100,6 +100,13 @@
                                 <textarea name="materi" class="form-control" required></textarea>
                             </div>
 
+                            {{-- TAMBAHAN 2: INPUT FILE --}}
+                            <div class="mb-3">
+                                <label>Upload File (Opsional)</label>
+                                <input type="file" name="file_materi" class="form-control">
+                                <small class="text-muted">PDF/Word/Gambar (Max 5MB)</small>
+                            </div>
+
                             <div class="mb-3">
                                 <label>Jenis Kurikulum</label>
                                 <select name="jenis_kurikulum" class="form-control" required>
@@ -121,16 +128,38 @@
 
         <div class="materi-grid">
             @foreach ($materi as $m)
-                <a href="{{ route('detail_materi_pembelajaran', $m->id) }}" class="materi-card-link">
+                {{-- PERUBAHAN DI SINI: --}}
+                {{-- Saya ganti tag <a> pembungkus jadi <div> agar tombol download bisa masuk --}}
+                {{-- Class tetap 'materi-card-link' agar tampilan CSS tidak berubah --}}
+                <div class="materi-card-link" style="display: block; text-decoration: none; color: inherit;">
                     <div class="materi-card">
-                        <div class="materi-thumb">
-                            <img src="https://via.placeholder.com/150" alt="thumb">
-                        </div>
+
+                        {{-- Link ke Detail (Klik Gambar) --}}
+                        <a href="{{ route('detail_materi_pembelajaran', $m->id) }}"
+                            style="text-decoration: none; color: inherit;">
+                            <div class="materi-thumb">
+                                <img src="https://via.placeholder.com/150" alt="thumb">
+                            </div>
+                        </a>
+
                         <div class="materi-info">
-                            <h4 class="materi-title">{{ $m->nama_materi }}</h4>
+                            {{-- Link ke Detail (Klik Judul) --}}
+                            <a href="{{ route('detail_materi_pembelajaran', $m->id) }}"
+                                style="text-decoration: none; color: inherit;">
+                                <h4 class="materi-title">{{ $m->nama_materi }}</h4>
+                            </a>
+
+                            {{-- TAMBAHAN 3: TOMBOL DOWNLOAD --}}
+                            @if ($m->file_materi)
+                                <div style="margin-top: 10px;">
+                                    <a href="{{ route('download_materi', $m->id) }}" class="btn btn-success btn-sm w-100">
+                                        Download
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                     </div>
-                </a>
+                </div>
             @endforeach
         </div>
 

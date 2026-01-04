@@ -10,25 +10,29 @@
             </a>
         </div>
 
+        {{-- Nama Siswa (Dari Siswa yang diampu guru login) --}}
         <h4 class="fw-bold">{{ $siswa->nama }}</h4>
-        {{-- Saya asumsikan kolom jenjang/kelas ada di tabel siswa --}}
-        {{-- Jika error undefined, hapus bagian {{ $siswa->jenjang }} --}}
+
+        {{-- Kelas (Sesuai kolom kelas di tabel siswa) --}}
         <p class="text-muted">Kelas: {{ $siswa->kelas ?? '-' }}</p>
 
         {{-- Widget Nilai Rata-Rata & Tombol Tambah --}}
         <div class="d-flex justify-content-between align-items-center mb-4">
-            {{-- Card Nilai Rata-Rata (Sesuai Desain) --}}
+            {{-- Card Nilai Rata-Rata --}}
             <div class="card shadow-sm border-0" style="min-width: 250px;">
                 <div class="card-body d-flex justify-content-between align-items-center py-2 px-3">
                     <span class="fw-bold fs-5">Nilai Rata-Rata</span>
-                    <span class="badge rounded-circle bg-success d-flex justify-content-center align-items-center"
-                        style="width: 45px; height: 45px; font-size: 1.2rem; margin-left: 16px;">
+
+                    {{-- PERBAIKAN TAMPILAN BULAT SEMPURNA --}}
+                    {{-- style ditambahkan flex-shrink:0, padding:0, dan line-height fix --}}
+                    <div class="rounded-circle bg-success d-flex justify-content-center align-items-center text-white"
+                        style="width: 50px; height: 50px; min-width: 50px; aspect-ratio: 1; padding: 0; font-size: 1.2rem; margin-left: 16px;">
                         {{ round($rata_rata ?? 0) }}
-                    </span>
+                    </div>
                 </div>
             </div>
 
-            {{-- Tombol Tambah (Kuning) --}}
+            {{-- Tombol Tambah --}}
             <button type="button" class="btn btn-primary text-white fw-bold px-4 py-2" data-bs-toggle="modal"
                 data-bs-target="#tambahModal">
                 Tambah +
@@ -64,7 +68,6 @@
                                         data-bs-target="#editModal{{ $row->id }}">
                                         <i class="ri-edit-box-line"></i>
                                     </button>
-
                                 </td>
                             </tr>
                         @empty
@@ -74,6 +77,8 @@
                         @endforelse
                     </tbody>
                 </table>
+
+                {{-- MODAL EDIT --}}
                 @foreach ($laporan as $row)
                     <div class="modal fade" id="editModal{{ $row->id }}" tabindex="-1"
                         aria-labelledby="editModalLabel{{ $row->id }}" aria-hidden="true">
@@ -91,7 +96,6 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="row">
-                                            {{-- Hari --}}
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label">Hari</label>
                                                 <select name="hari" class="form-select" required>
@@ -102,30 +106,26 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            {{-- Tanggal --}}
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label">Tanggal</label>
                                                 <input type="date" name="tanggal" class="form-control"
                                                     value="{{ $row->tanggal }}" required>
                                             </div>
                                         </div>
-
                                         <div class="row">
-                                            {{-- Waktu --}}
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label">Waktu</label>
                                                 <input type="time" name="waktu" class="form-control"
                                                     value="{{ $row->waktu }}" required>
                                             </div>
-                                            {{-- Mapel --}}
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label">Mapel</label>
+                                                {{-- Dibuat READONLY dan Value mengambil dari Controller --}}
                                                 <input type="text" name="mapel" class="form-control"
-                                                    value="{{ $row->mapel }}" required>
+                                                    value="{{ $nama_mapel }}" readonly
+                                                    style="background-color: #e9ecef; cursor: not-allowed;">
                                             </div>
                                         </div>
-
-                                        {{-- Catatan --}}
                                         <div class="mb-3">
                                             <label class="form-label">Catatan Perkembangan</label>
                                             <textarea name="catatan" class="form-control" rows="4" required>{{ $row->laporan_perkembangan }}</textarea>
@@ -144,13 +144,12 @@
             </div>
         </div>
 
-        {{-- Pagination dihapus sesuai permintaan --}}
-
-        {{-- Modal Tambah --}}
+        {{-- MODAL TAMBAH --}}
         <div class="modal fade" id="tambahModal" tabindex="-1" aria-labelledby="tambahModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <form method="POST" action="{{ route('laporan_perkembangan_siswa.tambah') }}">
                     @csrf
+                    <input type="hidden" name="id_jadwal_bimbel" value="{{ $id_jadwal }}">
                     <input type="hidden" name="id_siswa" value="{{ $siswa->id }}">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -184,10 +183,14 @@
                                     <label class="form-label">Waktu</label>
                                     <input type="time" name="waktu" class="form-control" required>
                                 </div>
+
+                                {{-- PERBAIKAN BAGIAN MAPEL --}}
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Mapel</label>
+                                    {{-- Dibuat READONLY dan Value mengambil dari Controller --}}
                                     <input type="text" name="mapel" class="form-control"
-                                        placeholder="Contoh: Matematika" required>
+                                        value="{{ $nama_mapel }}" readonly
+                                        style="background-color: #e9ecef; cursor: not-allowed;">
                                 </div>
                             </div>
 
