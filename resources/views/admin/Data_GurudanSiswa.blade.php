@@ -231,7 +231,7 @@
 
         // --- PAGINATION LOGIC ---
         function setupPagination(tableId, paginationId) {
-            const rowsPerPage = 1;
+            const rowsPerPage = 10;
             let currentPage = 1;
             const $table = $(`#${tableId}`);
             
