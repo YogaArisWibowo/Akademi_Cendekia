@@ -1,12 +1,17 @@
 @extends('layouts.app_admin', ['title' => 'Gaji Guru'])
+
 @section('content')
 
 <style>
     .content-wrapper { padding: 20px; }
+    
+    /* --- STYLE PENCARIAN --- */
     .guru-search { margin-bottom: 25px; }
     .search-input-wrapper { position: relative; display: flex; align-items: center; }
     .search-icon { position: absolute; left: 15px; color: #adb5bd; }
     .search-input { width: 100%; padding: 10px 15px 10px 40px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 16px; }
+    
+    /* --- STYLE GRID GURU --- */
     .guru-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
     .guru-card-link { text-decoration: none; color: inherit; }
     .guru-card { background: #ffffff; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; border-radius: 8px; box-shadow: 0 2px 2px rgba(0, 0, 0, 0.263); transition: transform 0.2s, box-shadow 0.2s; border: 1px solid transparent; padding: 15px; }
@@ -14,10 +19,40 @@
     .nama { font-weight: 600 !important; color: #343a40; font-size: 18px; display: block; }
     .guru-title { font-size: 14px; color: #6c757d; font-weight: 500; }
     .guru-card .guru-info { margin: 0; font-size: 13px; display: block; text-align: left; color: #718096; }
-    .pagination-wrapper { display: flex; justify-content: center; align-items: center; padding: 20px 0; }
-    .btn.page { margin: 0 5px; border-radius: 8px; padding: 8px 15px; background-color: transparent; color: #6c757d; border: none; font-weight: 500; }
-    .btn.page.active { background-color: #c9d6ff; color: #3f51b5; font-weight: bold; }
-    .btn.page.prev-next { background-color: #e0eaff; color: #3f51b5; }
+    
+    /* --- STYLE PAGINATION (Mirip Pembayaran Siswa) --- */
+    .pagination-container { display: flex; gap: 10px; justify-content: center; margin-top: 20px; padding-bottom: 20px; }
+    
+    .btn-page { 
+        border: none; 
+        background: transparent; 
+        padding: 8px 16px; 
+        border-radius: 8px; 
+        font-size: 14px; 
+        color: #4a5568; 
+        cursor: pointer; 
+        transition: all 0.2s ease;
+    }
+    
+    .btn-page:hover { background-color: #f7fafc; }
+    
+    .btn-page.active { 
+        background-color: #ebf4ff; 
+        color: #3182ce; 
+        font-weight: 600; 
+    }
+    
+    .btn-page.next, .btn-page.prev { 
+        background-color: #c3dafe; 
+        color: #1a365d; 
+        font-weight: 500; 
+    }
+    
+    .btn-page:disabled { 
+        cursor: default; 
+        background-color: #f7fafc; 
+        color: #cbd5e0; 
+    }
 </style>
 
 <div class="content-wrapper">
@@ -25,7 +60,7 @@
     <div class="guru-search mb-4">
         <div class="search-input-wrapper">
             <i class="ri-search-line search-icon"></i>
-            <input type="text" class="search-input" id="searchInput" placeholder="Cari" />
+            <input type="text" class="search-input" id="searchInput" placeholder="Cari Guru..." />
         </div>
     </div>
 
@@ -43,51 +78,86 @@
         @endforeach
     </div>
 
-    {{-- Pagination (Statis sesuai permintaan) --}}
-    <div class="pagination-wrapper">
-        <button class="btn page" id="prevBtn" disabled>Sebelumnya</button>
-        <button class="btn page active">1</button>
-        <button class="btn page">2</button>
-        <button class="btn page">3</button>
-        <button class="btn page prev-next" id="nextBtn">Selanjutnya</button>
-    </div>
+    {{-- Container Pagination --}}
+    <div class="pagination-container" id="paginationGuru"></div>
 </div>
 
-{{-- JQUERY UNTUK FITUR CARI DAN PAGINATION --}}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
-    // 1. Logika Pencarian Real-time
-    $("#searchInput").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $("#guruGrid .guru-item").filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
-    });
+    // --- KONFIGURASI ---
+    const rowsPerPage = 10; // Menampilkan 6 kartu per halaman
+    const $items = $("#guruGrid .guru-item");
+    const $paginationContainer = $("#paginationGuru");
+    let currentPage = 1;
 
-    // 2. Logika Pagination Sederhana (Menangani tampilan per 10 data)
-    const rowsPerPage = 10;
-    const $items = $(".guru-item");
-    const totalPages = Math.ceil($items.length / rowsPerPage);
-
+    // --- FUNGSI TAMPILKAN HALAMAN ---
     function showPage(page) {
-        $items.hide();
-        $items.slice((page - 1) * rowsPerPage, page * rowsPerPage).show();
-        
-        $(".btn.page").removeClass("active");
-        $(".btn.page").filter(function() {
-            return $(this).text() == page;
-        }).addClass("active");
+        currentPage = page;
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
 
-        $("#prevBtn").prop("disabled", page === 1);
-        $("#nextBtn").prop("disabled", page === totalPages || totalPages === 0);
+        // Reset display
+        $items.hide().slice(start, end).fadeIn(300);
+        
+        renderButtons();
+        $("html, body").animate({ scrollTop: 0 }, "fast");
     }
 
-    $(document).on("click", ".btn.page:not(.prev-next)", function() {
-        showPage(parseInt($(this).text()));
+    // --- FUNGSI RENDER TOMBOL PAGINATION (STYLE BARU) ---
+    function renderButtons() {
+        const totalRows = $items.length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+        
+        $paginationContainer.empty();
+
+        if (totalPages <= 1) return;
+
+        // Tombol Sebelumnya
+        const prevDisabled = currentPage === 1 ? 'disabled' : '';
+        $paginationContainer.append(`<button type="button" class="btn-page prev" ${prevDisabled}>Sebelumnya</button>`);
+
+        // Tombol Angka
+        for (let i = 1; i <= totalPages; i++) {
+            const activeClass = i === currentPage ? 'active' : '';
+            $paginationContainer.append(`<button type="button" class="btn-page num ${activeClass}" data-page="${i}">${i}</button>`);
+        }
+
+        // Tombol Selanjutnya
+        const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+        $paginationContainer.append(`<button type="button" class="btn-page next" ${nextDisabled}>Selanjutnya</button>`);
+    }
+
+    // --- EVENT LISTENER ---
+    $(document).on("click", ".num", function() {
+        showPage($(this).data("page"));
     });
 
-    // Inisialisasi halaman pertama
+    $(document).on("click", ".prev", function() {
+        if (currentPage > 1) showPage(currentPage - 1);
+    });
+
+    $(document).on("click", ".next", function() {
+        const totalPages = Math.ceil($items.length / rowsPerPage);
+        if (currentPage < totalPages) showPage(currentPage + 1);
+    });
+
+    // --- LOGIKA PENCARIAN ---
+    $("#searchInput").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+
+        if (value.length > 0) {
+            $paginationContainer.hide();
+            $items.filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        } else {
+            $paginationContainer.show();
+            showPage(1);
+        }
+    });
+
+    // Inisialisasi tampilan awal
     showPage(1);
 });
 </script>

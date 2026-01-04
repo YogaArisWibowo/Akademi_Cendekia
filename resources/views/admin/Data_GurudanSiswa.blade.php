@@ -5,6 +5,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
+    /* --- STYLING TAMBAHAN --- */
     .swal2-container { z-index: 10000 !important; }
     .tambah { 
         margin-bottom: 10px; display: flex; justify-content: center; color: white !important; border: none; 
@@ -114,12 +115,14 @@
 
 <div class="modal fade" id="modalGuru" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form id="formGuru" method="POST">
+        <form id="formGuru">
             @csrf
-            <div id="methodGuru"></div>
+            <input type="hidden" name="id" id="g_id">
+            <input type="hidden" name="_method" id="g_method" value="POST">
+
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Form Guru</h5>
+                    <h5 class="modal-title" id="titleGuru">Form Guru</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -129,8 +132,13 @@
                             <input type="text" name="nama" id="g_nama" class="form-control" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label>Mata Pelajaran</label>
-                            <input type="text" name="mapel" id="g_mapel" class="form-control" required>
+                            <label class="form-label">Mata Pelajaran</label>
+                            <select name="mapel" id="g_mapel" class="form-control form-select" required>
+                                <option value="">-- Pilih Mapel --</option>
+                                @foreach($mapel as $m)
+                                    <option value="{{ $m->nama_mapel }}">{{ $m->nama_mapel }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label>No HP (WhatsApp)</label>
@@ -159,7 +167,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Simpan Data</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary" id="btnSimpanGuru">Simpan Data</button>
                 </div>
             </div>
         </form>
@@ -168,12 +177,14 @@
 
 <div class="modal fade" id="modalSiswa" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form id="formSiswa" method="POST">
+        <form id="formSiswa">
             @csrf
-            <div id="methodSiswa"></div>
+            <input type="hidden" name="id" id="s_id">
+            <input type="hidden" name="_method" id="s_method" value="POST">
+
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Form Siswa</h5>
+                    <h5 class="modal-title" id="titleSiswa">Form Siswa</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -184,7 +195,8 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label>Jenjang</label>
-                            <select name="jenjang" id="s_jenjang" class="form-control">
+                            <select name="jenjang" id="s_jenjang" class="form-control form-select">
+                                <option value="">-- Pilih Jenjang --</option>
                                 <option value="SD">SD</option>
                                 <option value="SMP">SMP</option>
                                 <option value="SMA">SMA</option>
@@ -213,7 +225,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Simpan Data</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary" id="btnSimpanSiswa">Simpan Data</button>
                 </div>
             </div>
         </form>
@@ -222,6 +235,12 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    // --- SETUP CSRF & DATA ---
+    $.ajaxSetup({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+    });
+
+    // Mengambil data lengkap dari Controller (keyBy id agar mudah dipanggil)
     const dataGuru = JSON.parse('{!! addslashes(json_encode($guru->keyBy("id"))) !!}');
     const dataSiswa = JSON.parse('{!! addslashes(json_encode($siswa->keyBy("id"))) !!}');
 
@@ -229,7 +248,7 @@
         const mGuru = new bootstrap.Modal(document.getElementById('modalGuru'));
         const mSiswa = new bootstrap.Modal(document.getElementById('modalSiswa'));
 
-        // --- PAGINATION LOGIC ---
+        // --- CLIENT SIDE PAGINATION (Simple) ---
         function setupPagination(tableId, paginationId) {
             const rowsPerPage = 10;
             let currentPage = 1;
@@ -243,11 +262,11 @@
                 
                 $container.empty();
                 if (totalPages > 1) {
-                    $container.append(`<button class="btn-page prev" ${currentPage === 1 ? 'disabled' : ''}>Sebelumnya</button>`);
+                    $container.append(`<button type="button" class="btn-page prev" ${currentPage === 1 ? 'disabled' : ''}><i class="bi bi-chevron-left"></i></button>`);
                     for (let i = 1; i <= totalPages; i++) {
-                        $container.append(`<button class="btn-page num ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`);
+                        $container.append(`<button type="button" class="btn-page num ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`);
                     }
-                    $container.append(`<button class="btn-page next" ${currentPage === totalPages ? 'disabled' : ''}>Selanjutnya</button>`);
+                    $container.append(`<button type="button" class="btn-page next" ${currentPage === totalPages ? 'disabled' : ''}><i class="bi bi-chevron-right"></i></button>`);
                 }
                 $rows.hide().slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage).show();
             }
@@ -261,57 +280,160 @@
         setupPagination('tableGuru', 'paginationGuru');
         setupPagination('tableSiswa', 'paginationSiswa');
 
-        // --- TAMBAH DATA ---
+        // ==========================================
+        // LOGIKA GURU (CRUD)
+        // ==========================================
         $('#btn-tambah-guru').click(function() {
-            $('#modalGuru .modal-title').text('Tambah Data Guru');
-            $('#formGuru').attr('action', '/admin/guru/store');
-            $('#methodGuru').empty();
+            $('#titleGuru').text('Tambah Data Guru');
             $('#formGuru')[0].reset();
+            $('#g_id').val('');
+            $('#g_method').val('POST');
+            $('#g_mapel').val('').change();
             mGuru.show();
         });
 
-        $('#btn-tambah-siswa').click(function() {
-            $('#modalSiswa .modal-title').text('Tambah Data Siswa');
-            $('#formSiswa').attr('action', '/admin/siswa/store');
-            $('#methodSiswa').empty();
-            $('#formSiswa')[0].reset();
-            mSiswa.show();
-        });
-
-        // --- EDIT DATA ---
-        $('.btn-edit-guru').click(function() {
+        $(document).on('click', '.btn-edit-guru', function() {
             const id = $(this).data('id');
             const g = dataGuru[id];
-            $('#modalGuru .modal-title').text('Edit Data Guru');
-            $('#formGuru').attr('action', '/admin/guru/update/' + id);
-            $('#methodGuru').html('<input type="hidden" name="_method" value="PUT">');
+            
+            $('#titleGuru').text('Edit Data Guru');
+            $('#formGuru')[0].reset();
+            $('#g_id').val(g.id);
+            $('#g_method').val('PUT');
             
             $('#g_nama').val(g.nama);
-            $('#g_mapel').val(g.mapel);
+            $('#g_mapel').val(g.mapel).change(); 
             $('#g_no_hp').val(g.no_hp);
             $('#g_pendidikan').val(g.pendidikan_terakhir);
             $('#g_alamat').val(g.alamat_guru);
             $('#g_wallet_tipe').val(g.jenis_e_wallet);
             $('#g_wallet_no').val(g.no_e_wallet);
             $('#g_rekening').val(g.rekening);
+            
             mGuru.show();
         });
 
-        $('.btn-edit-siswa').click(function() {
+        $('#formGuru').submit(function(e) {
+            e.preventDefault();
+            let id = $('#g_id').val();
+            let url = id ? ('/admin/guru/update/' + id) : '/admin/guru/store';
+            
+            $('#btnSimpanGuru').text('Menyimpan...').prop('disabled', true);
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function(res) {
+                    mGuru.hide();
+                    Swal.fire('Berhasil!', res.message, 'success').then(() => location.reload());
+                },
+                error: function(xhr) {
+                    $('#btnSimpanGuru').text('Simpan Data').prop('disabled', false);
+                    let msg = xhr.responseJSON ? xhr.responseJSON.message : 'Terjadi Kesalahan';
+                    Swal.fire('Gagal!', msg, 'error');
+                }
+            });
+        });
+
+        // ==========================================
+        // LOGIKA SISWA (CRUD) - DENGAN FIX JENJANG
+        // ==========================================
+        $('#btn-tambah-siswa').click(function() {
+            $('#titleSiswa').text('Tambah Data Siswa');
+            $('#formSiswa')[0].reset();
+            $('#s_id').val('');
+            $('#s_method').val('POST');
+            $('#s_jenjang').val('').change();
+            mSiswa.show();
+        });
+
+        $(document).on('click', '.btn-edit-siswa', function() {
             const id = $(this).data('id');
             const s = dataSiswa[id];
-            $('#modalSiswa .modal-title').text('Edit Data Siswa');
-            $('#formSiswa').attr('action', '/admin/siswa/update/' + id);
-            $('#methodSiswa').html('<input type="hidden" name="_method" value="PUT">');
+            
+            // --- DEBUGGING: Cek Console Browser (Tekan F12) jika masih error ---
+            console.log("Data Siswa dari DB:", s);
+            console.log("Jenjang Asli:", s.jenjang);
+            
+            $('#titleSiswa').text('Edit Data Siswa');
+            $('#formSiswa')[0].reset();
+            $('#s_id').val(s.id);
+            $('#s_method').val('PUT');
             
             $('#s_nama').val(s.nama);
-            $('#s_jenjang').val(s.jenjang);
+            
+            // --- FIX PENGAMBILAN DATA JENJANG ---
+            if (s.jenjang) {
+                // Konversi ke String, Huruf Besar, dan Hapus Spasi (misal: " sd " -> "SD")
+                let jenjangFix = String(s.jenjang).toUpperCase().trim();
+                $('#s_jenjang').val(jenjangFix);
+                
+                // Jika setelah diset masih kosong (berarti data DB "Sekolah Dasar" tidak cocok dgn "SD")
+                if (!$('#s_jenjang').val()) {
+                     console.warn("Data jenjang di DB ('"+ s.jenjang +"') tidak cocok dengan opsi Dropdown.");
+                }
+            } else {
+                $('#s_jenjang').val('');
+            }
+            // Trigger change agar tampilan dropdown update
+            $('#s_jenjang').trigger('change');
+            // ------------------------------------
+
             $('#s_kelas').val(s.kelas);
             $('#s_no_hp').val(s.no_hp);
             $('#s_asal_sekolah').val(s.asal_sekolah);
             $('#s_ortu').val(s.nama_orang_tua);
             $('#s_alamat').val(s.alamat);
+            
             mSiswa.show();
+        });
+
+        $('#formSiswa').submit(function(e) {
+            e.preventDefault();
+            let id = $('#s_id').val();
+            let url = id ? ('/admin/siswa/update/' + id) : '/admin/siswa/store';
+            
+            $('#btnSimpanSiswa').text('Menyimpan...').prop('disabled', true);
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function(res) {
+                    mSiswa.hide();
+                    Swal.fire('Berhasil!', res.message, 'success').then(() => location.reload());
+                },
+                error: function(xhr) {
+                    $('#btnSimpanSiswa').text('Simpan Data').prop('disabled', false);
+                    let msg = xhr.responseJSON ? xhr.responseJSON.message : 'Terjadi Kesalahan';
+                    Swal.fire('Gagal!', msg, 'error');
+                }
+            });
+        });
+
+        // --- UPDATE STATUS (GLOBAL) ---
+        $('.select-status').change(function() {
+            let id = $(this).data('id');
+            let tipe = $(this).data('tipe'); 
+            let status = $(this).val();
+            let $select = $(this);
+
+            if(status === 'aktif') $select.removeClass('status-non-aktif').addClass('status-aktif');
+            else $select.removeClass('status-aktif').addClass('status-non-aktif');
+
+            $.ajax({
+                url: `/admin/${tipe}/update-status/${id}`,
+                type: 'POST',
+                data: { status_aktif: status, _method: 'PUT' },
+                success: function() {
+                    const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+                    Toast.fire({ icon: 'success', title: 'Status diperbarui' });
+                },
+                error: function() {
+                    Swal.fire('Error', 'Gagal update status', 'error');
+                }
+            });
         });
     });
 </script>

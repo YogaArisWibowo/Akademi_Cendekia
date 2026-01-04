@@ -6,101 +6,137 @@ use Illuminate\Http\Request;
 use App\Models\Guru;
 use App\Models\Siswa;
 use App\Models\User;
+use App\Models\Mapel; // Tetap butuh Mapel untuk mengisi dropdown
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
     public function dataPengguna() {
+        // Ambil data Guru & Siswa
         $guru = Guru::with('user')->get();
         $siswa = Siswa::with('user')->get();
-        return view('admin.Data_GurudanSiswa', compact('guru', 'siswa'));
+        
+        // Ambil data Mapel untuk pilihan di Dropdown
+        $mapel = Mapel::all();
+
+        return view('admin.Data_GurudanSiswa', compact('guru', 'siswa', 'mapel'));
     }
 
     public function storeGuru(Request $request) {
-        DB::transaction(function () use ($request) {
-            $user = User::create([
-                'username' => $request->nama,
-                'email' => $request->email,
-                'password' => Hash::make('password123'),
-                'role' => 'guru'
-            ]);
-            Guru::create([
-                'id_user' => $user->id,
-                'nama' => $request->nama,
-                'pendidikan_terakhir' => $request->pendidikan,
-                'mapel' => $request->mapel,
-                'alamat_guru' => $request->alamat_guru,
-                'rekening' => $request->rekening,
-                'no_hp' => $request->no_hp,
-                'jenis_e_wallet' => $request->jenis,
-                'no_e_wallet' => $request->input('no_e-wallet'),
-                'status_aktif' => 'aktif'
-            ]);
-        });
-        return back()->with('success', 'Data Guru Berhasil Ditambahkan');
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required',
+            'mapel' => 'required', // Validasi input mapel
+            'no_hp' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'message' => $validator->errors()->first()], 422);
+        }
+
+        try {
+            DB::transaction(function () use ($request) {
+                // 1. Buat Akun Login (Dummy Email)
+                $dummyEmail = Str::slug($request->nama) . rand(100, 999) . '@guru.sekolah';
+
+                $user = User::create([
+                    'username' => $request->nama,
+                    'email' => $dummyEmail,
+                    'password' => Hash::make('password123'),
+                    'role' => 'guru'
+                ]);
+
+                // 2. Simpan Data Guru
+                Guru::create([
+                    'id_user' => $user->id,
+                    'nama' => $request->nama,
+                    'mapel' => $request->mapel, // Simpan teks mapel yang dipilih
+                    'pendidikan_terakhir' => $request->pendidikan_terakhir,
+                    'alamat_guru' => $request->alamat_guru,
+                    'rekening' => $request->rekening,
+                    'no_hp' => $request->no_hp,
+                    'jenis_e_wallet' => $request->jenis_e_wallet,
+                    'no_e_wallet' => $request->no_e_wallet,
+                    'status_aktif' => 'aktif'
+                ]);
+            });
+
+            return response()->json(['status' => 'success', 'message' => 'Data Guru Berhasil Ditambahkan']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
     }
 
     public function updateGuru(Request $request, $id) {
-        $guru = Guru::findOrFail($id);
-        DB::transaction(function () use ($request, $guru) {
-            $guru->user->update(['username' => $request->nama, 'email' => $request->email]);
-            $guru->update([
-                'nama' => $request->nama,
-                'pendidikan_terakhir' => $request->pendidikan,
-                'mapel' => $request->mapel,
-                'alamat_guru' => $request->alamat_guru,
-                'rekening' => $request->rekening,
-                'no_hp' => $request->no_hp,
-                'jenis_e_wallet' => $request->jenis,
-                'no_e_wallet' => $request->input('no_e-wallet'),
-            ]);
-        });
-        return back()->with('success', 'Data Guru Berhasil Diperbarui');
+        try {
+            $guru = Guru::findOrFail($id);
+            
+            DB::transaction(function () use ($request, $guru) {
+                // Update Username User
+                if($guru->user) {
+                    $guru->user->update(['username' => $request->nama]);
+                }
+
+                // Update Data Guru
+                $guru->update([
+                    'nama' => $request->nama,
+                    'mapel' => $request->mapel, // Update mapel
+                    'pendidikan_terakhir' => $request->pendidikan_terakhir,
+                    'alamat_guru' => $request->alamat_guru,
+                    'rekening' => $request->rekening,
+                    'no_hp' => $request->no_hp,
+                    'jenis_e_wallet' => $request->jenis_e_wallet,
+                    'no_e_wallet' => $request->no_e_wallet,
+                ]);
+            });
+
+            return response()->json(['status' => 'success', 'message' => 'Data Guru Berhasil Diperbarui']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
     }
 
+    // --- SISWA (Tidak berubah) ---
     public function storeSiswa(Request $request) {
-        DB::transaction(function () use ($request) {
-            $user = User::create([
-                'username' => $request->nama,
-                'email' => $request->email,
-                'password' => Hash::make('password123'),
-                'role' => 'siswa'
-            ]);
-            Siswa::create([
-                'id_user' => $user->id,
-                'nama' => $request->nama,
-                'jenjang' => $request->jenjang,
-                'kelas' => $request->kelas,
-                'asal_sekolah' => $request->asal_sekolah,
-                'nama_orang_tua' => $request->nama_ortu,
-                'no_hp' => $request->no_hp,
-                'status_penerimaan' => 1
-            ]);
-        });
-        return back()->with('success', 'Data Siswa Berhasil Ditambahkan');
+        try {
+            DB::transaction(function () use ($request) {
+                $dummyEmail = Str::slug($request->nama) . rand(1000, 9999) . '@siswa.sekolah';
+                $user = User::create([
+                    'username' => $request->nama,
+                    'email' => $dummyEmail,
+                    'password' => Hash::make('password123'),
+                    'role' => 'siswa'
+                ]);
+                Siswa::create(array_merge($request->all(), ['id_user' => $user->id, 'status_aktif' => 'aktif']));
+            });
+            return response()->json(['status' => 'success', 'message' => 'Data Siswa Berhasil Ditambahkan']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
     }
 
     public function updateSiswa(Request $request, $id) {
-        $siswa = Siswa::findOrFail($id);
-        DB::transaction(function () use ($request, $siswa) {
-            $siswa->user->update(['username' => $request->nama, 'email' => $request->email]);
-            $siswa->update([
-                'nama' => $request->nama,
-                'jenjang' => $request->jenjang,
-                'kelas' => $request->kelas,
-                'asal_sekolah' => $request->asal_sekolah,
-                'nama_orang_tua' => $request->nama_ortu,
-                'no_hp' => $request->no_hp,
-            ]);
-        });
-        return back()->with('success', 'Data Siswa Berhasil Diperbarui');
+        try {
+            $siswa = Siswa::findOrFail($id);
+            DB::transaction(function () use ($request, $siswa) {
+                if($siswa->user) $siswa->user->update(['username' => $request->nama]);
+                $siswa->update($request->all());
+            });
+            return response()->json(['status' => 'success', 'message' => 'Data Siswa Berhasil Diperbarui']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
     }
 
     public function updateStatus(Request $request, $role, $id) {
-        $data = ($role == 'guru') ? Guru::findOrFail($id) : Siswa::findOrFail($id);
-        $column = ($role == 'guru') ? 'status_aktif' : 'status_penerimaan';
-        $data->update([$column => $request->status]);
-        return response()->json(['success' => true]);
+        try {
+            $model = ($role == 'guru') ? Guru::findOrFail($id) : Siswa::findOrFail($id);
+            $model->update(['status_aktif' => $request->status_aktif]);
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false], 500);
+        }
     }
 }

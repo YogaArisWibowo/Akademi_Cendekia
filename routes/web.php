@@ -30,12 +30,12 @@ Route::post('/register', [RegisterController::class, 'store'])->name('Register.p
 
 Route::middleware(['auth', 'admin'])->group(function () {
     // Halaman Utama Data Guru & Siswa
-    Route::get('/admin/admin_Data_GurudanSiswa', [AdminController::class, 'dataPengguna'])->name('admin_Data_GurudanSiswa');
-    Route::post('/admin/store-guru', [AdminController::class, 'storeGuru'])->name('guru.store');
-    Route::put('/admin/guru/update-status/{id}', [AdminController::class, 'updateGuru'])->name('guru.update');
-    Route::post('/admin/store-siswa', [AdminController::class, 'storeSiswa'])->name('siswa.store');
-    Route::put('/admin/siswa/update-status/{id}', [AdminController::class, 'updateSiswa'])->name('siswa.update');
-    Route::post('/admin/update-status/{role}/{id}', [AdminController::class, 'updateStatus']);
+    Route::get('/admin/admin_data-guru-siswa', [AdminController::class, 'dataPengguna'])->name('admin_Data_GurudanSiswa');
+    Route::post('/admin/guru/store', [AdminController::class, 'storeGuru']);
+    Route::put('/admin/guru/update/{id}', [AdminController::class, 'updateGuru']);
+    Route::post('/admin/siswa/store', [AdminController::class, 'storeSiswa']);
+    Route::put('/admin/siswa/update/{id}', [AdminController::class, 'updateSiswa']);
+    Route::put('/admin/{role}/update-status/{id}', [AdminController::class, 'updateStatus']);
 
     Route::get('/admin/Tambah_Mapel', [MapelController::class, 'index'])->name('admin_Tambah_Mapel');
     Route::post('/admin/Tambah_Mapel/store', [MapelController::class, 'store'])->name('mapel.store');
