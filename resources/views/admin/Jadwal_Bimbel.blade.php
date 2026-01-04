@@ -31,7 +31,6 @@
     .search i { position: absolute; top: 50%; left: 10px; transform: translateY(-50%); color: #6c757d; }
     .search input.form-control { padding-left: 35px; height: 35px; border-radius: 6px; }
 
-    /* Pagination Styling Sesuai Template Guru */
     .pagination-wrapper { display: flex; justify-content: center; width: 100%; margin-top: 20px; gap: 5px; }
     .btn.page {
         border: 1px solid #e2e8f0; background: white; padding: 6px 14px;
@@ -88,9 +87,7 @@
                         <form action="{{ route('jadwal.destroy', $j->id) }}" method="POST" class="form-hapus">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger">
-                                <i class="bi bi-trash"></i>
-                            </button>
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
                         </form>
                     </div>
                 </td>
@@ -99,12 +96,10 @@
         </tbody>
     </table>
 
-    {{-- Pagination Wrapper Statis/Dinamis --}}
-    <div class="pagination-wrapper" id="paginationControls">
-        </div>
+    <div class="pagination-wrapper" id="paginationControls"></div>
 </div>
 
-{{-- MODAL FORM TETAP SAMA --}}
+{{-- MODAL --}}
 <div class="modal fade" id="modalJadwal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <form id="formJadwal" method="POST">
@@ -158,9 +153,9 @@
                             <div class="mb-3">
                                 <label class="form-label">Siswa</label>
                                 <select name="id_siswa" id="j_id_siswa" class="form-control" required>
-                                    <option value="">-- Pilih Siswa --</option>
+                                    <option value="" data-alamat="">-- Pilih Siswa --</option>
                                     @foreach($siswa as $s)
-                                    <option value="{{ $s->id }}">{{ $s->nama }}</option>
+                                    <option value="{{ $s->id }}" data-alamat="{{ $s->alamat }}">{{ $s->nama }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -185,10 +180,10 @@
 
     $(document).ready(function () {
         const mJadwal = new bootstrap.Modal(document.getElementById("modalJadwal"));
-        const rowsPerPage = 10;
+        let rowsPerPage = 10; 
         let currentPage = 1;
 
-        // --- 1. Logika Auto-fill Mapel dari Guru ---
+        // --- 1. Auto-fill Mapel ---
         $("#j_id_guru").on("change", function () {
             const selectedGuruMapel = $(this).find("option:selected").data("mapel");
             if (selectedGuruMapel) {
@@ -202,76 +197,74 @@
             }
         });
 
-        // --- 2. Logika Pagination Sesuai Request ---
-        function updatePagination() {
-            const $items = $(".jadwal-item:visible");
-            const totalItems = $items.length;
-            const totalPages = Math.ceil(totalItems / rowsPerPage);
-            const $wrapper = $("#paginationControls");
+        // --- NEW: Auto-fill Alamat Siswa ---
+        $("#j_id_siswa").on("change", function () {
+            const selectedAlamat = $(this).find("option:selected").data("alamat");
+            if (selectedAlamat) {
+                $("#j_alamat").val(selectedAlamat);
+            } else {
+                $("#j_alamat").val("");
+            }
+        });
 
-            $wrapper.empty();
+        // --- 2. LOGIKA PAGINATION ---
+        function renderPagination() {
+            const $filteredRows = $(".jadwal-item").filter(function() {
+                return $(this).data('search-match') !== false;
+            });
 
-            if (totalPages > 0) {
-                // Tombol Sebelumnya
-                $wrapper.append(`<button class="btn page prev-next" id="prevBtn" ${currentPage === 1 ? 'disabled' : ''}>Sebelumnya</button>`);
+            const totalItems = $filteredRows.length;
+            const totalPages = Math.ceil(totalItems / rowsPerPage) || 1;
+            const $controls = $("#paginationControls");
 
-                // Tombol Angka
-                for (let i = 1; i <= totalPages; i++) {
-                    $wrapper.append(`<button class="btn page ${i === currentPage ? 'active' : ''}">${i}</button>`);
-                }
+            if (currentPage > totalPages) currentPage = totalPages;
 
-                // Tombol Selanjutnya
-                $wrapper.append(`<button class="btn page prev-next" id="nextBtn" ${currentPage === totalPages ? 'disabled' : ''}>Selanjutnya</button>`);
+            $controls.empty();
+            $controls.append(`<button class="btn page prev-next" id="prevBtn" ${currentPage === 1 ? 'disabled' : ''}>Sebelumnya</button>`);
+            
+            for (let i = 1; i <= totalPages; i++) {
+                $controls.append(`<button class="btn page ${i === currentPage ? 'active' : ''}">${i}</button>`);
             }
 
-            showPage(currentPage);
-        }
+            $controls.append(`<button class="btn page prev-next" id="nextBtn" ${currentPage === totalPages ? 'disabled' : ''}>Selanjutnya</button>`);
 
-        function showPage(page) {
-            const $items = $(".jadwal-item:visible");
-            $items.hide();
-            $items.slice((page - 1) * rowsPerPage, page * rowsPerPage).show();
+            $(".jadwal-item").hide();
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            $filteredRows.slice(start, end).show();
         }
 
         $(document).on("click", ".btn.page:not(.prev-next)", function() {
             currentPage = parseInt($(this).text());
-            updatePagination();
+            renderPagination();
         });
 
-        $(document).on("click", "#prevBtn", function() {
-            if (currentPage > 1) {
-                currentPage--;
-                updatePagination();
-            }
+        $(document).on("click", "#prevBtn", function() { if (currentPage > 1) { currentPage--; renderPagination(); } });
+        $(document).on("click", "#nextBtn", function() { 
+            const totalPages = Math.ceil($(".jadwal-item").filter(function(){return $(this).data('search-match') !== false;}).length / rowsPerPage);
+            if (currentPage < totalPages) { currentPage++; renderPagination(); } 
         });
 
-        $(document).on("click", "#nextBtn", function() {
-            const totalPages = Math.ceil($(".jadwal-item:visible").length / rowsPerPage);
-            if (currentPage < totalPages) {
-                currentPage++;
-                updatePagination();
-            }
-        });
-
-        // --- 3. Logika Pencarian Real-time ---
+        // --- 3. SEARCH ---
         $("#searchInput").on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $("#jadwalTable tbody tr").filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            const value = $(this).val().toLowerCase();
+            $(".jadwal-item").each(function() {
+                const match = $(this).text().toLowerCase().indexOf(value) > -1;
+                $(this).data('search-match', match);
             });
-            currentPage = 1; // Reset ke hal 1 saat cari
-            updatePagination();
+            currentPage = 1;
+            renderPagination();
         });
 
-        // Inisialisasi awal
-        updatePagination();
+        renderPagination();
 
-        // --- 4. CRUD & Fitur Lainnya ---
+        // --- 4. CRUD Logic ---
         $("#btn-tambah-jadwal").on("click", function () {
             $("#modalJadwal .modal-title").text("Tambah Jadwal");
             $("#formJadwal").attr("action", "{{ route('jadwal.store') }}");
             $("#methodJadwal").empty();
             $("#formJadwal")[0].reset();
+            $("#j_nama_mapel").val("");
             mJadwal.show();
         });
 
@@ -281,9 +274,7 @@
             $("#modalJadwal .modal-title").text("Edit Jadwal");
             $("#formJadwal").attr("action", "/admin/admin_jadwal_bimbel/update/" + id);
             $("#methodJadwal").html('<input type="hidden" name="_method" value="PUT">');
-            
-            let dateVal = data.created_at ? data.created_at.split(" ")[0] : "";
-            $("#j_created_at").val(dateVal);
+            $("#j_created_at").val(data.created_at ? data.created_at.split(" ")[0] : "");
             $("#j_hari").val(data.hari);
             $("#j_mulai").val(data.waktu_mulai);
             $("#j_selesai").val(data.waktu_selesai);
@@ -297,9 +288,8 @@
 
         $("#j_created_at").on("change", function () {
             if ($(this).val()) {
-                const date = new Date($(this).val());
                 const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-                $("#j_hari").val(days[date.getDay()]);
+                $("#j_hari").val(days[new Date($(this).val()).getDay()]);
             }
         });
     });

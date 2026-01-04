@@ -231,7 +231,7 @@
 
         // --- PAGINATION LOGIC ---
         function setupPagination(tableId, paginationId) {
-            const rowsPerPage = 10;
+            const rowsPerPage = 1;
             let currentPage = 1;
             const $table = $(`#${tableId}`);
             
@@ -243,11 +243,11 @@
                 
                 $container.empty();
                 if (totalPages > 1) {
-                    $container.append(`<button class="btn-page prev" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`);
+                    $container.append(`<button class="btn-page prev" ${currentPage === 1 ? 'disabled' : ''}>Sebelumnya</button>`);
                     for (let i = 1; i <= totalPages; i++) {
                         $container.append(`<button class="btn-page num ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`);
                     }
-                    $container.append(`<button class="btn-page next" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`);
+                    $container.append(`<button class="btn-page next" ${currentPage === totalPages ? 'disabled' : ''}>Selanjutnya</button>`);
                 }
                 $rows.hide().slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage).show();
             }

@@ -24,6 +24,7 @@ class Guru extends Authenticatable
         'password',
         'mapel',
         'no_hp',
+        'gaji_per_jam',
         'alamat_guru',
         'jenis_e_wallet', // Sesuaikan jika di DB menggunakan underscore (_)
         'no_e_wallet',
@@ -52,4 +53,11 @@ class Guru extends Authenticatable
     {
         return $this->belongsTo(User::class, 'id_user', 'id');
     }
+
+    public function absensi_guru()
+    {
+        return $this->hasMany(AbsensiGuru::class, 'id_guru');
+    }
+
+    
 }

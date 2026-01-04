@@ -11,6 +11,8 @@ use App\Http\Controllers\Logincontroller;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\GajiGuruController;
 use App\Http\Controllers\MapelController;
+use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\PembayaranController;
 
 Route::get('/', function () {
     return view('landingpages');
@@ -38,35 +40,19 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/Tambah_Mapel', [MapelController::class, 'index'])->name('admin_Tambah_Mapel');
     Route::post('/admin/Tambah_Mapel/store', [MapelController::class, 'store'])->name('mapel.store');
     
-    Route::get('/admin/admin_Pencatatan_Gaji_Guru', function () {
-    return view('admin.Pencatatan_Gaji_Guru');
-    })->name('admin_Pencatatan_Gaji_Guru');
+    
 
     Route::get('/admin/admin_Pencatatan_Gaji_Guru', [GajiGuruController::class, 'index'])->name('admin_Pencatatan_Gaji_Guru');
+    Route::get('/admin/admin_detail_pencatatan_gaji_guru/{id}', [GajiGuruController::class, 'show'])->name('admin_detail_pencatatan_gaji_guru');
+    Route::put('/admin/admin_detail_pencatatan_gaji_guru/{id}', [GajiGuruController::class, 'update'])->name('admin_detail_pencatatan_gaji_guru.update');
+    Route::post('/admin/admin_detail_pencatatan_gaji_guru/store', [GajiGuruController::class, 'store'])->name('admin_detail_pencatatan_gaji_guru.store');
 
-    Route::get('/admin/admin_detail_pencatatan_gaji_guru', function () {
-        return view('admin.detail_pencatatan_gaji_guru');
-    })->name('admin_detail_pencatatan_gaji_guru');
+    Route::get('/admin/absensi', [AbsensiController::class, 'index'])->name('admin_Absensi');
+    Route::get('/admin/absensi/siswa/{id}', [AbsensiController::class, 'detailSiswa'])->name('admin_detail_absensi_siswa');
+    Route::get('/admin/absensi/guru/{id}', [AbsensiController::class, 'detailGuru'])->name('admin_detail_absensi_guru');
 
-    Route::get('/admin/admin_Absensi', function () {
-        return view('admin.Absensi');
-    })->name('admin_Absensi');
-
-    Route::get('/admin/admin_detail_absensi_siswa', function () {
-        return view('admin.detail_absensi_siswa');
-    })->name('admin_detail_absensi_siswa');
-
-    Route::get('/admin/admin_detail_absensi_guru', function () {
-        return view('admin.detail_absensi_guru ');
-    })->name('admin_detail_absensi_guru');
-
-    Route::get('/admin/admin_Pembayaran_Siswa', function () {
-        return view('admin.Pembayaran_Siswa ');
-    })->name('admin_Pembayaran_Siswa');
-
-    Route::get('/admin/admin_detail_pembayaran_siswa', function () {
-        return view('admin.detail_pembayaran_siswa ');
-    })->name('admin_detail_pembayaran_siswa');
+    Route::get('/admin/pembayaran-siswa', [PembayaranController::class, 'index'])->name('admin_Pembayaran_Siswa');
+    Route::get('/admin/pembayaran-siswa/detail/{id}', [PembayaranController::class, 'detail'])->name('admin_detail_pembayaran_siswa');
 
     Route::get('/admin/admin_Materi_Pembelajaran', function () {
         return view('admin.Materi_Pembelajaran ');

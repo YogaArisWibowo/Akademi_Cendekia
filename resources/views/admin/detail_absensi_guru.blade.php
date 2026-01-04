@@ -1,148 +1,127 @@
-@extends('layouts.app_admin', ['title' => 'Absensi Guru']) @section('content')
+@extends('layouts.app_admin', ['title' => 'Absensi Guru']) 
+
+@section('content')
 
 <style>
     .back {
-        background-color: #c7c7c7;
-        border-radius: 10px;
-        border: none;
-        width: 110px;
-        height: 35px;
-        color: white;
-        font-weight: 500;
-        font-size: large;
-        cursor: pointer;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 20px;
+        background-color: #c7c7c7; border-radius: 10px; border: none; width: 110px; height: 35px;
+        color: white; font-weight: 500; font-size: large; cursor: pointer;
+        display: flex; align-items: center; justify-content: center; margin-bottom: 20px; text-decoration: none;
     }
-    .back i {
-        padding-right: 5px;
-    }
+    .back i { padding-right: 5px; }
 
-    /* TAMBAHAN CSS UNTUK NAMA, FILTER, DAN UNDUH AGAR SEJAJAR */
     .header-custom-wrapper {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        margin-top: 20px;
-        margin-bottom: 30px;
+        display: flex; justify-content: space-between; align-items: flex-end;
+        margin-top: 20px; margin-bottom: 30px;
     }
-    .profile-info h3 {
-        margin: 0;
-        font-weight: 700;
-        color: #1f2937;
-    }
-    .left-controls {
-        display: flex;
-        align-items: flex-end;
-        gap: 50px; /* Jarak antara Nama dan Filter agar tidak menempel */
-    }
-    .controls-group {
-        display: flex;
-        gap: 10px;
-        
-    }
+    .profile-info h3 { margin: 0; font-weight: 700; color: #1f2937; }
+    .left-controls { display: flex; align-items: flex-end; gap: 50px; }
+    .controls-group { display: flex; gap: 10px; }
     .filter-select {
-        height: 35px;
-        width: 120px;
-        border-radius: 8px;
-        border: 1px solid #d1d5db;
-        padding: 0 10px;
-        font-size: 13px;
-        cursor: pointer;
-        background-color: white;
-        border-color: transparent !important;
-        box-shadow: 0 3px 3px rgba(0, 0, 0, 0.203);
+        height: 35px; width: 120px; border-radius: 8px; border: 1px solid #d1d5db;
+        padding: 0 10px; font-size: 13px; cursor: pointer; background-color: white;
+        border-color: transparent !important; box-shadow: 0 3px 3px rgba(0, 0, 0, 0.203);
     }
     .btn-download-green {
-        background-color: #00cb0a;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        height: 35px;
-        padding: 0 15px;
-        font-weight: 600;
-        cursor: pointer;
-    }
-    .pagination-container {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
+        background-color: #00cb0a; color: white; border: none; border-radius: 8px;
+        height: 35px; padding: 0 15px; font-weight: 600; cursor: pointer;
     }
 
-    .btn-page {
-        border: none;
-        background: transparent;
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-size: 14px;
-        color: #4a5568;
-        cursor: pointer;
-    }
+    /* TABEL: WARNA ABU-ABU SESUAI VIEW PERTAMA */
+    .table-general { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; }
+    .table-general thead th { background-color: #CCE0FF !important; color: #333; padding: 12px; border: none; font-size: 13px; white-space: nowrap; }
+    .table-general tbody td { padding: 12px; border: none; vertical-align: middle; font-size: 13px; }
+    .table-general tbody tr:nth-child(even) { background-color: #EBF3FF; }
 
-    .btn-page.active {
-        background-color: #ebf4ff;
-        color: #3182ce;
-        font-weight: 600;
-    }
 
-    .btn-page.next-btn {
-        background-color: #c3dafe;
-        color: #1a365d;
-        font-weight: 500;
-        border-radius: 8px;
-    }
+    /* Judul ini disembunyikan di layar, hanya muncul saat diprint */
+    .print-only-title { display: none; }
 
-    .btn-page:disabled {
-        cursor: default;
-        background-color: #f7fafc;
+    @media print {
+        /* Menghilangkan Header/Footer Otomatis Browser (Tanggal & Judul) */
+        @page { margin: 0; }
+        body { margin: 1.6cm; background-color: white !important; }
+
+        /* Sembunyikan SEMUA elemen di luar tabel container */
+        body * { visibility: hidden; } 
+        
+        /* Tampilkan kembali hanya area tabel dan isinya */
+        .table-container, .table-container * { visibility: visible; } 
+        
+        .table-container {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100% !important;
+        }
+
+        /* Judul Nama yang muncul di atas tabel saat diprint */
+        .print-only-title { 
+            display: block !important; 
+            visibility: visible !important;
+            text-align: center; 
+            margin-bottom: 25px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #1f2937;
+            border-bottom: none; /* Menghilangkan Underline agar rapi */
+        }
+
+        /* Jaga style warna tabel Boss agar tetap muncul di PDF/Print */
+        .table-general th { 
+            background-color: #f9fafb !important; 
+            -webkit-print-color-adjust: exact; 
+        }
+
+        .pagination-wrapper, .back, .header-custom-wrapper { display: none !important; }
+        a[href]::after { content: none !important; }
     }
 </style>
+
+{{-- Tampilan Views: Tombol Kembali --}}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <a href="{{ route('admin_Absensi') }}">
+    <a href="{{ route('admin_Absensi') }}" style="text-decoration: none;">
         <button class="back"><i class="ri-arrow-left-line"></i> Kembali</button>
     </a>
 </div>
 
+{{-- Tampilan Views: Nama & Filter --}}
 <div class="header-custom-wrapper">
     <div class="left-controls">
         <div class="profile-info">
-            <h3>Ira Sulistya</h3>
+            <h3>{{ $guru->nama }}</h3>
         </div>
 
         <div class="controls-group">
-            <select class="filter-select">
-                <option selected disabled>Bulan</option>
-                <option value="1">Januari</option>
-                <option value="2">Februari</option>
-                <option value="3">Maret</option>
-                <option value="4">April</option>
-                <option value="5">Mei</option>
-                <option value="6">Juni</option>
-                <option value="7">Juli</option>
-                <option value="8">Agustus</option>
-                <option value="9">September</option>
-                <option value="10">Oktober</option>
-                <option value="11">November</option>
-                <option value="12">Desember</option>
-            </select>
+            <form action="{{ URL::current() }}" method="GET" style="display: flex; gap: 10px;">
+                <select name="bulan" class="filter-select" onchange="this.form.submit()">
+                    <option value="">Bulan</option>
+                    @foreach(range(1, 12) as $m)
+                        <option value="{{ $m }}" {{ request('bulan') == $m ? 'selected' : '' }}>
+                            {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
+                        </option>
+                    @endforeach
+                </select>
 
-            <select class="filter-select">
-                <option selected disabled>Tahun</option>
-                <option value="2024">2024</option>
-                <option value="2025">2025</option>
-                <option value="2026">2026</option>
-                <option value="2027">2027</option>
-                <option value="2028">2028</option>
-                <option value="2029">2029</option>
-                <option value="2030">2030</option>
-            </select>
+                <select name="tahun" class="filter-select" onchange="this.form.submit()">
+                    <option value="">Tahun</option>
+                    @for($y = date('Y'); $y >= 2024; $y--)
+                        <option value="{{ $y }}" {{ request('tahun') == $y ? 'selected' : '' }}>{{ $y }}</option>
+                    @endfor
+                </select>
+            </form>
         </div>
     </div>
-    <button class="btn-download-green">Unduh</button>
+    <button class="btn-download-green" onclick="window.print()">Unduh</button>
 </div>
 
+{{-- Kontainer Utama --}}
 <div class="table-container">
+    {{-- Muncul hanya saat Print --}}
+    <div class="print-only-title">
+        LAPORAN ABSENSI GURU: {{ strtoupper($guru->nama) }}
+    </div>
+
     <table class="table-general">
         <thead>
             <tr>
@@ -155,28 +134,35 @@
                 <th>Catatan</th>
             </tr>
         </thead>
-
         <tbody>
+            @forelse($absensi as $key => $item)
             <tr>
-                <td>1</td>
-                <td>Senin</td>
-                <td>01-04-2025</td>
-                <td>14.00</td>
-                <td>Biologi</td>
+                <td>{{ $absensi->firstItem() + $key }}</td>
+                <td>{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('l') }}</td>
+                <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d-m-Y') }}</td>
+                <td>{{ \Carbon\Carbon::parse($item->created_at)->format('H.i') }}</td>
+                <td>{{ $item->mapel ?? '-' }}</td>
                 <td>
-                    <a href="#"><u>Lihat Detail</u></a>
+                    @if($item->bukti_foto)
+                        {{-- Menggunakan asset() karena file ada di public/bukti_absensi --}}
+                        <a href="{{ asset('bukti_absensi/' . $item->bukti_foto) }}" target="_blank"><u>Lihat Detail</u></a>
+                    @else
+                        -
+                    @endif
                 </td>
-                <td>good</td>
+                <td>{{ $item->laporan_kegiatan ?? '-' }}</td>
             </tr>
+            @empty
+            <tr>
+                <td colspan="7" class="text-center py-4">Data tidak ditemukan.</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 
-    <div class="pagination-wrapper">
-        <button class="btn-page text-muted" disabled>Sebelumnya</button>
-        <button class="btn-page active">1</button>
-        <button class="btn-page">2</button>
-        <button class="btn-page">3</button>
-        <button class="btn-page next-btn">Selanjutnya</button>
+    <div class="pagination-wrapper mt-4">
+        {{ $absensi->appends(request()->query())->links('pagination::bootstrap-4') }}
     </div>
 </div>
+
 @endsection

@@ -38,7 +38,6 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>Nama Siswa</th>
                 <th>Nama Mapel</th>
                 <th>Kurikulum</th>
                 <th>Kelas</th>
@@ -48,7 +47,6 @@
             @foreach($mapel as $m)
             <tr>
                 <td>{{ $loop->iteration + ($mapel->firstItem() - 1) }}</td>
-                <td>{{ $m->siswa->nama ?? 'Tidak Ada' }}</td>
                 <td>{{ $m->nama_mapel }}</td>
                 <td>{{ $m->jenis_kurikulum }}</td>
                 <td>{{ $m->kelas }}</td>
@@ -72,15 +70,6 @@
             <form action="{{ route('mapel.store') }}" method="POST">
                 @csrf
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Nama Siswa</label>
-                        <select name="siswa_id" class="form-control" required>
-                            <option value="">-- Pilih Siswa --</option>
-                            @foreach($siswa as $s)
-                                <option value="{{ $s->id }}">{{ $s->nama }}</option>
-                            @endforeach
-                        </select>
-                    </div>
                     <div class="mb-3">
                         <label class="form-label">Nama Mapel</label>
                         <input type="text" name="nama_mapel" class="form-control" placeholder="Input Nama Mapel" required>

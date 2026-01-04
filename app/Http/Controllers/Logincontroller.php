@@ -24,7 +24,7 @@ class LoginController extends Controller
 
             // 3. Arahkan Redirect berdasarkan Role yang tersimpan di tabel users
             if ($user->role === 'admin') {
-                return redirect()->intended('/admin/admin_jadwal_bimbel');
+                return redirect()->intended('/admin/admin_Penerimaan_Siswa');
             } 
             
             if ($user->role === 'guru') {

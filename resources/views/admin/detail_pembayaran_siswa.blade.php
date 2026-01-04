@@ -1,74 +1,37 @@
-@extends('layouts.app_admin', ['title' => 'Pembayaran Bimbel'])
+@extends('layouts.app_admin', ['title' => 'Detail Pembayaran'])
+
 @section('content')
 
 <style>
     .back {
-        background-color: #c7c7c7;
-        border-radius: 10px;
-        border: none;
-        width: 110px;
-        height: 35px;
-        color: white;
-        font-weight: 500;
-        font-size: large;
-        cursor: pointer;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 20px;
+        background-color: #c7c7c7; border-radius: 10px; border: none; width: 110px; height: 35px;
+        color: white; font-weight: 500; font-size: large; cursor: pointer;
+        display: flex; align-items: center; justify-content: center; margin-bottom: 20px; text-decoration: none;
     }
-    .back i {
-        padding-right: 5px;
-    }
+    .back i { padding-right: 5px; }
 
-    /* TAMBAHAN CSS UNTUK NAMA, FILTER, DAN UNDUH AGAR SEJAJAR */
-    .header-custom-wrapper {
-        margin-top: 20px;
-        margin-bottom: 30px;
-    }
-    .profile-info h3 {
-        margin: 0;
-        font-weight: 700;
-        color: #1f2937;
-    }
-    .pagination-wrapper {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-    }
+    .header-custom-wrapper { margin-top: 20px; margin-bottom: 30px; }
+    .profile-info h3 { margin: 0; font-weight: 700; color: #1f2937; }
+    
+    .table-general { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; }
+    .table-general thead th { background-color: #CCE0FF !important; color: #333; padding: 12px; border: none; font-size: 13px; white-space: nowrap; }
+    .table-general tbody td { padding: 12px; border: none; vertical-align: middle; font-size: 13px; }
+    .table-general tbody tr:nth-child(even) { background-color: #EBF3FF; }
 
-    .btn-page {
-        border: none;
-        background: transparent;
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-size: 14px;
-        color: #4a5568;
-        cursor: pointer;
-    }
-
-    .btn-page.active {
-        background-color: #ebf4ff;
-        color: #3182ce;
-        font-weight: 600;
-    }
-
-    .btn-page.next-btn {
-        background-color: #c3dafe;
-        color: #1a365d;
-        font-weight: 500;
-        border-radius: 8px;
-    }
-
-    .btn-page:disabled {
-        cursor: default;
-        background-color: #f7fafc;
-    }
+    .pagination-wrapper { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
 </style>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <a href="{{ route('admin_Pembayaran_Siswa') }}">
+    <a href="{{ route('admin_Pembayaran_Siswa') }}" style="text-decoration: none;">
         <button class="back"><i class="ri-arrow-left-line"></i> Kembali</button>
     </a>
+</div>
+
+<div class="header-custom-wrapper">
+    <div class="profile-info">
+        <h3>Riwayat Pembayaran: {{ $siswa->nama }}</h3>
+        <p class="text-muted">Kelas {{ $siswa->kelas }} / {{ $siswa->jenjang }}</p>
+    </div>
 </div>
 
 <div class="table-container">
@@ -79,33 +42,40 @@
                 <th>Tanggal</th>
                 <th>Nama Siswa</th>
                 <th>Kelas/Jenjang</th>
-                <th>No hp</th>
+                <th>Nama Orang Tua</th>
                 <th>Nominal</th>
-                <th>Bukti Pembayaran</th>
+                <th>Bukti</th>
             </tr>
         </thead>
 
         <tbody>
+            @forelse($riwayat as $key => $item)
             <tr>
-                <td>1</td>
-                <td>01-04-2025</td>
-                <td>Yoga</td>
-                <td>SMP</td>
-                <td>0878 Kapan Kita jalan</td>
-                <td>5000</td>
+                <td>{{ $riwayat->firstItem() + $key }}</td>
+                <td>{{ \Carbon\Carbon::parse($item->tanggal_pembayaran)->format('d-m-Y') }}</td>
+                <td>{{ $siswa->nama }}</td>
+                <td>{{ $siswa->kelas }} / {{ $siswa->jenjang }}</td>
+                <td>{{ $item->nama_orangtua }}</td>
+                <td>Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
                 <td>
-                    <a href="#"><u>Lihat</u></a>
+                    @if($item->bukti_pembayaran)
+                        <a href="{{ asset('bukti_absensi/' . $item->bukti_pembayaran) }}" target="_blank"><u>Lihat Detail</u></a>
+                    @else
+                        -
+                    @endif
                 </td>
             </tr>
+            @empty
+            <tr>
+                <td colspan="7" class="text-center py-4">Belum ada data pembayaran.</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 
     <div class="pagination-wrapper">
-        <button class="btn-page text-muted" disabled>Sebelumnya</button>
-        <button class="btn-page active">1</button>
-        <button class="btn-page">2</button>
-        <button class="btn-page">3</button>
-        <button class="btn-page next-btn">Selanjutnya</button>
+        {{ $riwayat->links('pagination::bootstrap-4') }}
     </div>
 </div>
+
 @endsection

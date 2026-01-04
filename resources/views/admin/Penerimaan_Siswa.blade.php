@@ -59,7 +59,7 @@
 <script>
 $(document).ready(function () {
     // --- PAGINATION (Tetap Sama) ---
-    const rowsPerPage = 10;
+    const rowsPerPage = 1;
     let currentPage = 1;
     const $rows = $("#penerimaanTable tbody tr");
 

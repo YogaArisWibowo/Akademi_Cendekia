@@ -22,7 +22,6 @@ class MapelController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'siswa_id' => 'required',
             'nama_mapel' => 'required',
             'jenis_kurikulum' => 'required',
             'kelas' => 'required',

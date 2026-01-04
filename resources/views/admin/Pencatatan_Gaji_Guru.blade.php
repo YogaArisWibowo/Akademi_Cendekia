@@ -36,7 +36,7 @@
             <div class="guru-card">
                 <span class="nama">{{ $guru->nama }}</span>
                 <div class="guru-info">
-                    <span class="guru-title">Guru Jenjang: {{ $guru->jenjang }}</span>
+                    <span class="guru-title">Guru Mapel: {{ $guru->mapel }}</span>
                 </div>
             </div>
         </a>
