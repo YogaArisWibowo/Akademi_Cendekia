@@ -85,7 +85,7 @@
         @forelse($gurus as $guru)
             {{-- PENTING: Class="guru-item" ditambahkan agar JS bisa menghitung item --}}
             <div class="guru-item"> 
-                <a href="#" class="guru-card-link">
+                <a href="{{route('admin_detail_monitoring_guru', $guru->id)}}" class="guru-card-link">
                     <div class="guru-card">
                         <span class="nama">{{ $guru->nama }}</span>
                         <div class="guru-info">

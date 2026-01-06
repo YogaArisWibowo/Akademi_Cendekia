@@ -5,46 +5,155 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
-    /* --- STYLING TAMBAHAN --- */
+    /* --- STYLING GLOBAL --- */
     .swal2-container { z-index: 10000 !important; }
-    .tambah { 
-        margin-bottom: 10px; display: flex; justify-content: center; color: white !important; border: none; 
-        border-radius: 8px; background-color: #ffd700; font-weight: 600 !important; 
-        align-items: center; width: 120px; height: 38px; text-decoration: none; cursor: pointer; 
+
+    /* Card Utama */
+    .main-card { 
+        background: white; 
+        padding: 30px; 
+        border-radius: 25px; 
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
+        margin-bottom: 40px; 
     }
-    .data-section-title { font-weight: 600 !important; font-size: 28px; margin-bottom: 0; color: #1a1a1a; }
-    .main-card { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-bottom: 40px; }
+
+    /* Judul Halaman */
+    .data-section-title { 
+        font-weight: 600 !important; 
+        font-size: 28px; 
+        margin-bottom: 0; 
+        color: #1a1a1a; 
+    }
+
+    /* Tombol Tambah (Default Desktop) */
+    .tambah { 
+        display: inline-flex; 
+        justify-content: center; 
+        align-items: center; 
+        color: white !important; 
+        border: none; 
+        border-radius: 8px; 
+        background-color: #ffd700; 
+        font-weight: 600 !important; 
+        width: 120px; 
+        height: 38px; 
+        text-decoration: none; 
+        cursor: pointer; 
+        transition: 0.2s;
+        font-size: 14px;
+    }
+    .tambah:hover {
+        background-color: #e6c200;
+        color: white;
+    }
+
+    /* --- TABEL CUSTOM --- */
+    .table-general { 
+        width: 100%; 
+        border-collapse: separate; 
+        border-spacing: 0; 
+        margin-top: 10px; 
+    }
     
-    .table-general { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; }
-    .table-general thead th { background-color: #CCE0FF !important; color: #333; padding: 12px; border: none; font-size: 13px; white-space: nowrap; }
-    .table-general tbody td { padding: 12px; border: none; vertical-align: middle; font-size: 13px; }
+    .table-general thead th { 
+        background-color: #CCE0FF !important; 
+        color: #333; 
+        padding: 12px 15px; 
+        border: none; 
+        font-size: 14px; 
+        white-space: nowrap; 
+    }
+    
+    .table-general tbody td { 
+        padding: 12px 15px; 
+        border: none; 
+        vertical-align: middle; 
+        font-size: 14px; 
+        white-space: nowrap; 
+    }
+    
     .table-general tbody tr:nth-child(even) { background-color: #EBF3FF; }
 
+    /* Dropdown Status */
     .custom-status-dropdown {
-        border: 2px solid transparent !important; border-radius: 20px; padding: 5px 15px; 
-        color: white !important; font-size: 11px; font-weight: 500; appearance: none; cursor: pointer;
-        background-repeat: no-repeat; background-position: right 8px center; padding-right: 25px;
+        border: 2px solid transparent !important; 
+        border-radius: 20px; 
+        padding: 5px 15px; 
+        color: white !important; 
+        font-size: 12px; 
+        font-weight: 500; 
+        appearance: none; 
+        cursor: pointer;
+        background-repeat: no-repeat; 
+        background-position: right 8px center; 
+        padding-right: 30px;
+        min-width: 110px; 
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
     }
     .status-aktif { background-color: #52D669 !important; }
     .status-non-aktif { background-color: #FF7676 !important; }
     
+    /* Pagination */
     .pagination-wrapper { display: flex; justify-content: center; width: 100%; margin-top: 20px; }
-    .pagination-container { display: flex; gap: 8px; justify-content: center; }
-    .btn-page { border: 1px solid #e2e8f0; background: white; padding: 6px 14px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+    .pagination-container { display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; }
+    .btn-page { border: 1px solid #e2e8f0; background: white; padding: 6px 12px; border-radius: 8px; font-size: 13px; cursor: pointer; transition: 0.2s; }
+    .btn-page:hover { background-color: #f7fafc; }
     .btn-page.active { background-color: #ebf4ff; color: #3182ce; font-weight: 600; border-color: #3182ce; }
+
+    /* --- PERBAIKAN RESPONSIVE (MOBILE & TABLET) --- */
+    @media (max-width: 768px) {
+        /* Header tetap sejajar (kiri-kanan) */
+        .header-section {
+            flex-direction: row !important; /* Paksa tetap baris */
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 10px;
+        }
+        
+        /* Font Judul lebih kecil */
+        .data-section-title {
+            font-size: 20px !important; 
+        }
+        
+        /* Tombol Tambah versi Mini */
+        .tambah {
+            width: auto !important;     /* Lebar menyesuaikan isi */
+            padding: 5px 15px;          /* Padding dikecilkan */
+            height: 32px;               /* Tinggi dikurangi sedikit */
+            font-size: 12px !important; /* Font lebih kecil */
+        }
+
+        /* Padding Card dikurangi di HP */
+        .main-card {
+            padding: 15px;
+        }
+
+        /* Font tabel sedikit lebih kecil */
+        .table-general thead th, 
+        .table-general tbody td {
+            font-size: 12px;
+            padding: 8px;
+        }
+    }
 </style>
 
-<div class="d-flex justify-content-between align-items-center mb-2 px-3">
+<div class="d-flex justify-content-between align-items-center mb-3 px-1 header-section">
     <h2 class="data-section-title">Data Guru</h2>
-    <button class="tambah" id="btn-tambah-guru">Tambah <i class="bi bi-plus"></i></button>
+    <button class="tambah" id="btn-tambah-guru">Tambah <i class="bi bi-plus fs-5 ms-1"></i></button>
 </div>
+
 <div class="main-card">
     <div class="table-responsive">
         <table class="table-general" id="tableGuru">
             <thead>
                 <tr>
-                    <th>No</th><th>Nama</th><th>Mapel</th><th>No HP</th><th>Alamat</th><th>Status</th><th class="text-center">Aksi</th>
+                    <th>No</th>
+                    <th>Nama</th>
+                    <th>Mapel</th>
+                    <th>No HP</th>
+                    <th>Alamat</th>
+                    <th>Status</th>
+                    <th class="text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -54,7 +163,8 @@
                     <td>{{ $g->nama }}</td>
                     <td>{{ $g->mapel }}</td>
                     <td>{{ $g->no_hp }}</td>
-                    <td>{{ \Str::limit($g->alamat_guru, 20) }}</td>
+                    {{-- Gunakan title untuk hover tooltip jika teks terpotong --}}
+                    <td title="{{ $g->alamat_guru }}">{{ \Str::limit($g->alamat_guru, 20) }}</td>
                     <td>
                         <select class="custom-status-dropdown select-status {{ strtolower($g->status_aktif) == 'aktif' ? 'status-aktif' : 'status-non-aktif' }}" data-id="{{ $g->id }}" data-tipe="guru">
                             <option value="aktif" {{ strtolower($g->status_aktif) == 'aktif' ? 'selected' : '' }}>Aktif</option>
@@ -74,16 +184,23 @@
     </div>
 </div>
 
-<div class="d-flex justify-content-between align-items-center mb-2 px-3 mt-4">
+<div class="d-flex justify-content-between align-items-center mb-3 px-1 header-section mt-5">
     <h2 class="data-section-title">Data Siswa</h2>
-    <button class="tambah" id="btn-tambah-siswa">Tambah <i class="bi bi-plus"></i></button>
+    <button class="tambah" id="btn-tambah-siswa">Tambah <i class="bi bi-plus fs-5 ms-1"></i></button>
 </div>
+
 <div class="main-card">
     <div class="table-responsive">
         <table class="table-general" id="tableSiswa">
             <thead>
                 <tr>
-                    <th>No</th><th>Nama</th><th>Jenjang</th><th>No HP</th><th>Kelas</th><th>Status</th><th class="text-center">Aksi</th>
+                    <th>No</th>
+                    <th>Nama</th>
+                    <th>Jenjang</th>
+                    <th>No HP</th>
+                    <th>Kelas</th>
+                    <th>Status</th>
+                    <th class="text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -114,8 +231,7 @@
 </div>
 
 <div class="modal fade" id="modalGuru" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <form id="formGuru">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable"> <form id="formGuru">
             @csrf
             <input type="hidden" name="id" id="g_id">
             <input type="hidden" name="_method" id="g_method" value="POST">
@@ -128,7 +244,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label>Nama Lengkap</label>
+                            <label class="form-label">Nama Lengkap</label>
                             <input type="text" name="nama" id="g_nama" class="form-control" required>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -141,34 +257,34 @@
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label>No HP (WhatsApp)</label>
+                            <label class="form-label">No HP (WhatsApp)</label>
                             <input type="text" name="no_hp" id="g_no_hp" class="form-control" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label>Pendidikan Terakhir</label>
+                            <label class="form-label">Pendidikan Terakhir</label>
                             <input type="text" name="pendidikan_terakhir" id="g_pendidikan" class="form-control">
                         </div>
-                        <div class="col-md-12 mb-3">
-                            <label>Alamat Lengkap</label>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Alamat Lengkap</label>
                             <textarea name="alamat_guru" id="g_alamat" class="form-control" rows="2"></textarea>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label>Jenis E-Wallet</label>
-                            <input type="text" name="jenis_e_wallet" id="g_wallet_tipe" class="form-control" placeholder="Dana/OVO/dll">
+                            <label class="form-label">Jenis E-Wallet</label>
+                            <input type="text" name="jenis_e_wallet" id="g_wallet_tipe" class="form-control" placeholder="Dana/OVO">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label>No E-Wallet</label>
+                            <label class="form-label">No E-Wallet</label>
                             <input type="text" name="no_e_wallet" id="g_wallet_no" class="form-control">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label>Rekening Bank</label>
-                            <input type="text" name="rekening" id="g_rekening" class="form-control" placeholder="BCA - 123456">
+                            <label class="form-label">Rekening Bank</label>
+                            <input type="text" name="rekening" id="g_rekening" class="form-control" placeholder="Nama Bank - No Rek">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary" id="btnSimpanGuru">Simpan Data</button>
+                    <button type="submit" class="btn btn-primary" id="btnSimpanGuru">Simpan</button>
                 </div>
             </div>
         </form>
@@ -176,7 +292,7 @@
 </div>
 
 <div class="modal fade" id="modalSiswa" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <form id="formSiswa">
             @csrf
             <input type="hidden" name="id" id="s_id">
@@ -190,11 +306,11 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label>Nama Siswa</label>
+                            <label class="form-label">Nama Siswa</label>
                             <input type="text" name="nama" id="s_nama" class="form-control" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label>Jenjang</label>
+                            <label class="form-label">Jenjang</label>
                             <select name="jenjang" id="s_jenjang" class="form-control form-select">
                                 <option value="">-- Pilih Jenjang --</option>
                                 <option value="SD">SD</option>
@@ -203,30 +319,30 @@
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label>Kelas</label>
+                            <label class="form-label">Kelas</label>
                             <input type="text" name="kelas" id="s_kelas" class="form-control">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label>No HP</label>
+                            <label class="form-label">No HP</label>
                             <input type="text" name="no_hp" id="s_no_hp" class="form-control">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label>Asal Sekolah</label>
+                            <label class="form-label">Asal Sekolah</label>
                             <input type="text" name="asal_sekolah" id="s_asal_sekolah" class="form-control">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label>Nama Orang Tua</label>
+                            <label class="form-label">Nama Orang Tua</label>
                             <input type="text" name="nama_orang_tua" id="s_ortu" class="form-control">
                         </div>
-                        <div class="col-md-12 mb-3">
-                            <label>Alamat Lengkap</label>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Alamat Lengkap</label>
                             <textarea name="alamat" id="s_alamat" class="form-control" rows="2"></textarea>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary" id="btnSimpanSiswa">Simpan Data</button>
+                    <button type="submit" class="btn btn-primary" id="btnSimpanSiswa">Simpan</button>
                 </div>
             </div>
         </form>
@@ -240,7 +356,6 @@
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
     });
 
-    // Mengambil data lengkap dari Controller (keyBy id agar mudah dipanggil)
     const dataGuru = JSON.parse('{!! addslashes(json_encode($guru->keyBy("id"))) !!}');
     const dataSiswa = JSON.parse('{!! addslashes(json_encode($siswa->keyBy("id"))) !!}');
 
@@ -263,9 +378,21 @@
                 $container.empty();
                 if (totalPages > 1) {
                     $container.append(`<button type="button" class="btn-page prev" ${currentPage === 1 ? 'disabled' : ''}><i class="bi bi-chevron-left"></i></button>`);
-                    for (let i = 1; i <= totalPages; i++) {
+                    
+                    // Simple logic: Show all page numbers if pages < 7, else simple cut
+                    let startPage = Math.max(1, currentPage - 2);
+                    let endPage = Math.min(totalPages, currentPage + 2);
+
+                    if(startPage > 1) $container.append(`<button type="button" class="btn-page num" data-page="1">1</button>`);
+                    if(startPage > 2) $container.append(`<span class="px-1 text-muted">...</span>`);
+
+                    for (let i = startPage; i <= endPage; i++) {
                         $container.append(`<button type="button" class="btn-page num ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`);
                     }
+
+                    if(endPage < totalPages - 1) $container.append(`<span class="px-1 text-muted">...</span>`);
+                    if(endPage < totalPages) $container.append(`<button type="button" class="btn-page num" data-page="${totalPages}">${totalPages}</button>`);
+
                     $container.append(`<button type="button" class="btn-page next" ${currentPage === totalPages ? 'disabled' : ''}><i class="bi bi-chevron-right"></i></button>`);
                 }
                 $rows.hide().slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage).show();
@@ -329,7 +456,7 @@
                     Swal.fire('Berhasil!', res.message, 'success').then(() => location.reload());
                 },
                 error: function(xhr) {
-                    $('#btnSimpanGuru').text('Simpan Data').prop('disabled', false);
+                    $('#btnSimpanGuru').text('Simpan').prop('disabled', false);
                     let msg = xhr.responseJSON ? xhr.responseJSON.message : 'Terjadi Kesalahan';
                     Swal.fire('Gagal!', msg, 'error');
                 }
@@ -337,7 +464,7 @@
         });
 
         // ==========================================
-        // LOGIKA SISWA (CRUD) - DENGAN FIX JENJANG
+        // LOGIKA SISWA (CRUD)
         // ==========================================
         $('#btn-tambah-siswa').click(function() {
             $('#titleSiswa').text('Tambah Data Siswa');
@@ -352,10 +479,6 @@
             const id = $(this).data('id');
             const s = dataSiswa[id];
             
-            // --- DEBUGGING: Cek Console Browser (Tekan F12) jika masih error ---
-            console.log("Data Siswa dari DB:", s);
-            console.log("Jenjang Asli:", s.jenjang);
-            
             $('#titleSiswa').text('Edit Data Siswa');
             $('#formSiswa')[0].reset();
             $('#s_id').val(s.id);
@@ -363,22 +486,13 @@
             
             $('#s_nama').val(s.nama);
             
-            // --- FIX PENGAMBILAN DATA JENJANG ---
             if (s.jenjang) {
-                // Konversi ke String, Huruf Besar, dan Hapus Spasi (misal: " sd " -> "SD")
                 let jenjangFix = String(s.jenjang).toUpperCase().trim();
                 $('#s_jenjang').val(jenjangFix);
-                
-                // Jika setelah diset masih kosong (berarti data DB "Sekolah Dasar" tidak cocok dgn "SD")
-                if (!$('#s_jenjang').val()) {
-                     console.warn("Data jenjang di DB ('"+ s.jenjang +"') tidak cocok dengan opsi Dropdown.");
-                }
             } else {
                 $('#s_jenjang').val('');
             }
-            // Trigger change agar tampilan dropdown update
             $('#s_jenjang').trigger('change');
-            // ------------------------------------
 
             $('#s_kelas').val(s.kelas);
             $('#s_no_hp').val(s.no_hp);
@@ -405,14 +519,14 @@
                     Swal.fire('Berhasil!', res.message, 'success').then(() => location.reload());
                 },
                 error: function(xhr) {
-                    $('#btnSimpanSiswa').text('Simpan Data').prop('disabled', false);
+                    $('#btnSimpanSiswa').text('Simpan').prop('disabled', false);
                     let msg = xhr.responseJSON ? xhr.responseJSON.message : 'Terjadi Kesalahan';
                     Swal.fire('Gagal!', msg, 'error');
                 }
             });
         });
 
-        // --- UPDATE STATUS (GLOBAL) ---
+        // --- UPDATE STATUS ---
         $('.select-status').change(function() {
             let id = $(this).data('id');
             let tipe = $(this).data('tipe'); 

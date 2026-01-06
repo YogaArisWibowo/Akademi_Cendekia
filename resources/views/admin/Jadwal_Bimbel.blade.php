@@ -1,6 +1,8 @@
-@extends('layouts.app_admin', ['title' => 'Jadwal Bimbel']) 
+@extends('layouts.app_admin', ['title' => 'Jadwal Bimbel'])
 
 @section('content')
+
+{{-- ALERT ERROR --}}
 @if ($errors->any())
     <div class="alert alert-danger">
         <ul>
@@ -12,34 +14,71 @@
 @endif
 
 <style>
+    /* --- CSS TOMBOL UTAMA --- */
     .tambah {
         margin-bottom: 5px; display: flex; justify-content: center; color: white; border: none;
         border-radius: 6px; background-color: #ffd700; font-weight: 500 !important;
         align-items: center; width: 110px; height: 35px; cursor: pointer; text-decoration: none;
+        transition: 0.3s;
     }
+    .tambah:hover { background-color: #e6c200; color: white; }
     .tambah i { font-size: 25px; padding-left: 5px; }
+    
     .data-title { font-weight: 600 !important; font-size: 30px; padding-left: 15px; }
     
+    /* --- CSS TABEL --- */
     .table-container {
         width: 100%; overflow-x: auto; background: white; padding: 15px;
         border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
-    .table-general { width: 100%; min-width: 1000px; border-collapse: collapse; }
-    .table-general th, .table-general td { padding: 12px 15px; border-bottom: 1px solid #eee; }
+    .table-general { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; }
+    .table-general thead th { background-color: #CCE0FF !important; color: #333; padding: 12px; border: none; font-size: 13px; white-space: nowrap; }
+    .table-general tbody td { padding: 12px; border: none; vertical-align: middle; font-size: 13px; }
+    .table-general tbody tr:nth-child(even) { background-color: #EBF3FF; }
     
+    /* --- CSS SEARCH --- */
     .search { width: 250px; position: relative; display: inline-block; }
     .search i { position: absolute; top: 50%; left: 10px; transform: translateY(-50%); color: #6c757d; }
     .search input.form-control { padding-left: 35px; height: 35px; border-radius: 6px; }
 
-    .pagination-wrapper { display: flex; justify-content: center; width: 100%; margin-top: 20px; gap: 5px; }
-    .btn.page {
-        border: 1px solid #e2e8f0; background: white; padding: 6px 14px;
-        border-radius: 8px; font-size: 13px; color: #4a5568; cursor: pointer; transition: 0.3s;
+    /* --- CSS PAGINATION (Gaya Baru) --- */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        margin-top: 20px;
     }
-    .btn.page.active { background-color: #ebf4ff; color: #3182ce; font-weight: 600; border-color: #3182ce; }
-    .btn.page:disabled { cursor: default; background-color: #f7fafc; color: #cbd5e0; border-color: #edf2f7; }
+    
+    .btn-page {
+        border: 1px solid #dee2e6;
+        background-color: white;
+        color: #0d6efd;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 14px;
+    }
+    
+    .btn-page:hover:not(:disabled) {
+        background-color: #e9ecef;
+    }
+    
+    .btn-page.active {
+        background-color: #0d6efd;
+        color: white;
+        border-color: #0d6efd;
+    }
+    
+    .btn-page:disabled {
+        color: #6c757d;
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+        cursor: default;
+    }
 </style>
 
+{{-- HEADER HALAMAN --}}
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
         <p class="data-title">Jadwal Bimbel</p>
@@ -53,6 +92,7 @@
     </button>
 </div>
 
+{{-- TABEL DATA --}}
 <div class="table-container">
     <table class="table-general" id="jadwalTable">
         <thead>
@@ -68,7 +108,7 @@
                 <th class="text-center">Aksi</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="jadwalTbody">
             @foreach($jadwal as $j)
             <tr class="jadwal-item">
                 <td>{{ $loop->iteration }}</td>
@@ -87,19 +127,30 @@
                         <form action="{{ route('jadwal.destroy', $j->id) }}" method="POST" class="form-hapus">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus jadwal ini?')">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </form>
                     </div>
                 </td>
             </tr>
             @endforeach
+
+            {{-- Baris Pesan Jika Data Kosong (Hidden by default) --}}
+            <tr id="noDataRow" style="display: none;">
+                <td colspan="9" class="text-center py-5 text-muted">
+                    <i class="bi bi-emoji-frown display-6 mb-3 d-block"></i>
+                    Data jadwal tidak ditemukan.
+                </td>
+            </tr>
         </tbody>
     </table>
 
-    <div class="pagination-wrapper" id="paginationControls"></div>
+    {{-- CONTAINER PAGINATION --}}
+    <div class="pagination-container" id="paginationControls"></div>
 </div>
 
-{{-- MODAL --}}
+{{-- MODAL TAMBAH/EDIT --}}
 <div class="modal fade" id="modalJadwal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <form id="formJadwal" method="POST">
@@ -174,16 +225,116 @@
     </div>
 </div>
 
+{{-- SCRIPT --}}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     const dataJadwal = JSON.parse('{!! addslashes(json_encode($jadwal->keyBy("id"))) !!}');
 
     $(document).ready(function () {
-        const mJadwal = new bootstrap.Modal(document.getElementById("modalJadwal"));
-        let rowsPerPage = 10; 
-        let currentPage = 1;
+        
+        // --- LOGIKA PAGINATION & SEARCH (Gaya Baru) ---
+        // Fungsi ini membungkus logika search dan pagination dalam satu scope
+        function setupTablePagination(tableId, paginationId, searchId) {
+            const rowsPerPage = 10; 
+            let currentPage = 1;
+            
+            const $table = $('#' + tableId);
+            const $pagination = $('#' + paginationId);
+            const $searchInput = $('#' + searchId);
+            const $noDataRow = $('#noDataRow');
+            
+            // Ambil semua baris data (class .jadwal-item)
+            const $allRows = $table.find('tbody tr.jadwal-item');
+            
+            function render() {
+                const searchValue = $searchInput.val().toLowerCase();
+                
+                // 1. Filter baris berdasarkan Search
+                const $visibleRows = $allRows.filter(function() {
+                    const text = $(this).text().toLowerCase();
+                    return text.indexOf(searchValue) > -1;
+                });
 
-        // --- 1. Auto-fill Mapel ---
+                // 2. Hitung total halaman
+                const totalItems = $visibleRows.length;
+                const totalPages = Math.ceil(totalItems / rowsPerPage);
+                
+                // Reset page jika hasil filter lebih sedikit dari posisi saat ini
+                if (currentPage > totalPages) currentPage = 1;
+                if (currentPage < 1) currentPage = 1;
+
+                // 3. Tampilkan/Sembunyikan Baris
+                $allRows.hide(); // Sembunyikan semua dulu
+                $noDataRow.hide(); 
+
+                if (totalItems === 0) {
+                    $noDataRow.show(); // Munculkan pesan kosong
+                    $pagination.empty();
+                    return;
+                }
+
+                // Slice data yang visible sesuai halaman
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                $visibleRows.slice(start, end).show();
+
+                // 4. Render Tombol Pagination
+                $pagination.empty();
+                
+                if (totalPages > 1) {
+                    // Tombol Previous
+                    $pagination.append(`<button type="button" class="btn-page prev" ${currentPage === 1 ? 'disabled' : ''}>Sebelumnya</button>`);
+                    
+                    // Tombol Angka
+                    for (let i = 1; i <= totalPages; i++) {
+                        $pagination.append(`<button type="button" class="btn-page num ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`);
+                    }
+                    
+                    // Tombol Next
+                    $pagination.append(`<button type="button" class="btn-page next" ${currentPage === totalPages ? 'disabled' : ''}>Selanjutnya</button>`);
+                }
+            }
+
+            // Event Listeners Pagination
+            $pagination.on('click', '.num', function() { 
+                currentPage = $(this).data('page'); 
+                render(); 
+            });
+            
+            $pagination.on('click', '.prev', function() { 
+                if (currentPage > 1) { currentPage--; render(); } 
+            });
+            
+            $pagination.on('click', '.next', function() { 
+                // Hitung ulang total pages saat klik next (karena search dinamis)
+                const currentFilteredCount = $allRows.filter(function() {
+                    return $(this).text().toLowerCase().indexOf($searchInput.val().toLowerCase()) > -1;
+                }).length;
+                
+                if (currentPage < Math.ceil(currentFilteredCount / rowsPerPage)) { 
+                    currentPage++; 
+                    render(); 
+                } 
+            });
+
+            // Event Search: Reset ke halaman 1 setiap mengetik
+            $searchInput.on('keyup', function() {
+                currentPage = 1;
+                render();
+            });
+
+            // Render pertama kali saat load
+            render();
+        }
+
+        // Jalankan Fungsi Pagination
+        setupTablePagination('jadwalTable', 'paginationControls', 'searchInput');
+
+
+        // --- LOGIKA FORM MODAL (Add/Edit) ---
+        const mJadwal = new bootstrap.Modal(document.getElementById("modalJadwal"));
+
+        // 1. Auto-fill Mapel saat Guru dipilih
         $("#j_id_guru").on("change", function () {
             const selectedGuruMapel = $(this).find("option:selected").data("mapel");
             if (selectedGuruMapel) {
@@ -196,101 +347,54 @@
                 });
             }
         });
-
-        // --- NEW: Auto-fill Alamat Siswa ---
+        
+        // 2. Auto-fill Alamat saat Siswa dipilih
         $("#j_id_siswa").on("change", function () {
-            const selectedAlamat = $(this).find("option:selected").data("alamat");
-            if (selectedAlamat) {
-                $("#j_alamat").val(selectedAlamat);
-            } else {
-                $("#j_alamat").val("");
-            }
+            const alamat = $(this).find("option:selected").data("alamat");
+            $("#j_alamat").val(alamat || "");
         });
 
-        // --- 2. LOGIKA PAGINATION ---
-        function renderPagination() {
-            const $filteredRows = $(".jadwal-item").filter(function() {
-                return $(this).data('search-match') !== false;
-            });
-
-            const totalItems = $filteredRows.length;
-            const totalPages = Math.ceil(totalItems / rowsPerPage) || 1;
-            const $controls = $("#paginationControls");
-
-            if (currentPage > totalPages) currentPage = totalPages;
-
-            $controls.empty();
-            $controls.append(`<button class="btn page prev-next" id="prevBtn" ${currentPage === 1 ? 'disabled' : ''}>Sebelumnya</button>`);
-            
-            for (let i = 1; i <= totalPages; i++) {
-                $controls.append(`<button class="btn page ${i === currentPage ? 'active' : ''}">${i}</button>`);
-            }
-
-            $controls.append(`<button class="btn page prev-next" id="nextBtn" ${currentPage === totalPages ? 'disabled' : ''}>Selanjutnya</button>`);
-
-            $(".jadwal-item").hide();
-            const start = (currentPage - 1) * rowsPerPage;
-            const end = start + rowsPerPage;
-            $filteredRows.slice(start, end).show();
-        }
-
-        $(document).on("click", ".btn.page:not(.prev-next)", function() {
-            currentPage = parseInt($(this).text());
-            renderPagination();
-        });
-
-        $(document).on("click", "#prevBtn", function() { if (currentPage > 1) { currentPage--; renderPagination(); } });
-        $(document).on("click", "#nextBtn", function() { 
-            const totalPages = Math.ceil($(".jadwal-item").filter(function(){return $(this).data('search-match') !== false;}).length / rowsPerPage);
-            if (currentPage < totalPages) { currentPage++; renderPagination(); } 
-        });
-
-        // --- 3. SEARCH ---
-        $("#searchInput").on("keyup", function() {
-            const value = $(this).val().toLowerCase();
-            $(".jadwal-item").each(function() {
-                const match = $(this).text().toLowerCase().indexOf(value) > -1;
-                $(this).data('search-match', match);
-            });
-            currentPage = 1;
-            renderPagination();
-        });
-
-        renderPagination();
-
-        // --- 4. CRUD Logic ---
-        $("#btn-tambah-jadwal").on("click", function () {
-            $("#modalJadwal .modal-title").text("Tambah Jadwal");
-            $("#formJadwal").attr("action", "{{ route('jadwal.store') }}");
-            $("#methodJadwal").empty();
-            $("#formJadwal")[0].reset();
-            $("#j_nama_mapel").val("");
-            mJadwal.show();
-        });
-
-        $(document).on("click", ".btn-edit-jadwal", function () {
-            const id = $(this).data("id");
-            const data = dataJadwal[id];
-            $("#modalJadwal .modal-title").text("Edit Jadwal");
-            $("#formJadwal").attr("action", "/admin/admin_jadwal_bimbel/update/" + id);
-            $("#methodJadwal").html('<input type="hidden" name="_method" value="PUT">');
-            $("#j_created_at").val(data.created_at ? data.created_at.split(" ")[0] : "");
-            $("#j_hari").val(data.hari);
-            $("#j_mulai").val(data.waktu_mulai);
-            $("#j_selesai").val(data.waktu_selesai);
-            $("#j_id_mapel").val(data.id_mapel);
-            $("#j_nama_mapel").val(data.nama_mapel);
-            $("#j_id_guru").val(data.id_guru);
-            $("#j_id_siswa").val(data.id_siswa);
-            $("#j_alamat").val(data.alamat_siswa);
-            mJadwal.show();
-        });
-
+        // 3. Auto-fill Hari saat Tanggal dipilih
         $("#j_created_at").on("change", function () {
             if ($(this).val()) {
                 const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
                 $("#j_hari").val(days[new Date($(this).val()).getDay()]);
             }
+        });
+
+        // 4. Tombol Tambah
+        $("#btn-tambah-jadwal").on("click", function () {
+            $("#modalJadwal .modal-title").text("Tambah Jadwal");
+            $("#formJadwal").attr("action", "{{ route('jadwal.store') }}");
+            $("#methodJadwal").empty(); // Hapus method PUT (reset ke POST)
+            $("#formJadwal")[0].reset();
+            $("#j_nama_mapel").val("");
+            mJadwal.show();
+        });
+
+        // 5. Tombol Edit
+        $(document).on("click", ".btn-edit-jadwal", function () {
+            const id = $(this).data("id");
+            const data = dataJadwal[id];
+            
+            $("#modalJadwal .modal-title").text("Edit Jadwal");
+            // Sesuaikan route update Anda, pastikan sesuai web.php
+            $("#formJadwal").attr("action", "{{ url('admin/admin_jadwal_bimbel/update') }}/" + id);
+            $("#methodJadwal").html('<input type="hidden" name="_method" value="PUT">');
+            
+            // Isi Form
+            $("#j_created_at").val(data.created_at ? data.created_at.split(" ")[0] : "");
+            $("#j_hari").val(data.hari);
+            $("#j_mulai").val(data.waktu_mulai);
+            $("#j_selesai").val(data.waktu_selesai);
+            
+            $("#j_id_mapel").val(data.id_mapel);
+            $("#j_nama_mapel").val(data.nama_mapel);
+            $("#j_id_guru").val(data.id_guru);
+            $("#j_id_siswa").val(data.id_siswa);
+            $("#j_alamat").val(data.alamat_siswa);
+            
+            mJadwal.show();
         });
     });
 </script>

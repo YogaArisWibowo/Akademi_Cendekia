@@ -593,10 +593,9 @@ class GuruController extends Controller
 
     public function tambahLaporan(Request $request)
     {
-        // Validasi input
+        // 1. Validasi input
         $request->validate([
             'id_siswa' => 'required|exists:siswa,id',
-            // Pastikan id_jadwal_bimbel ada (atau boleh nullable jika logika anda mengizinkan)
             'id_jadwal_bimbel' => 'required',
             'hari'     => 'required|string',
             'tanggal'  => 'required|date',
@@ -605,13 +604,35 @@ class GuruController extends Controller
             'catatan'  => 'required|string',
         ]);
 
+        // 2. Ambil data Guru untuk menghitung rata-rata
+        $id_user_login = Auth::id();
+        $guru = Guru::where('id_user', $id_user_login)->first();
+        
+        // Default nilai 0 jika guru tidak ditemukan atau error
+        $nilai_rata_rata = 0; 
+
+        if ($guru) {
+            // Hitung rata-rata dari tabel TugasSiswa
+            $nilai_rata_rata = TugasSiswa::where('id_siswa', $request->id_siswa)
+                ->where('id_guru', $guru->id)
+                ->avg('nilai_tugas');
+                
+            // Jika belum ada tugas (hasil null), set ke 0
+            if ($nilai_rata_rata === null) {
+                $nilai_rata_rata = 0;
+            }
+        }
+
+        // 3. Simpan ke Database
         LaporanPerkembanganSiswa::create([
             'id_siswa' => $request->id_siswa,
-            'id_jadwal_bimbel' => $request->id_jadwal_bimbel, // <--- TAMBAHKAN INI
+            'id_jadwal_bimbel' => $request->id_jadwal_bimbel,
             'hari'     => $request->hari,
             'tanggal'  => $request->tanggal,
             'waktu'    => $request->waktu,
             'mapel'    => $request->mapel,
+            // Gunakan hasil perhitungan di atas
+            'nilai_rata-rata'  => $nilai_rata_rata, 
             'laporan_perkembangan' => $request->catatan,
         ]);
 

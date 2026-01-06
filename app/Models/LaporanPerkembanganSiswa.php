@@ -15,6 +15,7 @@ class LaporanPerkembanganSiswa extends Model
         'tanggal',       // Baru
         'waktu',         // Baru
         'mapel',         // Baru
+        'nilai_rata-rata',         // Baru
         'laporan_perkembangan', // Ini akan kita pakai untuk 'Catatan'
         
     ];

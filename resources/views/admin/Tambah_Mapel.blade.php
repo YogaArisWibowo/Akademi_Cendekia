@@ -14,8 +14,10 @@
         width: 100%; overflow-x: auto; background: white; padding: 15px;
         border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
-    .table-general { width: 100%; min-width: 1000px; border-collapse: collapse; }
-    .table-general th, .table-general td { padding: 12px 15px; border-bottom: 1px solid #eee; }
+    .table-general { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; }
+    .table-general thead th { background-color: #CCE0FF !important; color: #333; padding: 12px; border: none; font-size: 13px; white-space: nowrap; }
+    .table-general tbody td { padding: 12px; border: none; vertical-align: middle; font-size: 13px; }
+    .table-general tbody tr:nth-child(even) { background-color: #EBF3FF; }
     
     .search { width: 250px; position: relative; display: inline-block; }
     .search i { position: absolute; top: 50%; left: 10px; transform: translateY(-50%); color: #6c757d; }

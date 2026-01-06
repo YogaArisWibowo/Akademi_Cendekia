@@ -18,6 +18,10 @@
     .btn-page { border: 1px solid #e2e8f0; background: white; padding: 8px 16px; border-radius: 8px; font-size: 14px; color: #4a5568; cursor: pointer; }
     .btn-page.active { background-color: #ebf4ff; color: #3182ce; font-weight: 600; border-color: #3182ce; }
     .btn-page:disabled { opacity: 0.5; cursor: default; }
+    .table-general { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; }
+    .table-general thead th { background-color: #CCE0FF !important; color: #333; padding: 12px; border: none; font-size: 13px; white-space: nowrap; }
+    .table-general tbody td { padding: 12px; border: none; vertical-align: middle; font-size: 13px; }
+    .table-general tbody tr:nth-child(even) { background-color: #EBF3FF; }
 </style>
 
 <div class="table-container">

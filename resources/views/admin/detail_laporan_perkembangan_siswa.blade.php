@@ -1,136 +1,113 @@
 @extends('layouts.app_admin', ['title' => 'Laporan Perkembangan Siswa'])
+
 @section('content')
 
 <style>
+    /* --- STYLE UMUM (TAMPILAN WEB) --- */
     .back {
-        background-color: #c7c7c7;
-        border-radius: 10px;
-        border: none;
-        width: 110px;
-        height: 35px;
-        color: white;
-        font-weight: 500;
-        font-size: large;
-        cursor: pointer;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 20px;
+        background-color: #c7c7c7; border-radius: 10px; border: none; width: 110px; height: 35px;
+        color: white; font-weight: 500; font-size: large; cursor: pointer;
+        display: flex; align-items: center; justify-content: center; margin-bottom: 20px; text-decoration: none;
     }
-    .back i {
-        padding-right: 5px;
-    }
+    .back i { padding-right: 5px; }
 
-    .profile-info h3 {
-        margin: 0;
-        font-weight: 700;
-        color: #1f2937;
-    }
-    .btn-download-green {
-        background-color: #00cb0a;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        height: 35px;
-        padding: 0 15px;
-        font-weight: 600;
-        cursor: pointer;
-    }
-    .pagination-wrapper {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-    }
-    .btn-page {
-        border: none;
-        background: transparent;
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-size: 14px;
-        color: #4a5568;
-        cursor: pointer;
-    }
-
-    .btn-page.active {
-        background-color: #ebf4ff;
-        color: #3182ce;
-        font-weight: 600;
-    }
-
-    .btn-page.next-btn {
-        background-color: #c3dafe;
-        color: #1a365d;
-        font-weight: 500;
-        border-radius: 8px;
-    }
-
-    .btn-page:disabled {
-        cursor: default;
-        background-color: #f7fafc;
-    }
-    /* Mengatur kontainer utama agar kartu dan nama tidak bertumpuk */
-    .left-controls {
-        width: 100%;
-        max-width: 400px; /* Membatasi lebar agar tidak terlalu melar */
-    }
-
-    .custom-card {
-        background: #ffffff;
-        border-radius: 15px; /* Lebih bulat agar modern */
-        padding: 15px 20px;
-        margin-top: 15px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); /* Shadow lebih halus */
-        display: flex;
-        align-items: center;
-        height: auto; /* Biarkan tinggi menyesuaikan konten */
-    }
-
-    .card-body-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%; /* Memastikan konten mengisi seluruh kartu */
-    }
-
-    .name {
-        margin: 0;
-        font-weight: 600;
-        color: #64748b; /* Warna teks label agak abu agar badge menonjol */
-        font-size: 0.95rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .badge-number {
-        background-color: #00cb0a; /* Biru sesuai gambar */
-        color: white;
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
-        box-shadow: 0 4px 6px rgba(43, 108, 176, 0.3);
-    }
     .header-custom-wrapper {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        margin-top: 20px;
-        margin-bottom: 30px;
+        display: flex; justify-content: space-between; align-items: flex-end;
+        margin-top: 20px; margin-bottom: 30px;
+    }
+    .profile-info h3 { margin: 0; font-weight: 700; color: #1f2937; }
+    
+    .left-controls { width: 100%; max-width: 400px; }
+    
+    .custom-card {
+        background: #ffffff; border-radius: 15px; padding: 15px 20px; margin-top: 15px;
+        border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        display: flex; align-items: center; height: auto; width: fit-content;
+    }
+    .card-body-content { display: flex; gap: 20px; align-items: center; }
+    .name { margin: 0; font-weight: 600; color: #64748b; font-size: 0.95rem; text-transform: uppercase; }
+    
+    .badge-number {
+        background-color: #00cb0a; color: white; width: 38px; height: 38px;
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-weight: 600; box-shadow: 0 4px 6px rgba(43, 108, 176, 0.3);
+    }
+
+    .btn-download-green {
+        background-color: #00cb0a; color: white; border: none; border-radius: 8px;
+        height: 35px; padding: 0 15px; font-weight: 600; cursor: pointer;
+    }
+
+    /* --- STYLE TABEL --- */
+    .table-general { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; }
+    .table-general thead th { background-color: #CCE0FF !important; color: #333; padding: 12px; border: none; font-size: 13px; white-space: nowrap; }
+    .table-general tbody td { padding: 12px; border: none; vertical-align: middle; font-size: 13px; border-bottom: 1px solid #eee; }
+    .table-general tbody tr:nth-child(even) { background-color: #EBF3FF; }
+
+    /* Judul ini disembunyikan di layar, hanya muncul saat diprint */
+    .print-only-title { display: none; }
+
+    /* --- PENGATURAN CETAK / PDF --- */
+    @media print {
+        /* 1. Hilangkan margin browser */
+        @page { margin: 0; size: auto; }
+        body { margin: 1.6cm; background-color: white !important; }
+
+        /* 2. Sembunyikan SEMUA elemen website (Sidebar, Navbar, Tombol, dll) */
+        body * { visibility: hidden; } 
+        
+        /* 3. Tampilkan kembali hanya area tabel wrapper dan isinya */
+        .table-container, .table-container * { visibility: visible; } 
+        
+        /* 4. Posisikan area tabel di pojok kiri atas */
+        .table-container {
+            position: absolute; left: 0; top: 0; width: 100% !important;
+        }
+
+        /* 5. Tampilkan Judul Khusus Print */
+        .print-only-title { 
+            display: block !important; 
+            visibility: visible !important;
+            text-align: center; 
+            margin-bottom: 25px;
+            color: #1f2937;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+        .print-only-title h2 { font-size: 24px; margin-bottom: 5px; margin-top: 0; }
+        .print-only-title p { font-size: 14px; margin: 2px 0; }
+
+        /* 6. Pastikan warna background tabel tercetak */
+        .table-general th { 
+            background-color: #CCE0FF !important; 
+            -webkit-print-color-adjust: exact; 
+            print-color-adjust: exact;
+        }
+        .table-general tr:nth-child(even) {
+            background-color: #EBF3FF !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* 7. Sembunyikan elemen navigasi yang mungkin tersisa */
+        .pagination-wrapper, .back, .header-custom-wrapper, .btn-download-green { display: none !important; }
+        a[href]::after { content: none !important; }
     }
 </style>
 
+{{-- Tampilan Views: Tombol Kembali --}}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <a href="{{ route('admin_Laporan_Perkembangan_Siswa') }}">
+    {{-- Sesuaikan route ini jika perlu --}}
+    <a href="{{ route('admin_Laporan_Perkembangan_Siswa') }}" style="text-decoration: none;">
         <button class="back"><i class="ri-arrow-left-line"></i> Kembali</button>
     </a>
 </div>
+
+{{-- Tampilan Views: Header (Nama, Nilai, Tombol) --}}
 <div class="header-custom-wrapper">
     <div class="left-controls">
         <div class="profile-info">
-            <h3>Yoga Aris Wibowo</h3>
+            <h3>{{ $siswas->name }}</h3>
         </div>
 
         <div class="custom-card">
@@ -138,43 +115,71 @@
                 <div class="info">
                     <h5 class="name">Nilai Rata-Rata</h5>
                 </div>
-                <div class="badge-number">99</div>
+                <div class="badge-number">{{ $nilai }}</div>
             </div>
         </div>
     </div>
-    <button class="btn-download-green">Unduh</button>
+    
+    {{-- TOMBOL UNDUH: MENGGUNAKAN WINDOW.PRINT() --}}
+    <button class="btn-download-green" onclick="window.print()">Unduh</button>
 </div>
+
+{{-- Kontainer Utama yang akan dicetak --}}
 <div class="table-container">
+    
+    {{-- Header Khusus Print (Judul, Nama, Nilai) --}}
+    <div class="print-only-title">
+        <h2>LAPORAN PERKEMBANGAN SISWA</h2>
+        <p><strong>Nama Siswa:</strong> {{ $siswas->nama }}</p>
+        <p><strong>Nilai Rata-Rata:</strong> {{ $nilai }}</p>
+        <p><strong>Tanggal Cetak:</strong> {{ date('d-m-Y') }}</p>
+    </div>
+
     <table class="table-general">
         <thead>
             <tr>
                 <th>No</th>
-                <th>Hari</th>
-                <th>Tanggal</th>
+                <th>Hari, Tanggal</th>
                 <th>Waktu</th>
-                <th>Mapel</th>
-                <th>Catatan</th>
+                <th>Mata Pelajaran</th>
+                <th>Catatan Perkembangan</th>
             </tr>
         </thead>
-
         <tbody>
+            @forelse($laporans as $index => $laporan)
             <tr>
-                <td>1</td>
-                <td>Senin</td>
-                <td>01-04-2025</td>
-                <td>14.00</td>
-                <td>Biologi</td>
-                <td>Kurang-kurangi teriak hidup jokowi saat belajar</td>
+                {{-- Penomoran --}}
+                <td>
+                    {{ method_exists($laporans, 'firstItem') ? $laporans->firstItem() + $index : $index + 1 }}
+                </td>
+                
+                {{-- Hari & Tanggal --}}
+                <td>
+                    {{ \Carbon\Carbon::parse($laporan->tanggal)->locale('id')->isoFormat('dddd, D MMMM Y') }}
+                </td>
+                
+                {{-- Waktu --}}
+                <td>{{ \Carbon\Carbon::parse($laporan->waktu)->format('H:i') }}</td>
+                
+                <td>{{ $laporan->mapel }}</td>
+                <td>{{ $laporan->laporan_perkembangan }}</td>
             </tr>
+            @empty
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 20px;">
+                    Belum ada data laporan perkembangan.
+                </td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 
-    <div class="pagination-wrapper">
-        <button class="btn-page text-muted" disabled>Sebelumnya</button>
-        <button class="btn-page active">1</button>
-        <button class="btn-page">2</button>
-        <button class="btn-page">3</button>
-        <button class="btn-page next-btn">Selanjutnya</button>
+    {{-- Pagination (Akan disembunyikan saat print oleh CSS) --}}
+    @if(method_exists($laporans, 'hasPages') && $laporans->hasPages())
+    <div class="pagination-wrapper mt-4">
+        {{ $laporans->appends(request()->query())->links('pagination::bootstrap-4') }}
     </div>
+    @endif
 </div>
+
 @endsection

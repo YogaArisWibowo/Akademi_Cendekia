@@ -9,8 +9,10 @@
     .tambah i { color: white; font-size: 25px !important; padding-left: 5px; line-height: 0; vertical-align: middle; }
     .data { font-weight: 600 !important; font-size: 30px; padding-left: 15px; }
     .table-container { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .table-general { width: 100%; border-collapse: collapse; }
-    .table-general th, .table-general td { padding: 12px 15px; border-bottom: 1px solid #eee; text-align: left; }
+    .table-general { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; }
+    .table-general thead th { background-color: #CCE0FF !important; color: #333; padding: 12px; border: none; font-size: 13px; white-space: nowrap; }
+    .table-general tbody td { padding: 12px; border: none; vertical-align: middle; font-size: 13px; }
+    .table-general tbody tr:nth-child(even) { background-color: #EBF3FF; }
     .status-aktif { background-color: #e8f5e9 !important; color: #2e7d32 !important; font-weight: bold; padding: 5px 10px; border-radius: 10px; font-size: 12px; }
     .status-non-aktif { background-color: #ffebee !important; color: #c62828 !important; font-weight: bold; padding: 5px 10px; border-radius: 10px; font-size: 12px; }
     .btn-edit { background-color: #3182ce; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; }

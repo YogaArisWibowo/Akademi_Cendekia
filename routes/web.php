@@ -15,7 +15,7 @@ use App\Http\Controllers\Admin\PembayaranController;
 use App\Http\Controllers\Admin\MateriPembelajaranController;
 use App\Http\Controllers\Admin\VideoMateriController;
 use App\Http\Controllers\Admin\MonitoringGuruController;
-
+use App\Http\Controllers\Admin\LaporanPerkembanganController;
 
 Route::get('/', function () {
     return view('landingpages');
@@ -71,9 +71,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     
     // Monitoring & Laporan
     Route::get('/admin/admin_Monitoring_Guru', [MonitoringGuruController::class, 'index'])->name('admin_Monitoring_Guru');
-    Route::get('/admin/admin_detail_monitoring_guru', function () { return view('admin.detail_monitoring_guru '); })->name('admin_detail_monitoring_guru');
-    Route::get('/admin/admin_Laporan_Perkembangan_Siswa', function () { return view('admin.Laporan_Perkembangan_Siswa '); })->name('admin_Laporan_Perkembangan_Siswa');
-    Route::get('/admin/admin_detail_laporan_perkembangan_siswa', function () { return view('admin.detail_laporan_perkembangan_siswa '); })->name('admin_detail_laporan_perkembangan_siswa');
+    Route::get('/admin/monitoring-guru/detail/{id}', [MonitoringGuruController::class, 'show'])->name('admin_detail_monitoring_guru');
+    Route::get('/admin/admin_Laporan_Perkembangan_Siswa', [LaporanPerkembanganController::class, 'index'])->name('admin_Laporan_Perkembangan_Siswa');
+    Route::get('/admin/admin_detail_laporan_perkembangan_siswa/{id}', [LaporanPerkembanganController::class, 'show'])->name('admin_detail_laporan_perkembangan_siswa');
 
     // Jadwal Bimbel
     Route::get('/admin/admin_jadwal_bimbel', [JadwalController::class, 'index'])->name('admin_Jadwal_Bimbel');
