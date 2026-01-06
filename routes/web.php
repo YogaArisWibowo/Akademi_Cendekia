@@ -13,6 +13,8 @@ use App\Http\Controllers\Admin\MapelController;
 use App\Http\Controllers\Admin\AbsensiController;
 use App\Http\Controllers\Admin\PembayaranController;
 use App\Http\Controllers\Admin\MateriPembelajaranController;
+use App\Http\Controllers\Admin\VideoMateriController;
+use App\Http\Controllers\Admin\MonitoringGuruController;
 
 
 Route::get('/', function () {
@@ -63,10 +65,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/admin_detail_materi-pembelajaran/{id}', [MateriPembelajaranController::class, 'show'])->name('admin_detail_materi_pembelajaran');
     Route::put('/admin/admin_detail_materi-pembelajaran/{id}', [MateriPembelajaranController::class, 'update'])->name('admin_Materi_Pembelajaran.update');
 
-    Route::get('/admin/admin_Video_Materi', function () { return view('admin.Video_Materi '); })->name('admin_Video_Materi');
+    Route::get('/admin/admin_Video_Materi', [VideoMateriController::class, 'index'])->name('admin_Video_Materi');
+    Route::post('/admin/admin_Video_Materi/store', [VideoMateriController::class, 'store'])->name('admin_Video_Materi.store');
+    Route::post('/admin/admin_Video_Materi/update/{id}', [VideoMateriController::class, 'update'])->name('admin_Video_Materi.update');
     
     // Monitoring & Laporan
-    Route::get('/admin/admin_Monitoring_Guru', function () { return view('admin.Monitoring_Guru '); })->name('admin_Monitoring_Guru');
+    Route::get('/admin/admin_Monitoring_Guru', [MonitoringGuruController::class, 'index'])->name('admin_Monitoring_Guru');
     Route::get('/admin/admin_detail_monitoring_guru', function () { return view('admin.detail_monitoring_guru '); })->name('admin_detail_monitoring_guru');
     Route::get('/admin/admin_Laporan_Perkembangan_Siswa', function () { return view('admin.Laporan_Perkembangan_Siswa '); })->name('admin_Laporan_Perkembangan_Siswa');
     Route::get('/admin/admin_detail_laporan_perkembangan_siswa', function () { return view('admin.detail_laporan_perkembangan_siswa '); })->name('admin_detail_laporan_perkembangan_siswa');
