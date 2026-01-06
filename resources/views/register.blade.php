@@ -258,7 +258,7 @@
                     </div>
 
                     <button type="submit" class="btn btn-daftar">Daftar</button>
-                    <p class="mt-4">Sudah punya akun? <a href="{{route('Login')}}" class="text-black fw-bold text-decoration-none">Masuk</a></p>
+                    <p class="mt-4">Sudah punya akun? <a href="{{route('login')}}" class="text-black fw-bold text-decoration-none">Masuk</a></p>
                 </form>
             </div>
         </div>

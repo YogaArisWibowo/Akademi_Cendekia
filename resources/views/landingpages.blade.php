@@ -24,7 +24,7 @@
       <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <div class="d-flex gap-3 align-items-center mt-3 mt-lg-0">
             <a href="{{route('register')}}" class="btn-nav-outline">Daftar</a>
-            <a href="{{route('Login')}}" class="btn-nav-solid">Masuk</a>
+            <a href="{{route('login')}}" class="btn-nav-solid">Masuk</a>
         </div>
       </div>
     </div>

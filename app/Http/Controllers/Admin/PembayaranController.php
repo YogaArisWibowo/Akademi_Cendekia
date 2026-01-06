@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Siswa;
 use App\Models\PembayaranSiswa;
 use Illuminate\Http\Request;

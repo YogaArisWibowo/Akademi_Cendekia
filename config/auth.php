@@ -54,7 +54,7 @@ return [
 
     'siswa' => [
         'driver' => 'session',
-        'provider' => 'siswas',
+        'provider' => 'siswa',
     ],
 ],
 
@@ -92,7 +92,7 @@ return [
         'model' => App\Models\Guru::class,
     ],
 
-    'siswas' => [
+    'siswa' => [
         'driver' => 'eloquent',
         'model' => App\Models\Siswa::class,
     ],

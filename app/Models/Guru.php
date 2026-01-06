@@ -29,4 +29,8 @@ class Guru extends Authenticatable
         return $this->belongsTo(User::class, 'id_user', 'id');
     }
     
+    public function absensi_guru()
+    {
+        return $this->hasMany(AbsensiGuru::class, 'id_guru');
+    }
 }

@@ -56,7 +56,7 @@ class RegisterController extends Controller
                     'username' => $request->username,
                     'nama'     => $request->username, 
                 ]);
-                $redirect = redirect()->route('Login')->with('success', 'Admin berhasil daftar.');
+                $redirect = redirect()->route('login')->with('success', 'Admin berhasil daftar.');
             } 
             
             elseif ($role === 'guru') {
@@ -71,7 +71,7 @@ class RegisterController extends Controller
                     'no_hp'               => $request->no_hp,
                     'pendidikan_terakhir' => $request->pendidikan_terakhir,
                 ]);
-                $redirect = redirect()->route('Login')->with('info', 'Pendaftaran Guru berhasil.');
+                $redirect = redirect()->route('login')->with('info', 'Pendaftaran Guru berhasil.');
             } 
             
             else { // Siswa
@@ -86,7 +86,7 @@ class RegisterController extends Controller
                     'nama_orang_tua' => $request->nama_orang_tua,
                     'status_penerimaan' => 0,
                 ]);
-                $redirect = redirect()->route('Login')->with('info', 'Pendaftaran Siswa berhasil. Mohon tunggu persetujuan Admin.');
+                $redirect = redirect()->route('login')->with('info', 'Pendaftaran Siswa berhasil. Mohon tunggu persetujuan Admin.');
             }
 
             DB::commit();

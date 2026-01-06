@@ -156,7 +156,7 @@
             <div class="blur-form">
                 <p class="masuk-akun text-center">Masuk Akun</p>
                 
-                <form action="{{route('Login')}}" method="POST" class="custom-input">
+                <form action="{{route('login')}}" method="POST" class="custom-input">
                     @csrf
                     <div class="input-group-custom">
                         <i class="bi bi-person-circle input-icon-left"></i>

@@ -127,41 +127,42 @@
         </div>
 
         <div class="materi-grid">
-            @foreach ($materi as $m)
-                {{-- PERUBAHAN DI SINI: --}}
-                {{-- Saya ganti tag <a> pembungkus jadi <div> agar tombol download bisa masuk --}}
-                {{-- Class tetap 'materi-card-link' agar tampilan CSS tidak berubah --}}
-                <div class="materi-card-link" style="display: block; text-decoration: none; color: inherit;">
-                    <div class="materi-card">
-
-                        {{-- Link ke Detail (Klik Gambar) --}}
-                        <a href="{{ route('detail_materi_pembelajaran', $m->id) }}"
-                            style="text-decoration: none; color: inherit;">
-                            <div class="materi-thumb">
-                                <img src="https://via.placeholder.com/150" alt="thumb">
-                            </div>
-                        </a>
-
-                        <div class="materi-info">
-                            {{-- Link ke Detail (Klik Judul) --}}
-                            <a href="{{ route('detail_materi_pembelajaran', $m->id) }}"
-                                style="text-decoration: none; color: inherit;">
-                                <h4 class="materi-title">{{ $m->nama_materi }}</h4>
-                            </a>
-
-                            {{-- TAMBAHAN 3: TOMBOL DOWNLOAD --}}
-                            @if ($m->file_materi)
-                                <div style="margin-top: 10px;">
-                                    <a href="{{ route('download_materi', $m->id) }}" class="btn btn-success btn-sm w-100">
-                                        Download
-                                    </a>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
+    @foreach ($materi as $m)
+        {{-- WRAPPER UTAMA: --}}
+        {{-- Kita gunakan onclick JavaScript untuk link ke detail --}}
+        {{-- Style cursor:pointer agar terlihat bisa diklik --}}
+        <div class="materi-card-link" data-url="{{ route('detail_materi_pembelajaran', $m->id) }}" onclick="window.location=this.getAttribute('data-url')" style="cursor: pointer;">
+            
+            <div class="materi-card">
+                {{-- 1. THUMBNAIL (Tanpa tag <a>) --}}
+                <div class="materi-thumb">
+                    @php $ext = pathinfo($m->file_materi, PATHINFO_EXTENSION); @endphp
+                    @if($ext == 'pdf') <i class="bi bi-file-earmark-pdf text-danger"></i>
+                    @elseif(in_array($ext, ['doc', 'docx'])) <i class="bi bi-file-earmark-word text-primary"></i>
+                    @elseif(in_array($ext, ['ppt', 'pptx'])) <i class="bi bi-file-earmark-slides text-warning"></i>
+                    @else <i class="bi bi-file-earmark-text"></i> @endif
                 </div>
-            @endforeach
+
+                <div class="materi-info">
+                    {{-- 2. JUDUL (Tanpa tag <a>) --}}
+                    <h4 class="materi-title">{{ $m->nama_materi }}</h4>
+                    
+                    {{-- 3. TOMBOL DOWNLOAD (Satu-satunya tag <a>) --}}
+                    {{-- event.stopPropagation() penting agar saat klik download, tidak memicu link detail --}}
+                    @if ($m->file_materi)
+                        <div style="margin-top: auto; padding-top: 10px;">
+                            <a href="{{ route('download_materi', $m->id) }}" 
+                               class="btn btn-success btn-sm w-100"
+                               onclick="event.stopPropagation();">
+                                Download
+                            </a>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
+    @endforeach
+</div>
 
         <div class="pagination-wrapper">
             <button class="btn page">Sebelumnya</button>
