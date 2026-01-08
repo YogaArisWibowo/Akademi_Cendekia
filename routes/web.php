@@ -102,6 +102,11 @@ Route::middleware(['auth', 'guru'])->group(function () {
     Route::get('/tugas_siswa/{id}/detail/{tugas_id}', [GuruController::class, 'detailTugasPerSiswa'])->name('detail_tugas_persiswa');
     Route::put('/tugas_siswa/update/{id}', [GuruController::class, 'updateTugas'])->name('tugas_siswa.update');
 
+
+    //Gaji Guru
+    Route::get('/gaji_guru', [GuruController::class, 'gajiGuru'])->name('gaji_guru');
+
+
     // Materi
     Route::get('/materi_pembelajaran', [GuruController::class, 'indexMateri'])->name('materi_pembelajaran');
     Route::get('/materi_pembelajaran/{id}', [GuruController::class, 'materiPembelajaran'])->name('detail_materi_pembelajaran');

@@ -212,8 +212,6 @@ class SiswaController extends Controller
 
     // --- FITUR PEMBAYARAN ---
 
-    // $idSiswa = 1; // Ganti dengan Auth::id();
-    // 1. Tampilkan List Pembayaran (Menggantikan view statis kamu)
     public function pencatatanPembayaran(Request $request)
     {
         // 1. Ambil ID User yang login (Mikael login pakai User ID berapa?)
@@ -289,7 +287,7 @@ class SiswaController extends Controller
             return redirect()->back()->with('error', 'Data siswa tidak ditemukan.');
         }
 
-        // Memuat relasi guru dan mapel untuk mencegah N+1 Query problem
+        
         $query = MateriPembelajaran::with(['guru', 'mapel'])
             ->where('id_siswa', $siswa->id);
 
@@ -342,7 +340,7 @@ class SiswaController extends Controller
         $userId = Auth::id();
 
         // 2. Cari data Siswa berdasarkan id_user (Relasi dari tabel Siswa)
-        // Lihat Gambar 1 & 2: Kolom 'id_user' menghubungkan user login dengan data siswa
+        
         $siswa = Siswa::where('id_user', $userId)->first();
 
         // Cek validasi jika user login bukan siswa (misal admin iseng akses url ini)
@@ -356,7 +354,6 @@ class SiswaController extends Controller
         // 4. Query data video KHUSUS untuk siswa yang login
         $videos = VideoMateri::query()
             // FILTER UTAMA: Hanya tampilkan video milik siswa ini
-            // Lihat Gambar 3 & 4: Kolom 'id_siswa' di tabel video_materi
             ->where('id_siswa', $siswa->id)
 
             // Filter pencarian (jika user mengetik di search bar)
