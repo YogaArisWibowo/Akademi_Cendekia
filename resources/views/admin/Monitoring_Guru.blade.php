@@ -8,7 +8,7 @@
     .guru-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
+        gap: 20px; /* Jarak sedikit diperlebar */
         margin-bottom: 20px;
     }
 
@@ -20,77 +20,147 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 6px;
-        border-radius: 8px;
-        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.263);
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         transition: transform 0.2s, box-shadow 0.2s;
-        border: 1px solid transparent;
-        padding: 5px;
+        border: 1px solid #e2e8f0;
+        padding: 15px;
+        position: relative; 
+        overflow: hidden;
+        height: 100%; /* Agar tinggi kartu seragam */
     }
 
     .guru-card:hover {
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        transform: translateY(-2px);
-    }
-
-    .nama { font-weight: 600 !important; color: #343a40; font-size: 18px; }
-    .guru-title { font-size: 14px; color: #6c757d; font-weight: 500; }
-    .guru-info { margin: 0; font-size: 13px; display: block; text-align: left; color: #718096; }
-
-    /* --- STYLE PAGINATION JAVASCRIPT --- */
-    .pagination-wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 5px;
-        padding: 20px 0;
-        margin-top: 20px;
-    }
-
-    .btn-page {
-        border: 1px solid #d1d5db;
-        background-color: white;
-        color: #374151;
-        padding: 8px 16px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: all 0.2s;
-    }
-
-    .btn-page:hover {
-        background-color: #f3f4f6;
-        border-color: #9ca3af;
-    }
-
-    .btn-page.active {
-        background-color: #3b82f6; /* Warna Biru Utama */
-        color: white;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-3px);
         border-color: #3b82f6;
     }
 
-    .btn-page:disabled {
-        background-color: #f9fafb;
-        color: #9ca3af;
-        cursor: not-allowed;
-        border-color: #e5e7eb;
+    /* --- BADGES CONTAINER --- */
+    .badge-container {
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column; /* Badge ditumpuk ke bawah */
+        align-items: flex-end;
     }
+
+    .star-badge {
+        padding: 4px 12px;
+        color: white;
+        font-weight: 700;
+        font-size: 11px;
+        box-shadow: -2px 2px 5px rgba(0,0,0,0.15);
+        z-index: 2;
+        margin-bottom: 0; /* Rapat */
+        border-bottom-left-radius: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* WARNA BADGE RAJIN (Kuning/Emas) */
+    .badge-rajin-1 { background: linear-gradient(45deg, #FFD700, #FDB931); } 
+    .badge-rajin-2 { background: linear-gradient(45deg, #C0C0C0, #E0E0E0); } 
+    .badge-rajin-3 { background: linear-gradient(45deg, #CD7F32, #D2691E); }
+
+    /* WARNA BADGE CEPAT (Biru/Ungu - Flash) */
+    .badge-cepat-1 { background: linear-gradient(45deg, #00c6ff, #0072ff); width: 100px; text-align: right; }
+    .badge-cepat-2 { background: linear-gradient(45deg, #a18cd1, #fbc2eb); width: 90px; text-align: right; }
+    .badge-cepat-3 { background: linear-gradient(45deg, #84fab0, #8fd3f4); width: 80px; text-align: right; color: #333; }
+
+    /* Highlight Border untuk Juara 1 Rajin */
+    .border-gold { border: 2px solid #FFD700;
+                   background-color: white; }
+
+    .nama { font-weight: 700 !important; color: #1f2937; font-size: 18px; margin-top: 10px; /* Jarak karena ada badge */ }
+    .guru-title { font-size: 14px; color: #6b7280; font-weight: 500; }
+    
+    .stats-row {
+        display: flex;
+        gap: 15px;
+        margin-top: 8px;
+        font-size: 12px;
+        width: 100%;
+        border-top: 1px solid #f3f4f6;
+        padding-top: 8px;
+    }
+    .stat-item { display: flex; align-items: center; gap: 4px; }
+
+    /* --- PAGINATION STYLE --- */
+    .pagination-wrapper { display: flex; justify-content: center; margin-top: 20px; gap: 5px; }
+    .btn-page { border: 1px solid #d1d5db; background: white; padding: 8px 14px; border-radius: 6px; cursor: pointer; }
+    .btn-page.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+    .btn-page:disabled { background: #f9fafb; color: #9ca3af; }
 </style>
 
 <div class="content-wrapper">
     
-    {{-- Grid Kartu Guru --}}
-    {{-- PENTING: ID="guruGrid" ditambahkan untuk selector JS --}}
     <div class="guru-grid" id="guruGrid">
         
         @forelse($gurus as $guru)
-            {{-- PENTING: Class="guru-item" ditambahkan agar JS bisa menghitung item --}}
             <div class="guru-item"> 
                 <a href="{{route('admin_detail_monitoring_guru', $guru->id)}}" class="guru-card-link">
-                    <div class="guru-card">
-                        <span class="nama">{{ $guru->nama }}</span>
-                        <div class="guru-info">
-                            <span class="guru-title">Guru Mapel: {{ $guru->mapel ?? '-' }}</span>
+                    
+                    @php
+                        // Cek Ranking Rajin (Berdasarkan ID yang dikirim Controller)
+                        // array_search mengembalikan index (0 = Juara 1, 1 = Juara 2, dst)
+                        $posisiRajin = array_search($guru->id, $rankRajinIds); 
+                        $isRajin = $posisiRajin !== false;
+
+                        // Cek Ranking Cepat
+                        $posisiCepat = array_search($guru->id, $rankCepatIds);
+                        $isCepat = $posisiCepat !== false;
+
+                        // Tambahan Class Border Khusus Juara 1 Rajin
+                        $cardClass = ($isRajin && $posisiRajin === 0) ? 'border-gold' : '';
+                    @endphp
+
+                    <div class="guru-card {{ $cardClass }}">
+                        
+                        {{-- CONTAINER BADGE (Pojok Kanan Atas) --}}
+                        <div class="badge-container">
+                            
+                            {{-- BADGE RAJIN (TOTAL) --}}
+                            @if($isRajin)
+                                <div class="star-badge badge-rajin-{{ $posisiRajin + 1 }}">
+                                    <i class="ri-medal-fill"></i> 
+                                    @if($posisiRajin == 0) #1 TERAJIN 
+                                    @elseif($posisiRajin == 1) #2 RAJIN 
+                                    @else #3 RAJIN @endif
+                                </div>
+                            @endif
+
+                            {{-- BADGE CEPAT (RATA-RATA WAKTU) --}}
+                            @if($isCepat)
+                                <div class="star-badge badge-cepat-{{ $posisiCepat + 1 }}">
+                                    <i class="ri-timer-flash-line"></i>
+                                    @if($posisiCepat == 0) #1 TERCEPAT 
+                                    @elseif($posisiCepat == 1) #2 CEPAT 
+                                    @else #3 CEPAT @endif
+                                </div>
+                            @endif
+
                         </div>
+
+                        <span class="nama">{{ $guru->nama }}</span>
+                        
+                        <div class="guru-info">
+                            <span class="guru-title">Mapel: {{ $guru->mapel ?? '-' }}</span>
+                        </div>
+
+                        {{-- Statistik Kecil di Bawah --}}
+                        <div class="stats-row">
+                            <div class="stat-item" title="Total Kehadiran">
+                                <i class="ri-check-double-line" style="color: #10b981;"></i> 
+                                <strong>{{ $guru->total_hadir }}</strong> Hadir
+                            </div>
+                            <div class="stat-item" title="Rata-rata Jam Datang">
+                                <i class="ri-time-line" style="color: #3b82f6;"></i> 
+                                Avg: <strong>{{ $guru->rata_rata_str }}</strong>
+                            </div>
+                        </div>
+
                     </div>
                 </a>
             </div>
@@ -102,89 +172,57 @@
 
     </div>
 
-    {{-- Container Pagination JS --}}
-    <div id="paginationGuru" class="pagination-wrapper">
-        {{-- Tombol akan digenerate otomatis oleh Script di bawah --}}
-    </div>
+    {{-- Pagination JS (Sama seperti sebelumnya) --}}
+    <div id="paginationGuru" class="pagination-wrapper"></div>
 
 </div>
 
-{{-- 1. Load jQuery (Wajib ada) --}}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-{{-- 2. Script Pagination --}}
 <script>
     $(document).ready(function() {
-        // --- KONFIGURASI ---
-        const rowsPerPage = 10; // Jumlah kartu per halaman
-        const $items = $("#guruGrid .guru-item"); // Selector item guru
+        const rowsPerPage = 10; 
+        const $items = $("#guruGrid .guru-item"); 
         const $paginationContainer = $("#paginationGuru");
         let currentPage = 1;
 
-        // Cek jika tidak ada data, sembunyikan pagination
         if ($items.length === 0) {
             $paginationContainer.hide();
             return;
         }
 
-        // --- FUNGSI TAMPILKAN HALAMAN ---
         function showPage(page) {
             currentPage = page;
             const start = (page - 1) * rowsPerPage;
             const end = start + rowsPerPage;
-
-            // Sembunyikan semua, lalu munculkan yang sesuai range
             $items.hide().slice(start, end).fadeIn(300);
-            
             renderButtons();
-            
-            // Scroll ke atas grid (opsional)
-            // $("html, body").animate({ scrollTop: $(".content-wrapper").offset().top }, "fast");
         }
 
-        // --- FUNGSI RENDER TOMBOL PAGINATION ---
         function renderButtons() {
             const totalRows = $items.length;
             const totalPages = Math.ceil(totalRows / rowsPerPage);
-            
             $paginationContainer.empty();
+            if (totalPages <= 1) return;
 
-            if (totalPages <= 1) return; // Jika cuma 1 halaman, tidak usah tampil tombol
-
-            // Tombol Sebelumnya
             const prevDisabled = currentPage === 1 ? 'disabled' : '';
             $paginationContainer.append(`<button type="button" class="btn-page prev" ${prevDisabled}>Sebelumnya</button>`);
 
-            // Tombol Angka
             for (let i = 1; i <= totalPages; i++) {
                 const activeClass = i === currentPage ? 'active' : '';
                 $paginationContainer.append(`<button type="button" class="btn-page num ${activeClass}" data-page="${i}">${i}</button>`);
             }
 
-            // Tombol Selanjutnya
             const nextDisabled = currentPage === totalPages ? 'disabled' : '';
             $paginationContainer.append(`<button type="button" class="btn-page next" ${nextDisabled}>Selanjutnya</button>`);
         }
 
-        // --- EVENT LISTENER ---
-        
-        // Klik Angka
-        $(document).on("click", ".num", function() {
-            showPage($(this).data("page"));
-        });
-
-        // Klik Sebelumnya
-        $(document).on("click", ".prev", function() {
-            if (currentPage > 1) showPage(currentPage - 1);
-        });
-
-        // Klik Selanjutnya
-        $(document).on("click", ".next", function() {
+        $(document).on("click", ".num", function() { showPage($(this).data("page")); });
+        $(document).on("click", ".prev", function() { if (currentPage > 1) showPage(currentPage - 1); });
+        $(document).on("click", ".next", function() { 
             const totalPages = Math.ceil($items.length / rowsPerPage);
-            if (currentPage < totalPages) showPage(currentPage + 1);
+            if (currentPage < totalPages) showPage(currentPage + 1); 
         });
 
-        // Jalankan saat pertama kali load
         showPage(1);
     });
 </script>
