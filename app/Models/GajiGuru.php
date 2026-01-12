@@ -15,4 +15,17 @@ class GajiGuru extends Model
         'nominal_gaji',    // Ini akan menyimpan Total Gaji
         'kehadiran'
     ];
+
+
+    // Relasi ke Table Guru (untuk ambil Nama, Jenjang, Rekening)
+    public function guru()
+    {
+        return $this->belongsTo(Guru::class, 'id_guru');
+    }
+
+    // Relasi ke Table AbsensiGuru (untuk ambil Tanggal & Waktu mengajar)
+    public function absensi()
+    {
+        return $this->belongsTo(AbsensiGuru::class, 'id_absensi_guru');
+    }
 }

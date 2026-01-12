@@ -14,6 +14,7 @@ use App\Models\Mapel;
 use App\Models\VideoMateri;
 use App\Models\LaporanPerkembanganSiswa;
 use App\Models\AbsensiGuru;
+use App\Models\GajiGuru;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -123,11 +124,6 @@ class GuruController extends Controller
     }
 
     // UNTUK MATERI PEMBELAJARAN
-    //tambah dan view materi
-    // Pastikan namespace dan use di paling atas file tetap ada
-    // use Illuminate\Support\Facades\Auth;
-    // use Illuminate\Support\Facades\DB;
-    // use App\Models\Guru; ... dst
 
     public function indexMateri(Request $request)
     {
@@ -135,7 +131,6 @@ class GuruController extends Controller
         $userLogin = Auth::user();
 
         // 2. CARI DATA GURU BERDASARKAN ID_USER
-        // Kita cari baris di tabel 'guru' yang kolom 'id_user'-nya = 6
         $guruAsli = Guru::where('id_user', $userLogin->id)->first();
 
         // Cek jika data guru tidak ditemukan (misal admin yang login, bukan guru)
@@ -143,7 +138,7 @@ class GuruController extends Controller
             return redirect()->back()->with('error', 'Akun Anda tidak terdaftar sebagai Guru!');
         }
 
-        $id_guru_sebenarnya = $guruAsli->id; // Ini akan bernilai 3 (sesuai gambar kamu)
+        $id_guru_sebenarnya = $guruAsli->id;
 
         // 3. Ambil Jenjang (Untuk Filter)
         $jenjang = Siswa::select('jenjang')->distinct()->pluck('jenjang');
@@ -532,6 +527,45 @@ class GuruController extends Controller
         return redirect()->back()->with('success', 'Tugas berhasil diperbarui');
     }
 
+
+
+    //Gaji Guru
+    public function gajiGuru(Request $request)
+    {
+        $userId = Auth::id();
+        $guru = Guru::where('id_user', $userId)->firstOrFail();
+
+        // Query Dasar
+        // PERBAIKAN: Saya tambahkan COUNT(id) as total_kehadiran
+        $query = GajiGuru::selectRaw('
+                YEAR(created_at) as year, 
+                MONTH(created_at) as month, 
+                SUM(nominal_gaji) as total_gaji_bulan_ini,
+                COUNT(id) as total_kehadiran, 
+                MAX(gaji_per_jam) as gaji_per_jam_terakhir,
+                MAX(kehadiran) as status_pembayaran,
+                MAX(created_at) as created_at
+            ')
+            ->where('id_guru', $guru->id);
+
+        // Filter Bulan
+        if ($request->has('bulan') && $request->bulan != '') {
+            $query->whereMonth('created_at', $request->bulan);
+        }
+
+        $riwayatGaji = $query->groupBy('year', 'month')
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->paginate(10);
+
+        $riwayatGaji->appends($request->all());
+
+        return view('guru.gaji', compact('riwayatGaji', 'guru'));
+    }
+
+
+
+
     //Controller untuk Laporan Perkembangan siswa
     public function laporanPerkembangan()
     {
@@ -607,16 +641,16 @@ class GuruController extends Controller
         // 2. Ambil data Guru untuk menghitung rata-rata
         $id_user_login = Auth::id();
         $guru = Guru::where('id_user', $id_user_login)->first();
-        
+
         // Default nilai 0 jika guru tidak ditemukan atau error
-        $nilai_rata_rata = 0; 
+        $nilai_rata_rata = 0;
 
         if ($guru) {
             // Hitung rata-rata dari tabel TugasSiswa
             $nilai_rata_rata = TugasSiswa::where('id_siswa', $request->id_siswa)
                 ->where('id_guru', $guru->id)
                 ->avg('nilai_tugas');
-                
+
             // Jika belum ada tugas (hasil null), set ke 0
             if ($nilai_rata_rata === null) {
                 $nilai_rata_rata = 0;
@@ -632,7 +666,7 @@ class GuruController extends Controller
             'waktu'    => $request->waktu,
             'mapel'    => $request->mapel,
             // Gunakan hasil perhitungan di atas
-            'nilai_rata-rata'  => $nilai_rata_rata, 
+            'nilai_rata-rata'  => $nilai_rata_rata,
             'laporan_perkembangan' => $request->catatan,
         ]);
 

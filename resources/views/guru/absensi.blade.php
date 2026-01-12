@@ -123,7 +123,7 @@
                                 {{-- Catatan --}}
                                 <div class="mb-3">
                                     <label class="form-label">Catatan</label>
-                                    <textarea name="catatan" class="form-control" rows="3" placeholder="Tambahkan catatan..."></textarea>
+                                    <textarea name="catatan" class="form-control" rows="3" placeholder="Tambahkan catatan..." required></textarea>
                                 </div>
 
                             </div>
