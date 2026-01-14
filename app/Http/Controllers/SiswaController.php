@@ -240,35 +240,34 @@ class SiswaController extends Controller
             'tanggal_pembayaran' => 'required|date',
             'nama_orangtua'      => 'required|string|max:50',
             'nominal'            => 'required|integer|min:1',
-            'bukti_pembayaran'   => 'nullable|image|max:2048',
+            'metode_pembayaran'  => 'required|string', // Validasi baru
+            'bukti_pembayaran'   => 'required|image|max:2048', // Saya ubah jadi required karena transfer manual butuh bukti
         ]);
 
         try {
-            // --- LOGIKA MENCARI ID SISWA YANG BENAR ---
             $userId = Auth::id();
             $siswa = Siswa::where('id_user', $userId)->first();
 
             if (!$siswa) {
                 return back()->with('error', 'Data siswa tidak valid.');
             }
-            // ------------------------------------------
 
             $buktiPath = null;
             if ($request->hasFile('bukti_pembayaran')) {
-                // Pastikan folder ini permission-nya bisa ditulis
                 $buktiPath = $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public');
             }
 
             PembayaranSiswa::create([
-                'id_siswa'           => $siswa->id, // Gunakan ID dinamis (2), bukan 1
+                'id_siswa'           => $siswa->id,
                 'tanggal_pembayaran' => $request->tanggal_pembayaran,
                 'nama_orangtua'      => $request->nama_orangtua,
                 'nominal'            => $request->nominal,
+                'metode_pembayaran'  => $request->metode_pembayaran, // Simpan metode
                 'bukti_pembayaran'   => $buktiPath,
             ]);
 
-            return redirect()->route('siswa.pembayaran.index') // Pastikan nama route ini benar di web.php
-                ->with('success', 'Pembayaran berhasil disimpan');
+            return redirect()->route('siswa.pembayaran.index')
+                ->with('success', 'Pembayaran berhasil dikirim. Menunggu verifikasi admin.');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menyimpan: ' . $e->getMessage());
         }
@@ -277,7 +276,7 @@ class SiswaController extends Controller
 
 
 
-
+    //Materi Pembelajaran
     public function indexMateri(Request $request)
     {
         $userId = Auth::id();
@@ -287,7 +286,7 @@ class SiswaController extends Controller
             return redirect()->back()->with('error', 'Data siswa tidak ditemukan.');
         }
 
-        
+
         $query = MateriPembelajaran::with(['guru', 'mapel'])
             ->where('id_siswa', $siswa->id);
 
@@ -340,7 +339,7 @@ class SiswaController extends Controller
         $userId = Auth::id();
 
         // 2. Cari data Siswa berdasarkan id_user (Relasi dari tabel Siswa)
-        
+
         $siswa = Siswa::where('id_user', $userId)->first();
 
         // Cek validasi jika user login bukan siswa (misal admin iseng akses url ini)
