@@ -103,6 +103,34 @@
             }
         });
     </script>
+    {{-- Script Sederhana untuk Ganti Nomor Rekening --}}
+    <script>
+        function tampilkanRekening() {
+            var select = document.getElementById("pilihMetode");
+            var selectedValue = select.value;
+            var boxInfo = document.getElementById("infoRekening");
+            var textRekening = document.getElementById("nomorRekening");
+            var textNama = document.getElementById("namaPenerima");
+
+            // Tampilkan Box Info
+            boxInfo.classList.remove("d-none");
+
+            // Logika Ganti Nomor (Ganti XXXXX dengan nomor aslimu)
+            if (selectedValue === "Muamalat") {
+                textRekening.innerText = "537-000-8468 (Muamalat)";
+                textNama.innerText = "a.n Yayasan Bimbel Akademi Cendekia";
+            } /*else if (selectedValue === "BRI") {
+                textRekening.innerText = "002-111-222-333 (BRI)";
+                textNama.innerText = "a.n Yayasan Bimbel Akademi Cendekia";
+            }*/ else if (selectedValue === "DANA") {
+                textRekening.innerText = "0813-2953-1302 (DANA)";
+                textNama.innerText = "a.n Yayasan Bimbel Akademi Cendekia";
+            } else if (selectedValue === "SHOPEEPAY") {
+                textRekening.innerText = "0813-2953-1302 (ShopeePay)";
+                textNama.innerText = "a.n Yayasan Bimbel Akademi Cendekia";
+            }
+        }
+    </script>
 </body>
 
 </html>
