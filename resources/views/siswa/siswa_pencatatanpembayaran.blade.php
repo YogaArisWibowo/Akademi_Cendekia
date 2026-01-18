@@ -71,10 +71,6 @@
                                 <span class="badge bg-success">
                                     <i class="ri-check-double-line me-1"></i> Lunas
                                 </span>
-                            @elseif($item->status == 'ditolak')
-                                <span class="badge bg-danger">
-                                    <i class="ri-close-circle-line me-1"></i> Ditolak
-                                </span>
                             @else
                                 <span class="badge bg-secondary">{{ $item->status }}</span>
                             @endif
