@@ -40,29 +40,33 @@ class GuruController extends Controller
     // UNTUK TAMBAH ABSENSI GURU
     public function index(Request $request)
     {
-        // --- BAGIAN 1: FILTER HISTORY ABSENSI ---
+        // --- LANGKAH 1: AMBIL ID GURU YANG LOGIN TERLEBIH DAHULU ---
+        // Kita butuh ID ini untuk memfilter history absensi & jadwal
+        $idGuru = Auth::user()->guru->id;
+
+        // --- BAGIAN 2: FILTER HISTORY ABSENSI ---
         $bulan = $request->bulan;
         $tahun = $request->tahun;
 
-        $data = AbsensiGuru::when($bulan, function ($q) use ($bulan) {
-            return $q->whereMonth('tanggal', $bulan);
-        })
+        // PERBAIKAN DISINI: Tambahkan where('id_guru', $idGuru)
+        $data = AbsensiGuru::where('id_guru', $idGuru)
+            ->when($bulan, function ($q) use ($bulan) {
+                return $q->whereMonth('tanggal', $bulan);
+            })
             ->when($tahun, function ($q) use ($tahun) {
                 return $q->whereYear('tanggal', $tahun);
             })
             ->orderBy('tanggal', 'desc')
             ->get();
 
-        // --- BAGIAN 2: LOGIKA PENGECEKAN JADWAL (PERBAIKAN) ---
+        // --- BAGIAN 3: LOGIKA PENGECEKAN JADWAL (TOMBOL TAMBAH) ---
 
         // 1. Ambil Waktu Sekarang
-        $waktuSekarang = Carbon::now();
-        $jamSekarang = $waktuSekarang->format('H:i:s'); // Jam Server (WIB jika config sudah benar)
+        $waktuSekarang = \Carbon\Carbon::now();
+        $jamSekarang = $waktuSekarang->format('H:i:s');
 
         // 2. Mapping Hari Manual (Inggris -> Indo Uppercase)
-        // Ini solusi untuk masalah "Saturday" vs "SABTU"
         $hariInggris = $waktuSekarang->format('l');
-
         $mapHari = [
             'Sunday'    => 'MINGGU',
             'Monday'    => 'SENIN',
@@ -72,25 +76,16 @@ class GuruController extends Controller
             'Friday'    => 'JUMAT',
             'Saturday'  => 'SABTU'
         ];
-
-        // Pakai array map, jika tidak ketemu default ke string aslinya
         $hariIni = $mapHari[$hariInggris] ?? strtoupper($hariInggris);
 
-        // 3. Ambil ID Guru yang sedang login
-        $idGuru = Auth::user()->guru->id;
-
-        // 4. Cari Jadwal yang Sesuai
-        // Logika: Guru Benar + Hari Benar + Jam Sekarang ada di antara Mulai & Selesai
-        $jadwalAktif = JadwalBimbel::where('id_guru', $idGuru)
-            ->where('hari', $hariIni) // Menggunakan hasil mapping (misal: SABTU)
+        // 3. Cari Jadwal yang Sesuai untuk Tombol Tambah
+        $jadwalAktif = \App\Models\JadwalBimbel::where('id_guru', $idGuru)
+            ->where('hari', $hariIni)
             ->whereTime('waktu_mulai', '<=', $jamSekarang)
             ->whereTime('waktu_selesai', '>=', $jamSekarang)
             ->first();
 
-        // Debugging (Opsional: Hapus tanda komentar // di bawah jika ingin cek isi variabel di layar)
-        // dd($hariIni, $jamSekarang, $jadwalAktif);
-
-        // --- BAGIAN 3: LEMPAR KE VIEW ---
+        // --- BAGIAN 4: LEMPAR KE VIEW ---
         return view('guru.absensi', compact('data', 'bulan', 'tahun', 'jadwalAktif'));
     }
 
