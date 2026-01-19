@@ -71,6 +71,47 @@
 
     <div class="pagination-wrapper d-flex align-items-center gap-2 mt-3">
         {{ $pembayaran->links() }}
+                        {{-- LOGIKA STATUS --}}
+                        <td class="text-center">
+                            @if ($item->status == 'pending')
+                                <span class="badge bg-warning text-dark">
+                                    <i class="ri-time-line me-1"></i> Menunggu Verifikasi
+                                </span>
+                            @elseif($item->status == 'lunas')
+                                <span class="badge bg-success">
+                                    <i class="ri-check-double-line me-1"></i> Lunas
+                                </span>
+                            @else
+                                <span class="badge bg-secondary">{{ $item->status }}</span>
+                            @endif
+                        </td>
+
+                        <td class="text-center">
+                            @if ($item->bukti_pembayaran)
+                                <a href="{{ asset('storage/' . $item->bukti_pembayaran) }}" target="_blank"
+                                    class="btn btn-sm btn-outline-primary">
+                                    <i class="ri-image-line"></i> Lihat
+                                </a>
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" class="text-center py-4">
+                            <img src="https://cdni.iconscout.com/illustration/premium/thumb/empty-state-2130362-1800926.png"
+                                alt="Empty" style="width: 150px; opacity: 0.5">
+                            <p class="text-muted mt-2">Belum ada riwayat pembayaran.</p>
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+
+        <div class="pagination-wrapper d-flex align-items-center gap-2 mt-3">
+            {{ $pembayaran->links() }}
+        </div>
     </div>
 </div>
 
