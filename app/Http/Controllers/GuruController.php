@@ -631,10 +631,16 @@ class GuruController extends Controller
             ->orderBy('tanggal', 'desc')
             ->get();
 
-        // Hitung rata-rata
-        $rata_rata = TugasSiswa::where('id_siswa', $id)
+        // --- BAGIAN YANG DIUBAH (SEPERTI SISWA CONTROLLER) ---
+        // 1. Hitung Average dulu (tetap difilter berdasarkan guru agar spesifik mapel)
+        // Catatan: Di sini kita pakai $id karena itu parameter function (bukan $idSiswa)
+        $average = TugasSiswa::where('id_siswa', $id)
             ->where('id_guru', $id_guru_asli)
             ->avg('nilai_tugas');
+
+        // 2. Bulatkan nilai. Jika null (belum ada tugas), set ke 0
+        $rata_rata = $average ? round($average) : 0;
+        // -----------------------------------------------------
 
         // Ambil Mapel & Jadwal
         $jadwal = JadwalBimbel::with('mapel')
@@ -643,10 +649,10 @@ class GuruController extends Controller
             ->first();
 
         $nama_mapel = $jadwal ? $jadwal->mapel->nama_mapel : '-';
-        // TAMBAHAN: Simpan ID Jadwal untuk dikirim ke view
+
+        // Simpan ID Jadwal
         $id_jadwal  = $jadwal ? $jadwal->id : null;
 
-        // Jangan lupa kirim 'id_jadwal' ke compact
         return view('guru.detail_laporan_perkembangan_siswa', compact('siswa', 'laporan', 'rata_rata', 'nama_mapel', 'id_jadwal'));
     }
 
