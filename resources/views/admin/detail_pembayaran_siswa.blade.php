@@ -58,10 +58,14 @@
                 <td>{{ $item->nama_orangtua }}</td>
                 <td>Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
                 <td>
-                    @if($item->bukti_pembayaran)
-                        <a href="{{ asset('bukti_absensi/' . $item->bukti_pembayaran) }}" target="_blank"><u>Lihat Detail</u></a>
-                    @else
-                        -
+                    @if($item->bukti_pembayaran)   
+                    <a href="{{ asset('bukti_absensi/' . $item->bukti_pembayaran) }}" target="_blank">
+                            <img src="{{ asset('bukti_absensi/' . $item->bukti_pembayaran) }}" 
+                                alt="Bukti" 
+                                class="img-thumbnail-mini"
+                                onerror="this.onerror=null;this.src='https://via.placeholder.com/60?text=No+Img';">
+                        </a>
+                    @else - 
                     @endif
                 </td>
             </tr>
