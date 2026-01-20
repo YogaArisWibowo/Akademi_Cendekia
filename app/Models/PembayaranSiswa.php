@@ -14,8 +14,6 @@ class PembayaranSiswa extends Model
         'tanggal_pembayaran',
         'nama_orangtua',
         'nominal',
-        'metode_pembayaran',
-        'status',
         'bukti_pembayaran',
     ];
 

@@ -41,20 +41,20 @@ class MonitoringGuruController extends Controller
             return $guru;
         });
 
-        // 3. LOGIKA RANKING "RAJIN" (Tetap pakai total_hadir yg sudah kita set diatas)
+        // 3. LOGIKA RANKING "RAJIN"
         $rankRajinIds = $gurus->sortByDesc('total_hadir')
-                              ->take(3)
-                              ->pluck('id')
-                              ->values()
-                              ->all();
+                            ->take(3)
+                            ->pluck('id')
+                            ->values()
+                            ->all();
 
         // 4. LOGIKA RANKING "TERCEPAT"
         $rankCepatIds = $gurus->where('total_hadir', '>', 0)
-                              ->sortBy('avg_seconds')
-                              ->take(3)
-                              ->pluck('id')
-                              ->values()
-                              ->all();
+                            ->sortBy('avg_seconds')
+                            ->take(3)
+                            ->pluck('id')
+                            ->values()
+                            ->all();
 
         // 5. Sorting Utama Tampilan
         $gurus = $gurus->sortByDesc('total_hadir')->values();
