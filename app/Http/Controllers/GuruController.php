@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -556,6 +556,37 @@ class GuruController extends Controller
         $riwayatGaji->appends($request->all());
 
         return view('guru.gaji', compact('riwayatGaji', 'guru'));
+    }
+
+    public function downloadGajiPDF($year, $month)
+    {
+        $userId = Auth::id();
+        $guru = Guru::where('id_user', $userId)->firstOrFail();
+
+        // Query spesifik untuk bulan dan tahun yang dipilih
+        $dataGaji = GajiGuru::selectRaw('
+            YEAR(created_at) as year, 
+            MONTH(created_at) as month, 
+            SUM(nominal_gaji) as total_gaji_bulan_ini,
+            COUNT(id) as total_kehadiran, 
+            MAX(gaji_per_jam) as gaji_per_jam_terakhir,
+            MAX(kehadiran) as status_pembayaran
+        ')
+            ->where('id_guru', $guru->id)
+            ->whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->groupBy('year', 'month')
+            ->firstOrFail(); // Mengambil satu baris data saja
+
+        // Generate tanggal cetak (misal: hari ini atau akhir bulan gaji)
+        $tanggalCetak = Carbon::now()->translatedFormat('d F Y');
+
+        // Load view khusus PDF
+        $pdf = Pdf::loadView('guru.pdf_gaji', compact('guru', 'dataGaji', 'tanggalCetak'))
+            ->setPaper('a4', 'portrait'); // Set ukuran kertas
+
+        // Download file dengan nama dinamis
+        return $pdf->download('Slip_Gaji_' . $guru->nama . '_' . $month . '-' . $year . '.pdf');
     }
 
 
