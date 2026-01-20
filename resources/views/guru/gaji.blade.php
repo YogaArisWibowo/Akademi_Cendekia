@@ -52,6 +52,7 @@
                     <th>Total Absensi Perbulan</th>
                     <th>Total Gaji</th>
                     <th>Status</th>
+                    {{-- cek --}}
                     <th>Unduh Slip Gaji</th>
                 </tr>
             </thead>
