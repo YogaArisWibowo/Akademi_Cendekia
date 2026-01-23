@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id(); // Ini akan menjadi 'id' yang dirujuk oleh 'id_user'
-            $table->string('username')->unique();
-            $table->string('password');
-            $table->enum('role', ['admin', 'guru', 'siswa']);
-            $table->rememberToken();
-            $table->timestamps();
-        });
+       Schema::create('users', function (Blueprint $table) {
+    $table->string('Id_user', 10)->primary();
+    $table->string('Username', 50)->unique();
+    $table->string('Password', 255);
+    $table->enum('Role', ['admin', 'guru', 'siswa']);
+    $table->rememberToken();
+    $table->timestamps();
+});
     }
 
     /**

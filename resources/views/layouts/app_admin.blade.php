@@ -158,7 +158,6 @@
 
             {{-- Isi Dropdown Menu --}}
             <ul class="dropdown-menu dropdown-menu-end mt-3 shadow border-0">
-                <li><h6 class="dropdown-header">Menu Pengguna</h6></li>
                 <li>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf

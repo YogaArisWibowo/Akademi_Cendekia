@@ -12,13 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('gaji_guru', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('id_guru')->constrained('guru')->onDelete('cascade');
-            $table->foreignId('id_absensi_guru')->constrained('absensi_guru')->onDelete('cascade');
-            $table->integer('nominal_gaji');
-            $table->enum('kehadiran', ['Sudah Terbayar', 'Ijin', 'Belum Terbayar']);
-            $table->timestamps();
-        });
+    $table->unsignedInteger('Id_gaji_guru')->primary();
+    $table->string('Id_guru', 10);
+    $table->unsignedInteger('Id_absensi_guru');
+    $table->bigInteger('Nominal_gaji');
+    $table->bigInteger('gaji_perjam');
+    $table->enum('Status_gaji', ['sudah', 'belum']);
+    $table->timestamps();
+
+    $table->foreign('Id_guru')->references('Id_guru')->on('guru')->onDelete('cascade');
+    $table->foreign('Id_absensi_guru')->references('Id_absensi_guru')->on('absensi_guru')->onDelete('cascade');
+});
     }
 
     /**

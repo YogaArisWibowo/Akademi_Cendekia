@@ -12,20 +12,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('guru', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('id_user')->constrained('users')->onDelete('cascade');
-            $table->char('nama', 50);
-            $table->string('email', 50);// VARCHAR
-            $table->string('pendidikan_terakhir', 50);// VARCHAR
-            $table->char('mapel', 50);
-            $table->string('no_hp', 14); // VARCHAR(14)
-            $table->string('alamat_guru', 255); // VARCHAR
-            $table->string('rekening', 50); // VARCHAR
-            $table->string('jenis_e-wallet', 50); // VARCHAR
-            $table->string('no_e-wallet', 50); // VARCHAR
-            $table->enum('status_aktif', ['Aktif', 'Non-Aktif']);
-            $table->timestamps();
-        });
+    $table->string('Id_guru', 10)->primary();
+    $table->string('Id_user', 10);
+    $table->string('Nama', 50);
+    $table->string('Mapel', 50);
+    $table->string('Pendidikan_terakhir', 50);
+    $table->bigInteger('No_hp');
+    $table->string('Alamat_guru', 255);
+    $table->string('Rekening', 50);
+    $table->string('Jenis_e-wallet', 20);
+    $table->bigInteger('No_e-wallet');
+    $table->enum('Status_aktif', ['aktif', 'non-aktif']);
+    $table->timestamps();
+
+    // Relasi ke Users
+    $table->foreign('Id_user')->references('Id_user')->on('users')->onDelete('cascade');
+});
     }
 
     /**

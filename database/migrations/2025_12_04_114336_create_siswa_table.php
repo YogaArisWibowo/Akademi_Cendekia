@@ -12,19 +12,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siswa', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('id_user')->constrained('users')->onDelete('cascade');
-            $table->char('nama',50);
-            $table->string('email', 50);// VARCHAR
-            $table->string('alamat', 50);// VARCHAR
-            $table->char('jenjang',20);
-            $table->string('kelas', 20);// VARCHAR
-            $table->string('asal_sekolah', 100);// VARCHAR
-            $table->string('no_hp', 14);// VARCHAR
-            $table->enum('status_penerimaan', ['Diterima', 'ditolak']);
-            $table->enum('status_aktif', ['Aktif', 'Non-Aktif']);
-            $table->timestamps();
-        });
+    $table->string('Id_siswa', 10)->primary();
+    $table->string('Id_user', 10);
+    $table->string('Nama', 50);
+    $table->string('Jenjang', 20);
+    $table->string('Asal_sekolah', 50);
+    $table->string('Kelas', 20);
+    $table->bigInteger('No_hp_siswa');
+    $table->string('Alamat_siswa', 255);
+    $table->string('Nama_ortu', 50);
+    $table->bigInteger('No_hp_ortu');
+    $table->enum('Status_penerimaan', ['diterima', 'tertunda']);
+    $table->enum('Status_aktif', ['aktif', 'non-aktif']);
+    $table->timestamps();
+
+    $table->foreign('Id_user')->references('Id_user')->on('users')->onDelete('cascade');
+});
     }
 
     /**

@@ -12,13 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('alumni', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('id_siswa')->constrained('siswa')->onDelete('cascade');
-            $table->foreignId('id_guru')->nullable()->constrained('guru')->onDelete('cascade');
-            $table->dateTime('tahun_non-aktif');
-            $table->string('hasil_capaian', 255);// VARCHAR
-            $table->timestamps();
-        });
+    $table->unsignedInteger('Id_alumni')->primary();
+    $table->string('Id_siswa', 10);
+    $table->string('Id_guru', 10);
+    $table->dateTime('Tahun_nonaktif');
+    $table->string('Hasil_capaian', 255);
+    $table->timestamps();
+
+    $table->foreign('Id_siswa')->references('Id_siswa')->on('siswa')->onDelete('cascade');
+    $table->foreign('Id_guru')->references('Id_guru')->on('guru')->onDelete('cascade');
+});
     }
 
     /**

@@ -12,17 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('absensi_guru', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('id_guru')->constrained('guru')->onDelete('cascade');
-            $table->foreignId('id_jadwal_bimbel')->constrained('jadwal_bimbel')->onDelete('cascade');
-            $table->string('bukti_foto');
-            $table->text('laporan_kegiatan');
-            $table->string('hari');
-            $table->date('tanggal');
-            $table->time('waktu');
-            $table->string('mapel',255);
-            $table->timestamps();
-        });
+    $table->unsignedInteger('Id_absensi_guru')->primary();
+    $table->string('Id_guru', 10);
+    $table->unsignedInteger('Id_jadwal_bimbel');
+    $table->string('Bukti_foto', 255);
+    $table->string('Hari', 255);
+    $table->time('Waktu');
+    $table->date('Tanggal');
+    $table->text('Laporan_kegiatan');
+    $table->dateTime('Created_up');
+    $table->timestamps();
+
+    $table->foreign('Id_guru')->references('Id_guru')->on('guru')->onDelete('cascade');
+    $table->foreign('Id_jadwal_bimbel')->references('Id_jadwal_bimbel')->on('jadwal_bimbel')->onDelete('cascade');
+});
     }
 
     /**

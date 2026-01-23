@@ -12,18 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('absensi_siswa', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('id_siswa')->constrained('siswa')->onDelete('cascade');
-            $table->foreignId('id_jadwal_bimbel')->constrained('jadwal_bimbel')->onDelete('cascade');
-            $table->enum('kehadiran', ['Hadir', 'Ijin', 'Sakit']);
-            $table->string('hari');
-            $table->date('tanggal');
-            $table->time('waktu');
-            $table->string('mapel',255);
-            $table->text('catatan');
-            $table->string('bukti',255);
-            $table->timestamps();
-        });
+    $table->unsignedInteger('Id_absensi_siswa')->primary();
+    $table->string('Id_siswa', 10);
+    $table->unsignedInteger('Id_jadwal_bimbel');
+    $table->enum('Kehadiran', ['hadir', 'ijin', 'sakit']);
+    $table->time('Waktu');
+    $table->date('Tanggal');
+    $table->string('Mapel', 255);
+    $table->string('Bukti', 255);
+    $table->text('Catatan', 255);
+    $table->timestamps();
+
+    $table->foreign('Id_siswa')->references('Id_siswa')->on('siswa')->onDelete('cascade');
+    $table->foreign('Id_jadwal_bimbel')->references('Id_jadwal_bimbel')->on('jadwal_bimbel')->onDelete('cascade');
+});
     }
 
     /**

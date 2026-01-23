@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\JadwalBimbel;
 use App\Models\Guru;
 use App\Models\Siswa;
-use App\models\Mapel;
+use App\Models\Mapel;
 
 class JadwalController extends Controller
 {
@@ -16,7 +16,7 @@ class JadwalController extends Controller
         $jadwal = JadwalBimbel::all();
         // Ambil semua data pendukung untuk dropdown
         $guru = Guru::all(); 
-        $siswa = Siswa::class::all(); // Sesuaikan nama model Anda
+        $siswa = Siswa::all(); // Sesuaikan nama model Anda
         $mapel = Mapel::all();
 
         return view('admin.Jadwal_Bimbel', compact('jadwal', 'guru', 'siswa', 'mapel'));

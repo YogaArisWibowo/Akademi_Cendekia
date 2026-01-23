@@ -12,13 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pembayaran_siswa', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('id_siswa')->constrained('siswa')->onDelete('cascade');
-            $table->dateTime('tanggal_pembayaran');
-            $table->char('nama_orangtua',50);
-            $table->string('bukti_pembayaran', 255);
-            $table->timestamps();
-        });
+    $table->unsignedInteger('Id_pembayaran')->primary();
+    $table->string('Id_siswa', 10);
+    $table->dateTime('Tanggal_pembayaran');
+    $table->char('Nama_ortu', 50);
+    $table->bigInteger('Nominal');
+    $table->string('Bukti_pembayaran', 255);
+    $table->timestamps();
+
+    $table->foreign('Id_siswa')->references('Id_siswa')->on('siswa')->onDelete('cascade');
+});
     }
 
     /**

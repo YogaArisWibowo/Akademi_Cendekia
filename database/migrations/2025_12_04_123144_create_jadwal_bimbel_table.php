@@ -12,17 +12,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('jadwal_bimbel', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('id_guru')->constrained('guru')->onDelete('cascade');
-            $table->foreignId('id_siswa')->constrained('siswa')->onDelete('cascade');
-            $table->foreignId('id_mapel')->constrained('mapel')->onDelete('cascade');
-            $table->char('hari',20);
-            $table->time('waktu_mulai');//untuk type data time dalam jam misal 08.30
-            $table->time('waktu_selesai');
-            $table->char('nama_mapel',100);
-            $table->string('alamat_siswa',255);
-            $table->timestamps();
-        });
+    $table->unsignedInteger('Id_jadwal_bimbel')->primary();
+    $table->string('Id_siswa', 10);
+    $table->string('Id_guru', 10);
+    $table->unsignedInteger('Id_mapel');
+    $table->char('Hari', 20);
+    $table->integer('Waktu_mulai');
+    $table->integer('Waktu_selesai');
+    $table->string('Nama_mapel', 100);
+    $table->string('Alamat_siswa', 255);
+    $table->timestamps();
+
+    // Relasi
+    $table->foreign('Id_siswa')->references('Id_siswa')->on('siswa')->onDelete('cascade');
+    $table->foreign('Id_guru')->references('Id_guru')->on('guru')->onDelete('cascade');
+    $table->foreign('Id_mapel')->references('Id_mapel')->on('mapel')->onDelete('cascade');
+});
     }
 
     /**

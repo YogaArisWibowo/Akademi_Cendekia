@@ -12,12 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('admin', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('id_user')->constrained('users')->onDelete('cascade');
-            $table->string('username');
-            $table->string('nama');
-            $table->timestamps();
-        });
+    $table->string('Id_admin', 10)->primary();
+    $table->string('Id_User', 10);
+    $table->string('Username', 50);
+    $table->string('Password', 8);
+    $table->timestamps();
+
+    // Relasi ke Users
+    $table->foreign('Id_User')->references('Id_user')->on('users')->onDelete('cascade');
+});
     }
 
     /**

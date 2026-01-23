@@ -233,7 +233,6 @@
     $(document).ready(function () {
         
         // --- LOGIKA PAGINATION & SEARCH (Gaya Baru) ---
-        // Fungsi ini membungkus logika search dan pagination dalam satu scope
         function setupTablePagination(tableId, paginationId, searchId) {
             const rowsPerPage = 10; 
             let currentPage = 1;
@@ -243,7 +242,6 @@
             const $searchInput = $('#' + searchId);
             const $noDataRow = $('#noDataRow');
             
-            // Ambil semua baris data (class .jadwal-item)
             const $allRows = $table.find('tbody tr.jadwal-item');
             
             function render() {
@@ -362,7 +360,36 @@
             }
         });
 
-        // 4. Tombol Tambah
+        // 4. [BARU] VALIDASI WAKTU (Mulai vs Selesai)
+        // Fungsi cek waktu
+        function checkTimeValidity() {
+            var startTime = $('#j_mulai').val();
+            var endTime = $('#j_selesai').val();
+
+            if (startTime && endTime) {
+                if (endTime <= startTime) {
+                    alert("Waktu Selesai harus lebih besar dari Waktu Mulai!");
+                    $('#j_selesai').val(''); // Reset input selesai
+                }
+            }
+        }
+
+        // Cek saat input berubah
+        $('#j_mulai, #j_selesai').on('change', function() {
+            checkTimeValidity();
+        });
+
+        // Cek juga saat form disubmit (Pengaman Ganda)
+        $('#formJadwal').on('submit', function(e) {
+            var startTime = $('#j_mulai').val();
+            var endTime = $('#j_selesai').val();
+            if (startTime && endTime && endTime <= startTime) {
+                e.preventDefault(); 
+                alert("Mohon perbaiki Waktu Selesai sebelum menyimpan!");
+            }
+        });
+
+        // 5. Tombol Tambah
         $("#btn-tambah-jadwal").on("click", function () {
             $("#modalJadwal .modal-title").text("Tambah Jadwal");
             $("#formJadwal").attr("action", "{{ route('jadwal.store') }}");
@@ -372,7 +399,7 @@
             mJadwal.show();
         });
 
-        // 5. Tombol Edit
+        // 6. Tombol Edit
         $(document).on("click", ".btn-edit-jadwal", function () {
             const id = $(this).data("id");
             const data = dataJadwal[id];
