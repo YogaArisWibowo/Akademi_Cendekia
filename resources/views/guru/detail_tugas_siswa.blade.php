@@ -52,7 +52,7 @@
         {{-- Modal Tambah (UPDATED: Tambah Input Waktu) --}}
         <div class="modal fade" id="tambahModal" tabindex="-1" aria-labelledby="tambahModalLabel" aria-hidden="true">
             <div class="modal-dialog">
-                <form method="POST" action="{{ route('tugas_siswa.simpan') }}">
+                <form method="POST" action="{{ route('tugas_siswa.simpan') }}" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="id_siswa" value="{{ $siswa->id }}">
 

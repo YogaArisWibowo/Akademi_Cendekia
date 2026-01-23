@@ -277,7 +277,7 @@ class SiswaController extends Controller
 
 
 
-
+    //Materi pembelajaran siswa
     public function indexMateri(Request $request)
     {
         $userId = Auth::id();
@@ -287,7 +287,7 @@ class SiswaController extends Controller
             return redirect()->back()->with('error', 'Data siswa tidak ditemukan.');
         }
 
-        
+
         $query = MateriPembelajaran::with(['guru', 'mapel'])
             ->where('id_siswa', $siswa->id);
 
@@ -318,17 +318,29 @@ class SiswaController extends Controller
         return view('siswa.siswa_materi', compact('materi'));
     }
 
+    // Di dalam SiswaController.php
+
     public function downloadMateri($id)
     {
-        $materi = MateriPembelajaran::findOrFail($id);
+        $materi = \App\Models\MateriPembelajaran::findOrFail($id);
 
-        // Pastikan path sesuai dengan tempat Anda menyimpan file (biasanya di public/uploads atau storage)
-        $filePath = public_path('uploads/materi/' . $materi->file_materi);
+        // Validasi Akses (PENTING: Mencegah siswa A download materi siswa B jika perlu)
+        // Jika materi umum, bagian ini opsional. Tapi ID Siswa di materi harus dicek.
+        $userId = Auth::id();
+        $siswa = Siswa::where('id_user', $userId)->first();
 
+        if ($materi->id_siswa && $materi->id_siswa != $siswa->id) {
+            abort(403, 'File ini bukan untuk Anda.');
+        }
+
+        // CARI FILE MENGGUNAKAN PUBLIC PATH
+        $filePath = public_path('materi/' . $materi->file_materi);
+
+        // Cek ketersediaan file
         if (file_exists($filePath)) {
             return response()->download($filePath);
         } else {
-            return back()->with('error', 'File tidak ditemukan.');
+            return back()->with('error', 'File fisik materi tidak ditemukan. Mohon hubungi Guru.');
         }
     }
 
@@ -340,7 +352,7 @@ class SiswaController extends Controller
         $userId = Auth::id();
 
         // 2. Cari data Siswa berdasarkan id_user (Relasi dari tabel Siswa)
-        
+
         $siswa = Siswa::where('id_user', $userId)->first();
 
         // Cek validasi jika user login bukan siswa (misal admin iseng akses url ini)

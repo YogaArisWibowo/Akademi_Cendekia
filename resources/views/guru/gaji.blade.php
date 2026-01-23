@@ -110,7 +110,7 @@
 
                         {{-- KOLOM BARU: BUTTON DOWNLOAD --}}
                         <td>
-                            <a href="{{ route('guru.gaji_guru.download', ['year' => $gaji->year, 'month' => $gaji->month]) }}"
+                            <a href="{{ route('gaji_guru.download', ['year' => $gaji->year, 'month' => $gaji->month]) }}"
                                 class="btn btn-sm btn-danger d-flex align-items-center justify-content-center gap-1"
                                 target="_blank"
                                 style="text-decoration: none; color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px;">
