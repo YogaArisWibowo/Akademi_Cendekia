@@ -105,6 +105,8 @@ Route::middleware(['auth', 'guru'])->group(function () {
 
     //Gaji Guru
     Route::get('/gaji_guru', [GuruController::class, 'gajiGuru'])->name('gaji_guru');
+    Route::get('/gaji_guru/download/{year}/{month}', [GuruController::class, 'downloadGajiPDF'])
+        ->name('gaji_guru.download');
 
 
     // Materi
