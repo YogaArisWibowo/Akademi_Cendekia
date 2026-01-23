@@ -33,7 +33,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
 Route::middleware(['auth', 'admin'])->group(function () {
-    
+
     // Kelola User
     Route::get('/admin/admin_data-guru-siswa', [AdminController::class, 'dataPengguna'])->name('admin_Data_GurudanSiswa');
     Route::post('/admin/guru/store', [AdminController::class, 'storeGuru']);
@@ -68,7 +68,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/admin_Video_Materi', [VideoMateriController::class, 'index'])->name('admin_Video_Materi');
     Route::post('/admin/admin_Video_Materi/store', [VideoMateriController::class, 'store'])->name('admin_Video_Materi.store');
     Route::post('/admin/admin_Video_Materi/update/{id}', [VideoMateriController::class, 'update'])->name('admin_Video_Materi.update');
-    
+
     // Monitoring & Laporan
     Route::get('/admin/admin_Monitoring_Guru', [MonitoringGuruController::class, 'index'])->name('admin_Monitoring_Guru');
     Route::get('/admin/monitoring-guru/detail/{id}', [MonitoringGuruController::class, 'show'])->name('admin_detail_monitoring_guru');
@@ -80,16 +80,18 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/admin_jadwal_bimbel/store', [JadwalController::class, 'store'])->name('jadwal.store');
     Route::put('/admin/admin_jadwal_bimbel/update/{id}', [JadwalController::class, 'update'])->name('jadwal.update');
     Route::delete('/delete/{id}', [JadwalController::class, 'destroy'])->name('jadwal.destroy');
-    
+
     // Penerimaan Siswa
     Route::get('/admin/admin_Penerimaan_Siswa', [Penerimaan_SiswaController::class, 'index'])->name('admin_Penerimaan_Siswa');
     Route::post('/admin/update-status-siswa/{id}', [Penerimaan_SiswaController::class, 'updateStatusSiswa'])->name('update.status.siswa');
 });
 
 Route::middleware(['auth', 'guru'])->group(function () {
-    
+
     Route::get('/jadwal_mengajar', [GuruController::class, 'jadwalMengajar'])->name('jadwal_mengajar');
-    Route::get('/gaji_guru', function () { return view('guru.gaji'); })->name('gaji_guru');
+    Route::get('/gaji_guru', function () {
+        return view('guru.gaji');
+    })->name('gaji_guru');
 
     // Absensi
     Route::get('/absensi_guru', [GuruController::class, 'index'])->name('absensi_guru');
@@ -105,6 +107,8 @@ Route::middleware(['auth', 'guru'])->group(function () {
 
     //Gaji Guru
     Route::get('/gaji_guru', [GuruController::class, 'gajiGuru'])->name('gaji_guru');
+    Route::get('/gaji_guru/download/{year}/{month}', [GuruController::class, 'downloadGajiPDF'])
+        ->name('gaji_guru.download');
 
 
     // Materi
@@ -112,7 +116,8 @@ Route::middleware(['auth', 'guru'])->group(function () {
     Route::get('/materi_pembelajaran/{id}', [GuruController::class, 'materiPembelajaran'])->name('detail_materi_pembelajaran');
     Route::post('/materi_pembelajaran/store', [GuruController::class, 'storeMateri'])->name('store_materi');
     Route::put('/materi_pembelajaran/update/{id}', [GuruController::class, 'updateMateri'])->name('update_materi');
-    Route::get('/materi_pembelajaran/download/{id}', [GuruController::class, 'downloadMateri'])->name('download_materi');
+    Route::get('/materi_pembelajaran/download/{id}', [GuruController::class, 'downloadMateri'])
+        ->name('download_materi');
 
     // Video
     Route::get('/video_materi_belajar', [GuruController::class, 'indexVideoMateri'])->name('video_materi_belajar');
@@ -127,7 +132,7 @@ Route::middleware(['auth', 'guru'])->group(function () {
 });
 
 Route::middleware(['auth', 'siswa'])->group(function () {
-    
+
     // Jadwal
     Route::get('/jadwal_siswa', [SiswaController::class, 'jadwal'])->name('jadwalbimbel');
 
@@ -147,7 +152,8 @@ Route::middleware(['auth', 'siswa'])->group(function () {
     // Materi
     Route::get('/siswa/materi', [SiswaController::class, 'indexMateri'])->name('siswa.siswa_daftarmateri');
     Route::get('/siswa/materi/{id}', [SiswaController::class, 'showMateri'])->name('siswa.materi.detail');
-    Route::get('/siswa/materi/download/{id}', [SiswaController::class, 'downloadMateri'])->name('download_materi');
+    Route::get('/siswa/materi/download/{id}', [SiswaController::class, 'downloadMateri'])
+        ->name('siswa.download.materi');
 
     // Video & Laporan
     Route::get('/siswa_videomateri', [SiswaController::class, 'videoMateri'])->name('siswa.video');

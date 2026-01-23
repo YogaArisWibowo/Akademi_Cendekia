@@ -3,12 +3,15 @@
 @section('content')
     <div class="content-wrapper">
 
-        <div class="materi-search mb-4">
+        <form action="{{ route('laporan_perkembangan_siswa') }}" method="GET" class="materi-search mb-4">
             <div class="search-input-wrapper">
+                {{-- Icon Search --}}
                 <i class="ri-search-line search-icon"></i>
-                <input type="text" class="search-input" placeholder="Cari">
+
+                {{-- Tambahkan name="search" dan value agar tulisan tidak hilang saat di-enter --}}
+                <input type="text" name="search" class="search-input" placeholder="Cari" value="{{ request('search') }}">
             </div>
-        </div>
+        </form>
 
         <div class="materi-grid">
             @foreach ($siswa as $item)
@@ -22,7 +25,7 @@
                 </a>
             @endforeach
         </div>
-        
+
         <div class="pagination-wrapper">
             <button class="btn page">Sebelumnya</button>
             <button class="btn page active">1</button>

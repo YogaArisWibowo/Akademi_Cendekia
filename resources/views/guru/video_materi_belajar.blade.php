@@ -2,10 +2,10 @@
 
 @section('content')
     <div class="materi-search mb-4 d-flex justify-content-between align-items-center">
-        <div class="search-input-wrapper">
+        <form action="{{ route('video_materi_belajar') }}" method="GET" class="search-input-wrapper">
             <i class="ri-search-line search-icon"></i>
-            <input type="text" class="search-input" placeholder="Cari">
-        </div>
+            <input type="text" name="search" class="search-input" placeholder="Cari" value="{{ request('search') }}">
+        </form>
 
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">
             Unggah +
@@ -118,8 +118,8 @@
                             <label>Mata Pelajaran</label>
                             @if ($mapel_guru)
                                 <input type="hidden" name="id_mapel" value="{{ $mapel_guru->id }}">
-                                <input type="text" class="form-control" value="{{ $mapel_guru->nama_mapel }}" readonly
-                                    style="background-color: #e9ecef;">
+                                <input type="text" class="form-control" value="{{ $mapel_guru->nama_mapel }}"
+                                    readonly style="background-color: #e9ecef;">
                             @else
                                 <div class="alert alert-danger">Anda belum memiliki Jadwal Mapel.</div>
                             @endif

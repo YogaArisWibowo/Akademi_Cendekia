@@ -49,9 +49,10 @@
                     <th>Guru Jenjang</th>
                     <th>Rekening / Wallet</th>
                     <th>Gaji Perjam</th>
-                    <th>Absensi</th>
+                    <th>Total Absensi Perbulan</th>
                     <th>Total Gaji</th>
                     <th>Status</th>
+                    <th>Unduh Slip Gaji</th>
                 </tr>
             </thead>
 
@@ -105,6 +106,16 @@
                             <span class="badge badge-hadir" style="text-transform: capitalize;">
                                 {{ $gaji->status_pembayaran ?? 'Belum Dibayar' }}
                             </span>
+                        </td>
+
+                        {{-- KOLOM BARU: BUTTON DOWNLOAD --}}
+                        <td>
+                            <a href="{{ route('gaji_guru.download', ['year' => $gaji->year, 'month' => $gaji->month]) }}"
+                                class="btn btn-sm btn-danger d-flex align-items-center justify-content-center gap-1"
+                                target="_blank"
+                                style="text-decoration: none; color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px;">
+                                <i class="ri-file-pdf-line"></i> Download
+                            </a>
                         </td>
                     </tr>
                 @empty
